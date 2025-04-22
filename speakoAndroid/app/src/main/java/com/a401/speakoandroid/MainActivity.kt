@@ -1,4 +1,4 @@
-package com.example.speakoandroid
+package com.a401.speakoandroid
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.speakoandroid.ui.theme.SpeakoAndroidTheme
+import com.a401.speakoandroid.common.ui.theme.SpeakoAndroidTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,6 +1,5 @@
-package com.example.speakoandroid.ui.theme
+package com.a401.speakoandroid.common.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

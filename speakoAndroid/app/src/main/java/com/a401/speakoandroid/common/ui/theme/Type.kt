@@ -1,4 +1,4 @@
-package com.example.speakoandroid.ui.theme
+package com.a401.speakoandroid.common.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

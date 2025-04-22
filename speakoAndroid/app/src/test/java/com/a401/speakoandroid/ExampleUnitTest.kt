@@ -1,4 +1,4 @@
-package com.example.speakoandroid
+package com.a401.speakoandroid
 
 import org.junit.Test
 
