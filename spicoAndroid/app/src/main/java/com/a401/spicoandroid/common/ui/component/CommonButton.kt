@@ -1,7 +1,9 @@
 package com.a401.spicoandroid.common.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
@@ -20,9 +22,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.ui.unit.*
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.tooling.preview.Preview
 import com.a401.spicoandroid.common.ui.theme.*
 
 
@@ -67,3 +71,23 @@ fun CommonButton(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun CommonButtonPreview() {
+  Column (
+    verticalArrangement = Arrangement.Center,
+    modifier = Modifier.padding(16.dp)
+  ) {
+    CommonButton(
+      text = "Button",
+      size = ButtonSize.XS,
+      onClick = {},
+    )
+    CommonButton(
+      text = "Button",
+      size = ButtonSize.MD,
+      onClick = {},
+    )
+    
+  }
+}
