@@ -31,11 +31,11 @@ import com.a401.spicoandroid.common.ui.theme.*
 
 
 enum class ButtonSize(val height: Dp, val width: Dp, val fontSize: TextUnit) {
-  XS(height = 32.dp, width = 48.dp, fontSize = 12.sp), // AppBar 버튼
-  SM(height = 40.dp, width = 76.dp, fontSize = 16.sp), // 종료 버튼
-  MD(height = 40.dp, width = 132.dp, fontSize = 16.sp), // 알림창 버튼
-  LG(height = 40.dp, width = 328.dp, fontSize = 16.sp), // 다음 버튼
-  XL(height = 64.dp, width = 180.dp, fontSize = 20.sp), 
+    XS(height = 32.dp, width = 48.dp, fontSize = 12.sp), // AppBar 버튼
+    SM(height = 40.dp, width = 76.dp, fontSize = 16.sp), // 종료 버튼
+    MD(height = 40.dp, width = 132.dp, fontSize = 16.sp), // 알림창 버튼
+    LG(height = 40.dp, width = 328.dp, fontSize = 16.sp), // 다음 버튼
+    XL(height = 64.dp, width = 180.dp, fontSize = 20.sp),
 }
 
 @Composable
@@ -74,20 +74,20 @@ fun CommonButton(
 @Preview(showBackground = true)
 @Composable
 fun CommonButtonPreview() {
-  Column (
-    verticalArrangement = Arrangement.Center,
-    modifier = Modifier.padding(16.dp)
-  ) {
-    CommonButton(
-      text = "Button",
-      size = ButtonSize.XS,
-      onClick = {},
-    )
-    CommonButton(
-      text = "Button",
-      size = ButtonSize.MD,
-      onClick = {},
-    )
-    
-  }
+    Column (
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(16.dp)
+    ) {
+        CommonButton(
+            text = "Button",
+            size = ButtonSize.XS,
+            onClick = {},
+        )
+        CommonButton(
+            text = "Button",
+            size = ButtonSize.MD,
+            onClick = {},
+        )
+
+    }
 }
