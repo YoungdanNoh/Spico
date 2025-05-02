@@ -17,14 +17,14 @@ fun NavGraph(
 ) {
     NavControllerProvider(navController = navController) {
         val mainViewModel: MainViewModel = hiltViewModel()
-    }
 
-    NavHost(
-        navController = navController,
-        startDestination = NavRoutes.Main.route
-    ) {
-        composable(NavRoutes.Main.route) {
-            MainScreen(navController, modifier)
+        NavHost(
+            navController = navController,
+            startDestination = NavRoutes.Main.route
+        ) {
+            composable(NavRoutes.Main.route) {
+                MainScreen(navController, modifier)
+            }
         }
     }
 }
