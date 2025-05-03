@@ -1,4 +1,4 @@
-package com.ssafy.spico.spicobackend
+package com.ssafy.spico
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
