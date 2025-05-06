@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -23,15 +21,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.a401.spicoandroid.common.ui.theme.*
 import androidx.compose.ui.res.painterResource
 import com.a401.spicoandroid.R
 
-
+/**
+ * 버튼 크기(Enum) 정의
+ *
+ * @param height 버튼 높이
+ * @param width 버튼 너비
+ * @param fontSize 버튼 내부 텍스트 크기
+ */
 enum class ButtonSize(val height: Dp, val width: Dp, val fontSize: TextUnit) {
   XS(height = 32.dp, width = 48.dp, fontSize = 12.sp), // AppBar 버튼
   SM(height = 40.dp, width = 76.dp, fontSize = 16.sp), // 종료 버튼
@@ -40,6 +43,19 @@ enum class ButtonSize(val height: Dp, val width: Dp, val fontSize: TextUnit) {
   XL(height = 64.dp, width = 180.dp, fontSize = 20.sp), 
 }
 
+/**
+ * 공통 사각형 버튼 컴포넌트
+ *
+ * @param text 버튼에 표시될 텍스트
+ * @param size 버튼 크기 (ButtonSize Enum)
+ * @param enabled 버튼 활성화 여부
+ * @param backgroundColor 버튼 배경색
+ * @param borderColor 버튼 테두리 색
+ * @param textColor 텍스트 색상
+ * @param borderRadius 버튼 모서리 둥글기
+ * @param modifier 추가 Modifier 확장
+ * @param onClick 버튼 클릭 시 동작할 함수
+ */
 @Composable
 fun CommonButton(
     modifier: Modifier = Modifier,
@@ -70,15 +86,22 @@ fun CommonButton(
     ) {
         Text(
             text = text,
-            style = TextStyle(
-                color = if (enabled) textColor else TextTertiary,
-                fontSize = size.fontSize,
-                fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.bodyLarge.copy(
+              color = if (enabled) textColor else TextTertiary
             )
         )
     }
 }
-
+/**
+ * 공통 원형 아이콘 버튼 컴포넌트
+ *
+ * @param icon 아이콘 컴포저블 (예: Icon(...) )
+ * @param size 버튼 지름 (기본값: 48.dp)
+ * @param backgroundColor 배경색
+ * @param enabled 버튼 활성화 여부
+ * @param onClick 클릭 시 동작할 함수
+ * @param modifier 추가 Modifier 확장
+ */
 @Composable
 fun IconCircleButton(
   modifier: Modifier = Modifier,
@@ -101,7 +124,9 @@ fun IconCircleButton(
 }
 
 
-
+/**
+ * 프리뷰 예제
+ */
 @Preview(showBackground = true)
 @Composable
 fun CommonButtonPreview() {
@@ -109,6 +134,7 @@ fun CommonButtonPreview() {
     verticalArrangement = Arrangement.Center,
     modifier = Modifier.padding(16.dp)
   ) {
+    // 소
     CommonButton(
       text = "편집",
       backgroundColor = White,
@@ -117,6 +143,7 @@ fun CommonButtonPreview() {
       size = ButtonSize.XS,
       onClick = {},
     )
+    // 중소
     CommonButton(
       text = "대본",
       backgroundColor = White,
@@ -125,6 +152,7 @@ fun CommonButtonPreview() {
       size = ButtonSize.SM,
       onClick = {},
     )
+    // 중대
     CommonButton(
       text = "취소",
       backgroundColor = BackgroundSecondary,
@@ -133,11 +161,13 @@ fun CommonButtonPreview() {
       size = ButtonSize.MD,
       onClick = {},
     )
+    // 대
     CommonButton(
       text = "다음",
       size = ButtonSize.LG,
       onClick = {},
     )
+    // 원형
     IconCircleButton(
       icon = { 
         Icon(
