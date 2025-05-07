@@ -82,17 +82,13 @@ fun CustomOverlayTimePicker(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    //TODO: 컴포넌트 버튼으로 바꾸기
-                    Text(
+                    CommonButton(
                         text = "확인",
-                        modifier = Modifier
-                            .clickable {
-                                onTimeSelected(selectedHour, selectedMinute, selectedSecond)
-                                onDismiss()
-                            }
-                            .padding(vertical = 8.dp, horizontal = 24.dp),
-                        style = Typography.titleLarge,
-                        color = TextPrimary
+                        size = ButtonSize.MD,
+                        onClick = {
+                            onTimeSelected(selectedHour, selectedMinute, selectedSecond)
+                            onDismiss()
+                        },
                     )
                 }
             }
