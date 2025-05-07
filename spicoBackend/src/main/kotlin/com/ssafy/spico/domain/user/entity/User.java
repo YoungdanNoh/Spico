@@ -32,7 +32,7 @@ public class User {
         this.answerTimeLimit = 1;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
