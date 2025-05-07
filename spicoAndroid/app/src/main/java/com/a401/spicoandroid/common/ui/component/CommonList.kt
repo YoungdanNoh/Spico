@@ -2,6 +2,7 @@ package com.a401.spicoandroid.common.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,8 @@ fun CommonList(
     description: String? = null,
     rightIcon: Painter? = null,
     titleStyle: TextStyle? = null,
-    descriptionStyle: TextStyle? = null
+    descriptionStyle: TextStyle? = null,
+    onClick: () -> Unit = {}
 ) {
     val finalTitleStyle = titleStyle ?: Typography.displaySmall
     val finalDescriptionStyle = descriptionStyle ?: Typography.labelSmall
@@ -45,8 +47,9 @@ fun CommonList(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(White)
+            .clickable { onClick() }
             .drawBehind {
                 drawRect(
                     color = Color(0x1A222222),
@@ -54,7 +57,7 @@ fun CommonList(
                     size = Size(size.width, 4f)
                 )
             }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(16.dp),
         color = White
     ) {
         Row(
