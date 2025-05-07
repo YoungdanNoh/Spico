@@ -2,9 +2,6 @@ package com.ssafy.spico.domain.project.entity;
 
 import com.ssafy.spico.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -12,10 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "projects")
 public class ProjectEntity {
 
