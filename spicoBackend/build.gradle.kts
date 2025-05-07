@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -34,6 +35,12 @@ dependencies {
     // JPA (hibernate 포함)
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
+    // 쿼리 DSL 의존성 추가
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    kapt("jakarta.annotation:jakarta.annotation-api")
+    kapt("jakarta.persistence:jakarta.persistence-api")
+
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
@@ -58,11 +65,28 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// QueryDSL 경로 설정
+val querydslDir = "$buildDir/generated/querydsl"
+
 // 자바 소스도 src/main/kotlin에서 찾도록 명시
 sourceSets {
     main {
         java {
             setSrcDirs(listOf("src/main/kotlin"))
         }
+
+        kotlin.srcDir("build/generated/querydsl") // Q파일 포함
+    }
+}
+
+// annotationProcessor가 생성하는 Q클래스 경로 지정
+tasks.withType<JavaCompile> {
+    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+}
+
+// clean 시 생성된 Q클래스 디렉토리 삭제
+tasks.named("clean") {
+    doLast {
+        delete(querydslDir)
     }
 }
