@@ -1,12 +1,8 @@
 package com.ssafy.spico.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@NoArgsConstructor
 public class User {
 
     @Id
@@ -25,6 +21,8 @@ public class User {
 
     private Integer answerTimeLimit;
 
+    public User() {}
+
     public User(String email, String name) {
         this.email = email;
         this.name = name;
@@ -34,24 +32,32 @@ public class User {
         this.answerTimeLimit = 1;
     }
 
-    public void updateHasAudience(boolean hasAudience) {
-        this.hasAudience = hasAudience;
+    public Long getId() {
+        return id;
     }
 
-    public void updateHasQna(boolean hasQna) {
-        this.hasQna = hasQna;
-        if(this.hasQna){
-            this.questionCount = 1;
-            this.answerTimeLimit = 1;
-        }
+    public String getEmail() {
+        return email;
     }
 
-    public void updateQuestionCount(int questionCount) {
-        this.questionCount = questionCount;
+    public String getName() {
+        return name;
     }
 
-    public void updateAnswerTimeLimit(int answerTimeLimit) {
-        this.answerTimeLimit = answerTimeLimit;
+    public boolean isHasAudience() {
+        return hasAudience;
+    }
+
+    public boolean isHasQna() {
+        return hasQna;
+    }
+
+    public Integer getQuestionCount() {
+        return questionCount;
+    }
+
+    public Integer getAnswerTimeLimit() {
+        return answerTimeLimit;
     }
 
     public Integer getId() {
