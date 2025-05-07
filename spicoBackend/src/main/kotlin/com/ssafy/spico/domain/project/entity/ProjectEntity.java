@@ -42,4 +42,41 @@ public class ProjectEntity {
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
+
+    public ProjectEntity(User user, String title, LocalDate date, LocalTime limitTime, String script, LocalDateTime createdAt) {
+        this.user = user;
+        this.title = title;
+        this.date = date;
+        this.limitTime = limitTime;
+        this.script = script;
+        this.createdAt = createdAt;
+    }
+
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getLimitTime() {
+        return limitTime;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

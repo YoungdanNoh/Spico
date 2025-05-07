@@ -17,14 +17,14 @@ data class Project(
 )
 
 fun Project.toEntity(user: User): ProjectEntity {
-    return ProjectEntity.builder()
-        .user(user)
-        .title(title)
-        .date(date)
-        .limitTime(limitTime)
-        .script(script)
-        .createdAt(createdAt)
-        .build()
+    return ProjectEntity(
+        user,
+        this.title,
+        this.date,
+        this.limitTime,
+        this.script,
+        this.createdAt
+    )
 }
 
 fun ProjectEntity.toModel(): Project {
