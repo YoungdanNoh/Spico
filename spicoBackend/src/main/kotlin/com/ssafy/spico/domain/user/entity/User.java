@@ -32,16 +32,8 @@ public class User {
         this.answerTimeLimit = 1;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean isHasAudience() {
