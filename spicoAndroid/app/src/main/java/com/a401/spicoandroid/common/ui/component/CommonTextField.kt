@@ -11,6 +11,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.theme.*
@@ -49,4 +50,15 @@ fun CommonTextField(
             ),
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CommonTextFieldPreview() {
+    CommonTextField(
+        value = "",
+        onValueChange = {},
+        placeholder = "텍스트를 입력해주세요",
+        height = 56.dp
+    )
 }

@@ -2,6 +2,7 @@ package com.a401.spicoandroid.common.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.a401.spicoandroid.common.ui.theme.*
 
 /**
@@ -59,57 +62,70 @@ fun CommonAlert(
     borderColor: Color = White,
     onDismissRequest: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
+    Popup(
+        alignment = Alignment.Center,
+        onDismissRequest = onDismissRequest,
+        properties = PopupProperties(focusable = true)
+    ) {
         Box(
-            modifier = modifier
-                .size(width = 312.dp, height = 180.dp)
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x80000000)) // 어두운 반투명 배경
+                .clickable(onClick = onDismissRequest)
                 .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+            Box(
+                modifier = modifier
+                    .size(width = 312.dp, height = 180.dp)
+                    .align(Alignment.Center)
+                    .background(White, RoundedCornerShape(8.dp))
+                    .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+                    .padding(16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .height(64.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = title,
-                        fontSize = 20.sp,
-                        color = TextPrimary,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                    Box(
+                        modifier = Modifier
+                            .height(64.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = title,
+                            fontSize = 20.sp,
+                            color = TextPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    CommonButton(
-                        text = cancelText,
-                        onClick = onCancel,
-                        size = ButtonSize.MD,
-                        textColor = cancelTextColor,
-                        backgroundColor = cancelBackgroundColor,
-                        borderColor = cancelBorderColor,
-                        modifier = Modifier.weight(1f)
-                    )
-                    CommonButton(
-                        text = confirmText,
-                        onClick = onConfirm,
-                        size = ButtonSize.MD,
-                        textColor = confirmTextColor,
-                        backgroundColor = confirmBackgroundColor,
-                        borderColor = confirmBorderColor,
-                        modifier = Modifier.weight(1f)
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CommonButton(
+                            text = cancelText,
+                            onClick = onCancel,
+                            size = ButtonSize.MD,
+                            textColor = cancelTextColor,
+                            backgroundColor = cancelBackgroundColor,
+                            borderColor = cancelBorderColor,
+                            modifier = Modifier.weight(1f)
+                        )
+                        CommonButton(
+                            text = confirmText,
+                            onClick = onConfirm,
+                            size = ButtonSize.MD,
+                            textColor = confirmTextColor,
+                            backgroundColor = confirmBackgroundColor,
+                            borderColor = confirmBorderColor,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         }
