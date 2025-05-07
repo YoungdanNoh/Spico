@@ -10,17 +10,19 @@ import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.ui.theme.dropShadow1
 
-data class Report(
-    val title: String,
-    val description: String
+data class PracticeReport(
+    val practiceId: Int,
+    val reportsId: Int,
+    val practiceName: String,
+    val projectName: String
 )
 
 @Composable
 fun RecentReportSection(
-    reportList: List<Report> = listOf(
-        Report("코칭 모드 3회차 리포트", "자율 프로젝트"),
-        Report("파이널 모드 2회차 리포트", "자율 프로젝트"),
-        Report("코칭 모드 1회차 리포트", "공통 프로젝트")
+    reportList: List<PracticeReport> = listOf(
+        PracticeReport(101, 12343, "자율 프로젝트 결선 코칭 1트", "자율 프로젝트"),
+        PracticeReport(102, 12344, "자율 프로젝트 결선 코칭 2트", "특화 프로젝트"),
+        PracticeReport(103, 12345, "자율 프로젝트 결선 파이널 1트", "자율 프로젝트")
     )
 ) {
     Column(
@@ -38,8 +40,8 @@ fun RecentReportSection(
         reportList.forEachIndexed { index, report ->
             CommonList(
                 modifier = Modifier.dropShadow1(),
-                title = report.title,
-                description = report.description,
+                title = report.practiceName,
+                description = report.projectName
             )
             if (index < reportList.lastIndex) {
                 Spacer(modifier = Modifier.height(16.dp))
