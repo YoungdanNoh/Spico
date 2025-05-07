@@ -16,6 +16,7 @@ import com.a401.spicoandroid.common.ui.theme.*
 @Composable
 fun ProjectInfoHeader(
     title: String,
+    time: String,
     onScriptClick: () -> Unit = {}
 ) {
     Column {
@@ -41,7 +42,7 @@ fun ProjectInfoHeader(
             )
 
             CommonButton(
-                text = "15:00",
+                text = time,
                 size = ButtonSize.MD,
                 backgroundColor = BackgroundSecondary,
                 textColor = TextPrimary,
