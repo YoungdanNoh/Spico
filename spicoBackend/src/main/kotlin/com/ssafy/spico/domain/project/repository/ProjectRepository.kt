@@ -1,7 +1,7 @@
 package com.ssafy.spico.domain.project.repository
 
-import org.springframework.stereotype.Repository
+import com.ssafy.spico.domain.project.entity.ProjectEntity
+import org.springframework.data.jpa.repository.JpaRepository
 
-@Repository
-class ProjectRepository {
+interface ProjectRepository : JpaRepository<ProjectEntity, Int> {
 }
