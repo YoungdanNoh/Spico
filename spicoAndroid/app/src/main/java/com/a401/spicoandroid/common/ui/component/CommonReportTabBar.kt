@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.text.font.FontWeight
 import com.a401.spicoandroid.common.ui.theme.Action
 import com.a401.spicoandroid.common.ui.theme.TextTertiary
 import com.a401.spicoandroid.common.ui.theme.SpeakoAndroidTheme
+import com.a401.spicoandroid.common.ui.theme.Typography
 import com.a401.spicoandroid.common.ui.theme.White
 
 @Composable
@@ -52,10 +54,9 @@ fun CommonReportTabBar(
                 ) {
                     Text(
                         text = title,
-                        style = if (isSelected)
-                            MaterialTheme.typography.headlineLarge
-                        else
-                            MaterialTheme.typography.titleLarge,
+                        style = Typography.displaySmall.copy(
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        ),
                         color = if (isSelected) Action else TextTertiary
                     )
 
