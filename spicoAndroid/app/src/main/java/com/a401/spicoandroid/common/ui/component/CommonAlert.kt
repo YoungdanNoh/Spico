@@ -118,7 +118,7 @@ fun CommonAlert(
 /**
  * 프리뷰 예제
  */
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun CommonAlertPreview() {
     Column(
