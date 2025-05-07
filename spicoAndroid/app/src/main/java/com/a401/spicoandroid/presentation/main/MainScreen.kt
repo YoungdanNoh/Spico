@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
+import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.presentation.main.viewmodel.MainViewModel
 
 @Composable
@@ -20,11 +21,15 @@ fun MainScreen(
 ) {
     Scaffold(
         topBar = {
-            CommonTopBar(modifier = Modifier,
-                text = "메인화면에서 탑바",
-                showBackButton = true,
-                actionImageId = R.drawable.ic_launcher_foreground,
-                onActionClick = {}
+            CommonTopBar(
+                centerText = "텍스트",
+                leftContent = {
+                    IconButton(
+                        iconResId = R.drawable.ic_arrow_left_black,
+                        contentDescription = "뒤로가기",
+                        onClick = {}
+                    )
+                }
             )
         },
         bottomBar = {
