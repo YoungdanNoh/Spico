@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.home.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ fun RecentReportSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(BrokenWhite)
             .padding(16.dp)
     ) {
         Text(
