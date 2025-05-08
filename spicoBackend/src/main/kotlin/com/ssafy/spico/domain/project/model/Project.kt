@@ -1,6 +1,6 @@
 package com.ssafy.spico.domain.project.model
 
-import com.ssafy.spico.domain.user.entity.User
+import com.ssafy.spico.domain.user.entity.UserEntity
 import com.ssafy.spico.domain.project.entity.ProjectEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,9 +16,9 @@ data class Project(
     val createdAt: LocalDateTime
 )
 
-fun Project.toEntity(user: User): ProjectEntity {
+fun Project.toEntity(userEntity: UserEntity): ProjectEntity {
     return ProjectEntity(
-        user,
+        userEntity,
         this.title,
         this.date,
         this.limitTime,
@@ -30,7 +30,7 @@ fun Project.toEntity(user: User): ProjectEntity {
 fun ProjectEntity.toModel(): Project {
     return Project(
         id = this.projectId,
-        userId = this.user.id,
+        userId = this.userEntity.id,
         title = this.title,
         date = this.date,
         limitTime = this.limitTime,

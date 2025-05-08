@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 @Order(2)
-class SearchExceptionHandler {
+class PracticeExceptionHandler {
 
-    private val logger = LoggerFactory.getLogger(SearchExceptionHandler::class.java)
+    private val logger = LoggerFactory.getLogger(PracticeExceptionHandler::class.java)
 
-    @ExceptionHandler(SearchException::class)
-    fun handleSearchException(exception: SearchException): ApiResponse<Any?> {
+    @ExceptionHandler(PracticeException::class)
+    fun handleSearchException(exception: PracticeException): ApiResponse<Any?> {
         val error = exception.error
 
         val clientMsg = if (error.httpStatusCode.startsWith("4")) {

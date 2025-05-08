@@ -3,7 +3,8 @@ package com.ssafy.spico.domain.user.entity;
 import jakarta.persistence.*;
 
 @Entity
-public class User {
+@Table(name = "users")
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,15 +22,24 @@ public class User {
 
     private Integer answerTimeLimit;
 
-    public User() {}
+    public UserEntity() {}
 
-    public User(String email, String name) {
+    public UserEntity(String email, String name) {
         this.email = email;
         this.name = name;
         this.hasAudience = true;
         this.hasQna = true;
         this.questionCount = 1;
         this.answerTimeLimit = 1;
+    }
+
+    public UserEntity(String email, String name, boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
+        this.email = email;
+        this.name = name;
+        this.hasAudience = hasAudience;
+        this.hasQna = hasQna;
+        this.questionCount = questionCount;
+        this.answerTimeLimit = answerTimeLimit;
     }
 
     public String getEmail() {
@@ -58,5 +68,12 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public void updateSetting(boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
+        this.hasAudience = hasAudience;
+        this.hasQna = hasQna;
+        this.questionCount = questionCount;
+        this.answerTimeLimit = answerTimeLimit;
     }
 }
