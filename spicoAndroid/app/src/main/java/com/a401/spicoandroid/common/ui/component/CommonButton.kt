@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,6 +94,7 @@ fun CommonButton(
         )
     }
 }
+
 /**
  * 공통 원형 아이콘 버튼 컴포넌트
  *
@@ -110,6 +113,7 @@ fun IconCircleButton(
   backgroundColor: Color = Action,
   enabled: Boolean = true,
   onClick: () -> Unit,
+
 ) {
   Box(
     modifier = modifier
@@ -122,8 +126,56 @@ fun IconCircleButton(
     icon()
   }
 }
-
-
+@Composable
+fun CommonIconTextButton(
+    modifier: Modifier = Modifier,
+    iconResId: Int,
+    text: String,
+    size: ButtonSize = ButtonSize.LG,
+    enabled: Boolean = true,
+    backgroundColor: Color = Action,
+    borderColor: Color = Action,
+    textColor: Color = White,
+    iconTint: Color = White,
+    borderRadius: Dp = 8.dp,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .height(size.height)
+            .width(size.width)
+            .clip(RoundedCornerShape(borderRadius))
+            .border(
+                width = 1.dp,
+                color = if (enabled) borderColor else Disabled,
+                shape = RoundedCornerShape(borderRadius)
+            )
+            .background(
+                color = if (enabled) backgroundColor else Disabled
+            )
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = iconResId),
+                contentDescription = "아이콘",
+                modifier = Modifier.size(20.dp),
+                tint = if (enabled) iconTint else TextTertiary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = if (enabled) textColor else TextTertiary
+                )
+            )
+        }
+    }
+}
 /**
  * 프리뷰 예제
  */
@@ -131,7 +183,7 @@ fun IconCircleButton(
 @Composable
 fun CommonButtonPreview() {
   Column (
-    verticalArrangement = Arrangement.Center,
+    verticalArrangement = Arrangement.spacedBy(12.dp),
     modifier = Modifier.padding(16.dp)
   ) {
     // 소
@@ -167,6 +219,13 @@ fun CommonButtonPreview() {
       size = ButtonSize.LG,
       onClick = {},
     )
+      // 대 (아이콘)
+      CommonIconTextButton(
+          iconResId = R.drawable.ic_add_white,
+          text = "새 프로젝트 등록하기",
+          size = ButtonSize.LG,
+          onClick = { /* 클릭 테스트 */ }
+      )
     // 원형
     IconCircleButton(
       icon = { 
