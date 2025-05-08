@@ -53,6 +53,9 @@ dependencies {
     /* prometheus */
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
+    // GPT 관련 의존성 추가
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 }
 
 kotlin {

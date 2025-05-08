@@ -1,11 +1,7 @@
 package com.ssafy.spico.domain.practice.controller
 
 import com.ssafy.spico.common.response.ApiResponse
-import com.ssafy.spico.domain.practice.dto.FinalPracticeRequestDto
-import com.ssafy.spico.domain.practice.dto.FinalPracticeResponseDto
-import com.ssafy.spico.domain.practice.dto.toModel
-import com.ssafy.spico.domain.practice.dto.toResponse
-import com.ssafy.spico.domain.practice.model.FinalPracticeInfo
+import com.ssafy.spico.domain.practice.dto.*
 import com.ssafy.spico.domain.practice.service.PracticeServiceImpl
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
@@ -17,14 +13,27 @@ class PracticeController(
     @Value("\${user-id}") private val userId: Int
 ) {
 
+    // 파이널 모드 시작
     @PostMapping("/final")
-    fun createFinalPractice(
+    fun startFinalPractice(
         @PathVariable projectId: Int,
-        @RequestBody request: FinalPracticeRequestDto
-    ): ApiResponse<FinalPracticeResponseDto> {
+        @RequestBody request: StartFinalPracticeRequestDto
+    ): ApiResponse<StartFinalPracticeResponseDto> {
         val setting = request.toModel()
 
-        return ApiResponse.success(practiceService.createFinalPractice(projectId, userId, setting))
+        return ApiResponse.success(practiceService.createFinalPractice(userId, projectId, setting))
 
+    }
+
+    // 파이널 모드 종료 -> GPT 질문 생성
+    @PostMapping("/final/{practiceId}/qa")
+    fun endFinalPractice(
+        @PathVariable projectId: Int,
+        @PathVariable practiceId: Int,
+        @RequestBody request: EndFinalPracticeRequestDto
+    ): ApiResponse<EndFinalPracticeResponseDto> {
+        val speech = request.toModel()
+
+        return ApiResponse.success(practiceService.endFinalPractice(userId, projectId, practiceId, speech))
     }
 }
