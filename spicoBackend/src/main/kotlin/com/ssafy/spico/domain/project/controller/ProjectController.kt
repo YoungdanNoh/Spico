@@ -6,8 +6,6 @@ import com.ssafy.spico.domain.project.dto.ProjectViewType
 import com.ssafy.spico.domain.project.dto.toResponse
 import com.ssafy.spico.domain.project.service.ProjectService
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
