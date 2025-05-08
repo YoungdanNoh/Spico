@@ -1,12 +1,11 @@
 package com.a401.spicoandroid.presentation.project.screen
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,15 +13,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
-import com.a401.spicoandroid.common.ui.component.CommonBottomBar
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
-import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import com.a401.spicoandroid.common.ui.theme.BrokenWhite
 import com.a401.spicoandroid.presentation.project.viewmodel.Project
 
 @Composable
@@ -48,12 +44,6 @@ fun ProjectListScreen(
                         onClick = {}
                     )
                 }
-            )
-        },
-        bottomBar = {
-            CommonBottomBar(
-                navController = navController,
-                onFabClick = onFabClick
             )
         },
         containerColor = BrokenWhite

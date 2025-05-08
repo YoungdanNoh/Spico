@@ -3,10 +3,22 @@ package com.a401.spicoandroid.presentation.project.screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,14 +27,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonAlert
-import com.a401.spicoandroid.common.ui.component.CommonBottomBar
 import com.a401.spicoandroid.common.ui.component.CommonDropdown
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonReportTabBar
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.DropdownMenuItemData
 import com.a401.spicoandroid.common.ui.component.IconButton
-import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.common.ui.theme.BrokenWhite
+import com.a401.spicoandroid.common.ui.theme.Error
+import com.a401.spicoandroid.common.ui.theme.TextPrimary
 import com.a401.spicoandroid.presentation.project.component.ProjectEditDialog
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoHeader
 import com.a401.spicoandroid.presentation.project.viewmodel.Project
@@ -108,12 +121,6 @@ fun ProjectDetailScreen(
                         )
                     }
                 }
-            )
-        },
-        bottomBar = {
-            CommonBottomBar(
-                navController = navController,
-                onFabClick = onFabClick
             )
         },
         containerColor = BrokenWhite

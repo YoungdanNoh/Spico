@@ -32,9 +32,6 @@ fun MainScreen(
                 }
             )
         },
-        bottomBar = {
-            Text("바텀바")
-        },
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
