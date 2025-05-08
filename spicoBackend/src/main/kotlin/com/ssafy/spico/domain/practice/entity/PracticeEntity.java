@@ -32,8 +32,12 @@ public class PracticeEntity {
     @Column(name = "type", nullable = false)
     private PracticeType type; // 종류 (예: 통합, 파이널)
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PracticeStatus status; // 상태 (진행중, 완료 등)
+
+    public PracticeEntity() {
+    }
 
     public PracticeEntity(ProjectEntity projectEntity, LocalDateTime createdAt, PracticeType type, PracticeStatus status) {
         this.projectEntity = projectEntity;
@@ -60,5 +64,9 @@ public class PracticeEntity {
 
     public PracticeStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(PracticeStatus status) {
+        this.status = status;
     }
 }

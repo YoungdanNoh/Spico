@@ -24,37 +24,37 @@ public class FinalReportEntity {
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private PracticeEntity practiceEntity;
 
-    @Column(name = "pause_score", nullable = false)
+    @Column(name = "pause_score")
     private Integer pauseScore; // 휴지 기간 점수
 
-    @Column(name = "pronunciation_score", nullable = false)
+    @Column(name = "pronunciation_score")
     private Integer pronunciationScore; // 발음 점수
 
-    @Column(name = "speed_score", nullable = false)
+    @Column(name = "speed_score")
     private Integer speedScore; // 발표 속도 점수
 
-    @Column(name = "speech_speed", nullable = false)
+    @Column(name = "speech_speed")
     private String speechSpeed; // 발표 속도 피드백(적당해요, 너무 느려요 등)
 
-    @Column(name = "volume_score", nullable = false)
+    @Column(name = "volume_score")
     private Integer volumeScore; // 성량 점수
 
-    @Column(name = "speech_volume", nullable = false)
+    @Column(name = "speech_volume")
     private String speechVolume; // 성량 피드백(적당해요, 너무 커요 등)
 
-    @Column(name = "script_match_rate", nullable = false)
+    @Column(name = "script_match_rate")
     private Integer scriptMatchRate; // 대본 일치도
 
-    @Column(name = "pause_count", nullable = false)
+    @Column(name = "pause_count")
     private Integer pauseCount; // 휴지 구간 횟수
 
-    @Column(name = "total_score", nullable = false)
+    @Column(name = "total_score")
     private Integer totalScore; // 종합 점수
 
-    @Column(name = "video_url", nullable = false)
+    @Column(name = "video_url")
     private String videoUrl; // 발표 영상 url
 
-    @Column(name = "speech_time", nullable = false)
+    @Column(name = "speech_time")
     private Time speechTime; // 발표 시간
 
     @Column(name = "script", columnDefinition = "TEXT")
@@ -62,4 +62,10 @@ public class FinalReportEntity {
 
     @Column(name = "final_practice_cnt", nullable = false)
     private Integer finalPracticeCnt; // 해당 프로젝트의 파이널 모드 연습 횟수
+
+    public FinalReportEntity(PracticeEntity practiceEntity, Integer finalPracticeCnt, String script) {
+        this.practiceEntity = practiceEntity;
+        this.finalPracticeCnt = finalPracticeCnt;
+        this.script = script;
+    }
 }
