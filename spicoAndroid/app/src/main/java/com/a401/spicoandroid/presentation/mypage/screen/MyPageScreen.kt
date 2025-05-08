@@ -51,12 +51,9 @@ fun MyPageScreen(
     var showWithdrawDialog by remember { mutableStateOf(false) }
 
     Scaffold (
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
         topBar = {
             CommonTopBar(
-                centerText = "마이페이지",
+                centerText = "프로필",
             )
         },
         containerColor = White,
