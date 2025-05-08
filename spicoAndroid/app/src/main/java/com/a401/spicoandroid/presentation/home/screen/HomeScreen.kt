@@ -1,7 +1,11 @@
 package com.a401.spicoandroid.presentation.home.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -10,9 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.a401.spicoandroid.common.ui.component.CommonBottomBar
 import com.a401.spicoandroid.common.ui.theme.BackgroundPrimary
-import com.a401.spicoandroid.presentation.home.component.*
+import com.a401.spicoandroid.presentation.home.component.GreetingSection
+import com.a401.spicoandroid.presentation.home.component.PracticeSection
+import com.a401.spicoandroid.presentation.home.component.RecentReportSection
+import com.a401.spicoandroid.presentation.home.component.WeeklyCalendarSection
 import com.a401.spicoandroid.presentation.home.util.getStartOfWeek
 import com.a401.spicoandroid.presentation.home.util.getWeekDates
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
@@ -57,12 +63,6 @@ fun HomeScreenPreview() {
 
     Scaffold(
         containerColor = BackgroundPrimary,
-        bottomBar = {
-            CommonBottomBar(
-                navController = fakeNavController,
-                onFabClick = {}
-            )
-        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
