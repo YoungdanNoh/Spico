@@ -1,8 +1,10 @@
 package com.a401.spicoandroid.common.ui.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CommonList(
     modifier: Modifier = Modifier,
@@ -39,7 +42,8 @@ fun CommonList(
     rightIcon: Painter? = null,
     titleStyle: TextStyle? = null,
     descriptionStyle: TextStyle? = null,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onLongClick: (() -> Unit)? = null
 ) {
     val finalTitleStyle = titleStyle ?: Typography.displaySmall
     val finalDescriptionStyle = descriptionStyle ?: Typography.labelSmall
@@ -49,7 +53,10 @@ fun CommonList(
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(White)
-            .clickable { onClick() }
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .drawBehind {
                 drawRect(
                     color = Color(0x1A222222),
@@ -69,12 +76,10 @@ fun CommonList(
                     painter = imagePainter,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(46.dp)
+                    modifier = Modifier.size(46.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
             }
-
 
             Column(
                 modifier = Modifier.weight(1f),
@@ -95,15 +100,13 @@ fun CommonList(
                 }
             }
 
-
             if (rightIcon != null) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Image(
                     painter = rightIcon,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .size(20.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }

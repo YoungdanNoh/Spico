@@ -48,8 +48,6 @@ fun NavGraph(
                 val project = backStackEntry.arguments?.getParcelable<Project>("project")
                 if(project != null) {
                     ProjectDetailScreen(
-                        navController = navController,
-                        onFabClick = {},
                         project = project
                     )
                 }
