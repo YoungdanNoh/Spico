@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,7 +27,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.ButtonSize
-import com.a401.spicoandroid.common.ui.component.CommonBottomBar
 import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.theme.Error
@@ -57,12 +54,6 @@ fun MyPageScreen(
             )
         },
         containerColor = White,
-        bottomBar = {
-            CommonBottomBar(
-                navController = navController,
-                onFabClick = onFabClick
-            )
-        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
