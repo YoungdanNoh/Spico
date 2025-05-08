@@ -18,13 +18,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.LocalNavController
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
-fun GreetingSection(username: String = "사용자") {
+fun GreetingSection(
+    username: String = "사용자",
+    navController: NavHostController
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,7 +115,20 @@ fun GreetingSection(username: String = "사용자") {
                             backgroundColor = Action,
                             borderColor = Action,
                             textColor = White,
-                            onClick = { /* TODO */ }
+                            onClick = {
+                                navController.navigate(NavRoutes.ProjectCreate.route)
+                            }
+                        )
+
+                        CommonButton(
+                            text = "프로젝트 목록",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.ProjectList.route)
+                            }
                         )
                     }
 
@@ -125,11 +145,12 @@ fun GreetingSection(username: String = "사용자") {
     }
 }
 
-@Preview(showBackground = true,widthDp = 412)
-@Composable
-fun GreetingSectionPreview() {
-    SpeakoAndroidTheme {
-        GreetingSection()
-    }
-}
+//@Preview(showBackground = true,widthDp = 412)
+//@Composable
+//fun GreetingSectionPreview() {
+//    val fakeNavController = LocalNavController.current
+//    SpeakoAndroidTheme {
+//        GreetingSection(navController = fakeNavController)
+//    }
+//}
 
