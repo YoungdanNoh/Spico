@@ -1,0 +1,12 @@
+package com.ssafy.spico.domain.project.repository
+
+import com.ssafy.spico.domain.project.dto.ProjectViewType
+import com.ssafy.spico.domain.project.model.Project
+
+interface ProjectRepositoryCustom {
+    fun findProjectWithPaging(
+        cursor: Long?,
+        size: Int,
+        type: ProjectViewType
+    ): List<Project>
+}
