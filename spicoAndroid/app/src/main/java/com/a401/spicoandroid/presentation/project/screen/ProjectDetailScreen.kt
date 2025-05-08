@@ -33,7 +33,7 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProjectDetailScreen(
-    project: Project
+    projectId: Int
 ) {
     val practiceList = listOf(1, 2, 3)
     var selectedTab by remember { mutableStateOf(0) }
@@ -46,6 +46,12 @@ fun ProjectDetailScreen(
     var hour by remember { mutableIntStateOf(0) }
     var minute by remember { mutableIntStateOf(0) }
     var second by remember { mutableIntStateOf(0) }
+
+    val mockProject = Project(
+        id = 1,
+        title = "자율 프로젝트",
+        date = "2025.04.25. 금요일"
+    )
 
     val dropdownItems = listOf(
         DropdownMenuItemData(
@@ -130,7 +136,7 @@ fun ProjectDetailScreen(
                 .background(BrokenWhite)
         ) {
             ProjectInfoHeader(
-                title = project.title,
+                title = mockProject.title,
                 time = "15:00"
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -143,7 +149,7 @@ fun ProjectDetailScreen(
             practiceList.forEachIndexed { index, round ->
                 CommonList(
                     title = "코칭모드 ${round}회차",
-                    description = project.title,
+                    description = mockProject.title,
                     onLongClick = {
                         isBottomSheetVisible = true
                     }
@@ -198,11 +204,7 @@ fun ProjectDetailScreen(
 @Preview(showBackground = true)
 @Composable
 fun ProjectDetailScreenPreview() {
-    val mockProject = Project(
-        title = "자율 프로젝트",
-        date = "2025.04.25. 금요일"
-    )
     ProjectDetailScreen(
-        project = mockProject
+        projectId = 1
     )
 }
