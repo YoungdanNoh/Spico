@@ -1,6 +1,6 @@
 package com.ssafy.spico.domain.project.entity;
 
-import com.ssafy.spico.domain.user.entity.User;
+import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +20,7 @@ public class ProjectEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false,
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private User user;
+    private UserEntity userEntity;
 
     @Column(name = "title", nullable = false, length = 20)
     private String title;
@@ -37,8 +37,11 @@ public class ProjectEntity {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
-    public ProjectEntity(User user, String title, LocalDate date, LocalTime limitTime, String script, LocalDateTime createdAt) {
-        this.user = user;
+    public ProjectEntity() {
+    }
+
+    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, LocalTime limitTime, String script, LocalDateTime createdAt) {
+        this.userEntity = userEntity;
         this.title = title;
         this.date = date;
         this.limitTime = limitTime;
@@ -50,8 +53,8 @@ public class ProjectEntity {
         return projectId;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUserEntity() {
+        return userEntity;
     }
 
     public String getTitle() {

@@ -6,10 +6,14 @@ import com.ssafy.spico.domain.practice.dto.toResponse
 import com.ssafy.spico.domain.practice.entity.PracticeEntity
 import com.ssafy.spico.domain.practice.entity.PracticeStatus
 import com.ssafy.spico.domain.practice.entity.PracticeType
+import com.ssafy.spico.domain.practice.exception.PracticeError
+import com.ssafy.spico.domain.practice.exception.PracticeException
 import com.ssafy.spico.domain.practice.model.FinalPracticeInfo
 import com.ssafy.spico.domain.practice.model.FinalPracticeSetting
 import com.ssafy.spico.domain.practice.repository.PracticeRepository
 import com.ssafy.spico.domain.project.repository.ProjectRepository
+import com.ssafy.spico.domain.user.model.toEntity
+import com.ssafy.spico.domain.user.model.toModel
 import com.ssafy.spico.domain.user.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -27,19 +31,20 @@ class PracticeServiceImpl (
         projectId: Int,
         userId: Int,
         setting: FinalPracticeSetting
-    ): ApiResponse<FinalPracticeResponseDto> {
+    ): FinalPracticeResponseDto {
 
         val projectEntity = projectRepository.findById(projectId)
-            .orElseThrow { IllegalArgumentException("프로젝트를 찾을 수 없습니다.") }
+            .orElseThrow { PracticeException(PracticeError.PROJECT_NOT_FOUND) }
 
-        val user = userRepository.findById(userId)
-            .orElseThrow { IllegalArgumentException("사용자를 찾을 수 없습니다.") }
+        val userEntity = userRepository.findById(userId)
+            .orElseThrow { PracticeException(PracticeError.USER_NOT_FOUND) }
 
-        // 사용자의 파이널 모드 설정 값 업데이트
-        user.updateHasAudience(setting.hasAudience)
-        user.updateHasQna(setting.hasQnA)
-        user.updateQuestionCount(setting.questionCount)
-        user.updateAnswerTimeLimit(setting.answerTimeLimit)
+        userEntity.updateSetting(
+            setting.hasAudience,
+            setting.hasQnA,
+            setting.questionCount,
+            setting.answerTimeLimit
+        )
 
         val practiceEntity = PracticeEntity(
             projectEntity,
@@ -48,11 +53,13 @@ class PracticeServiceImpl (
             PracticeStatus.IN_PROGRESS
         )
 
-        val saved = practiceRepository.save(practiceEntity)
-
-        // 추후 hasQnA 처리 가능 (QuestionAnswer 생성 등)
-        return ApiResponse.success(FinalPracticeInfo(
+        val saved = try {
+            practiceRepository.save(practiceEntity)
+        } catch (e: Exception) {
+            throw PracticeException(PracticeError.PERSISTENCE_ERROR)
+        }
+        return FinalPracticeInfo(
             practiceId = saved.practiceId
-        ).toResponse())
+        ).toResponse()
     }
 }

@@ -10,5 +10,5 @@ interface PracticeService {
         projectId: Int,
         userId: Int,
         request: FinalPracticeSetting
-    ): ApiResponse<FinalPracticeResponseDto>
+    ): FinalPracticeResponseDto
 }
