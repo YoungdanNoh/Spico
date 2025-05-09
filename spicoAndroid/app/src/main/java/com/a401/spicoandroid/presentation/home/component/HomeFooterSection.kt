@@ -31,8 +31,8 @@ fun HomeFooterSection() {
     val teamMembers = listOf(
         "노영단" to "https://github.com/YoungdanNoh",
         "강명주" to "https://github.com/notrealsilk",
-        "김예진" to "https://github.com/z5zH0",
         "김서현" to "https://github.com/seohye-ki",
+        "김예진" to "https://github.com/z5zH0",
         "신유영" to "https://github.com/shinyou28",
         "이승연" to "http://github.com/leesyseel"
     )
@@ -53,13 +53,13 @@ fun HomeFooterSection() {
 
         Text(
             text = "© 2025 Spico. SSAFY 12기 자율 A401",
-            color = TextSecondary,
+            color = TextTertiary,
             fontSize = 10.sp,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(4.dp))
 
-        // 팀원 이름 반복
+        // 팀원 이름
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
