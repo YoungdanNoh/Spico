@@ -1,14 +1,28 @@
 package com.ssafy.spico.domain.practice.service
 
-import com.ssafy.spico.common.response.ApiResponse
-import com.ssafy.spico.domain.practice.dto.FinalPracticeResponseDto
+import com.ssafy.spico.domain.practice.dto.EndFinalPracticeResponseDto
+import com.ssafy.spico.domain.practice.dto.StartCoachingPracticeResponseDto
+import com.ssafy.spico.domain.practice.dto.StartFinalPracticeResponseDto
 import com.ssafy.spico.domain.practice.model.FinalPracticeSetting
+import com.ssafy.spico.domain.practice.model.FinalPracticeSpeechText
 
 interface PracticeService {
 
-    fun createFinalPractice(
-        projectId: Int,
+    fun startFinalPractice(
         userId: Int,
+        projectId: Int,
         request: FinalPracticeSetting
-    ): FinalPracticeResponseDto
+    ): StartFinalPracticeResponseDto
+
+    fun endFinalPractice(
+        userId: Int,
+        projectId: Int,
+        practiceId: Int,
+        speechText: FinalPracticeSpeechText
+    ): EndFinalPracticeResponseDto
+
+    fun startCoachingPractice(
+        userId: Int,
+        projectId: Int,
+    ): StartCoachingPracticeResponseDto
 }

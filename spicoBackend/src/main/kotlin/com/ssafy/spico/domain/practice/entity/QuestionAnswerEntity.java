@@ -26,4 +26,9 @@ public class QuestionAnswerEntity {
 
     @Column(name = "answer", columnDefinition = "TEXT")
     private String answer;
+
+    public QuestionAnswerEntity(FinalReportEntity finalReportEntity, String question) {
+        this.finalReportEntity = finalReportEntity;
+        this.question = question;
+    }
 }
