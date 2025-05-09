@@ -12,9 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.R
@@ -52,6 +50,8 @@ fun FinalReportScreen() {
 
     val coroutineScope = rememberCoroutineScope()
 
+    var isAlertVisible by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             CommonTopBar(
@@ -70,7 +70,9 @@ fun FinalReportScreen() {
                         backgroundColor = White,
                         textColor = Error,
                         borderColor = Error,
-                        onClick = {}
+                        onClick = {
+                            isAlertVisible = true
+                        }
                     )
                 }
             )
@@ -147,19 +149,40 @@ fun FinalReportScreen() {
             ReportQnAItem("Q2. 프로젝트에 사용한 데이터는 어디에서 구하셨나요?", "공공데이터를 이용했습니다. 공공데이터도 전처리도 했습니다.")
             ReportQnAItem("Q3. 팀원 간 갈등은 어떻게 해결했나요?", "서로 타협하고 이야기를 했습니다.")
 
-            CommonButton(
-                text = "음성 스크립트",
-                onClick = {},
-                modifier = Modifier.fillMaxWidth()
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                CommonButton(
+                    text = "음성 스크립트",
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            CommonButton(
-                text = "발표 영상 다시 보기",
-                onClick = {},
-                modifier = Modifier.fillMaxWidth(),
-                backgroundColor = White,
-                textColor = Action,
-                borderColor = Action
+                CommonButton(
+                    text = "발표 영상 다시 보기",
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = White,
+                    textColor = Action,
+                    borderColor = Action
+                )
+            }
+        }
+        if (isAlertVisible) {
+            CommonAlert(
+                title = "리포트를 삭제하시겠습니까?",
+                confirmText = "삭제",
+                onConfirm = {
+                    isAlertVisible = false
+                },
+                confirmTextColor = White,
+                confirmBackgroundColor = Error,
+                confirmBorderColor = Error,
+                cancelText = "취소",
+                onCancel = {
+                    isAlertVisible = false
+                },
+                onDismissRequest = {
+                    isAlertVisible = false
+                }
             )
         }
     }
