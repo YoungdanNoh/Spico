@@ -17,7 +17,7 @@ class ProjectController(
 ) {
     @GetMapping
     fun getProjects(
-        @RequestParam cursor: Long?,
+        @RequestParam cursor: Int?,
         @RequestParam size: Int,
         @RequestParam type: ProjectViewType,
     ): ApiResponse<List<ProjectResponse>> {
