@@ -14,6 +14,7 @@ import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
+import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 
 @Composable
 fun NavGraph(
@@ -39,6 +40,10 @@ fun NavGraph(
 
             composable(NavRoutes.ProjectList.route) {
                 ProjectListScreen(navController, projectViewModel, {})
+            }
+
+            composable(NavRoutes.VideoReplay.route) {
+                VideoReplayScreen()
             }
 
             composable(
