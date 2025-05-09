@@ -73,12 +73,3 @@ fun ProjectListScreen(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ProjectListScreenPreview() {
-    ProjectListScreen(
-        navController = rememberNavController(),
-        onFabClick = {}
-    )
-}

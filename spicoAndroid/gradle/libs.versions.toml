@@ -34,6 +34,8 @@ accompanistSystemUi = "0.31.1-alpha"
 materialIconsExtended = "1.7.8"
 clientSdk = "1.43.0"
 
+mpandroidchart = "3.1.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -80,6 +82,8 @@ palette = { group = "androidx.palette", name = "palette", version.ref = "palette
 accompanist-system-ui = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanistSystemUi" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 client-sdk = { group = "com.microsoft.cognitiveservices.speech", name = "client-sdk", version.ref = "clientSdk" }
+
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
