@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 val Action = Color(0xFF42D596)
 val Hover = Color(0xFF15B36F)
 val Disabled = Color(0xFFBCF0DA)
+val Action10 = Color(0xFFEDFBF5)
 val Error = Color(0xFFFD7563)
 val ErrorHover = Color(0xFFF95B46)
 val White = Color(0xFFFFFFFF)
