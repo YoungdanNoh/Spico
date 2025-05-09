@@ -11,6 +11,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.R
 
 enum class ChipType {
     REPORT_ACTION,
@@ -34,19 +35,19 @@ fun CommonChip(
             backgroundColor = Action
             contentColor = White
             borderStroke = null
-            textStyle = MaterialTheme.typography.headlineMedium
+            textStyle = Typography.headlineMedium
         }
         ChipType.REPORT_ERROR -> {
             backgroundColor = Error
             contentColor = White
             borderStroke = null
-            textStyle = MaterialTheme.typography.headlineMedium
+            textStyle = Typography.headlineMedium
         }
         ChipType.MODE_SELECT -> {
             backgroundColor = Color.Transparent
             contentColor = TextSecondary
             borderStroke = BorderStroke(1.dp, LineTertiary)
-            textStyle = MaterialTheme.typography.labelSmall
+            textStyle = Typography.labelSmall
         }
     }
 

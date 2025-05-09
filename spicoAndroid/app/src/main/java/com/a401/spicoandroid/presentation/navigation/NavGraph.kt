@@ -33,8 +33,6 @@ fun NavGraph(
             }
             composable(NavRoutes.ProjectList.route) {
                 ProjectListScreen(
-                    navController = navController,
-                    onFabClick = {}
                 )
             }
             composable(

@@ -23,8 +23,7 @@ import com.a401.spicoandroid.presentation.project.viewmodel.Project
 
 @Composable
 fun ProjectListScreen(
-    navController: NavController,
-    onFabClick: () -> Unit
+
 ) {
     val projectList = listOf(
         Project("자율 프로젝트", "2025.04.25. 금요일"),
@@ -77,7 +76,6 @@ fun ProjectListScreen(
 @Composable
 fun ProjectListScreenPreview() {
     ProjectListScreen(
-        navController = rememberNavController(),
-        onFabClick = {}
+
     )
 }
