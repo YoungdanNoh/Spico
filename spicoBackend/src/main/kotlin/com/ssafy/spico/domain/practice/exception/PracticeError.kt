@@ -1,0 +1,18 @@
+package com.ssafy.spico.domain.practice.exception
+
+enum class PracticeError(
+    val httpStatusCode: String,
+    val errorCode: String,
+    val errorMsg: String
+) {
+    USER_NOT_FOUND("404", "P001", "사용자를 찾을 수 없습니다."),
+
+    INVALID_QUESTION_COUNT("400", "P101", "질문 개수는 1~3개여야 합니다."),
+    INVALID_ANSWER_TIME_LIMIT("400", "P102", "답변 제한 시간은 30~180초여야 합니다."),
+
+    PRACTICE_NOT_FOUND("400", "P202", "해당 연습을 찾을 수 없습니다."),
+    PERSISTENCE_ERROR("500", "P202", "연습 정보 저장 중 오류가 발생했습니다."),
+
+    PROJECT_NOT_FOUND("404", "P301", "프로젝트를 찾을 수 없습니다.")
+
+}
