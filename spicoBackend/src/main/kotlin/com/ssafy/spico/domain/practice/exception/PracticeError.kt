@@ -13,6 +13,9 @@ enum class PracticeError(
     PRACTICE_NOT_FOUND("400", "P202", "해당 연습을 찾을 수 없습니다."),
     PERSISTENCE_ERROR("500", "P202", "연습 정보 저장 중 오류가 발생했습니다."),
 
-    PROJECT_NOT_FOUND("404", "P301", "프로젝트를 찾을 수 없습니다.")
+    PROJECT_NOT_FOUND("404", "P301", "프로젝트를 찾을 수 없습니다."),
+
+    REPORT_NOT_FOUND("404", "S401", "리포트를 찾을 수 없습니다."),
+    FEEDBACK_NOT_FOUND("404", "S401", "피드백을 찾을 수 없습니다.")
 
 }
