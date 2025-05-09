@@ -13,4 +13,6 @@ sealed class NavRoutes(val route: String) {
     object ProjectSelect : NavRoutes("project_select/{mode}") {
         fun withMode(mode: String) = "project_select/$mode"
     }
+    object FinalSetting : NavRoutes("final_setting")
+    object CoachingStart : NavRoutes("coaching_start")
 }

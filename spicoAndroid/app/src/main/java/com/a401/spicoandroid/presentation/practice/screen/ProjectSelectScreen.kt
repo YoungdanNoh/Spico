@@ -81,7 +81,11 @@ fun ProjectSelectScreen(
                             title = project.projectName,
                             description = formatDateWithDay(project.projectDate),
                             onClick = {
-                                // TODO: 프로젝트 선택 시 다음 단계로 이동
+                                when (mode) {
+                                    "final" -> navController.navigate("final_setting")
+                                    "coaching" -> {// TODO: 코칭 모드 시작 화면 연결
+                                    }
+                                }
                             }
                         )
                     }

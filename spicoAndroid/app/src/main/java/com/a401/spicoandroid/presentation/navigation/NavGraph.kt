@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
+import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
@@ -58,6 +59,10 @@ fun NavGraph(
                     navController = navController,
                     mode = mode
                 )
+            }
+            // 파이널 모드 설정 화면
+            composable(NavRoutes.FinalSetting.route) {
+                FinalSettingScreen(navController = navController)
             }
         }
     }
