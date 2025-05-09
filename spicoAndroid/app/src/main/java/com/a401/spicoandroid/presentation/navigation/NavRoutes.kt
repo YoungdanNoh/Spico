@@ -15,6 +15,12 @@ sealed class NavRoutes(val route: String) {
     }
     object FinalSetting : NavRoutes("final_setting")
     object FinalScreenCheck : NavRoutes("final_check")
-
+    // 영상 다시 보기
     object VideoReplay : NavRoutes("video_replay")
+
+    // 랜덤 스피치
+    object RandomSpeechLanding : NavRoutes("randomspeech_landing")
+    object RandomSpeechTopicSelect : NavRoutes("randomspeech_topic_select")
+    object RandomSpeechProjectSelect : NavRoutes("randomspeech_project_select")
+
 }

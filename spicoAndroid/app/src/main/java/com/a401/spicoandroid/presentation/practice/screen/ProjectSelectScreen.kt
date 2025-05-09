@@ -16,6 +16,7 @@ import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatDateWithDay
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.dummy.DummyProjectList
 
 @Composable
@@ -48,9 +49,9 @@ fun ProjectSelectScreen(
                         .fillMaxWidth()
                         .padding(vertical = 16.dp, horizontal = 16.dp),
                     iconResId = R.drawable.ic_add_white,
-                    text = "새 프로젝트 등록하기",
+                    text = "새 프로젝트 생성",
                     size = ButtonSize.LG,
-                    onClick = { /* TODO: 새 프로젝트 등록 이동 */ }
+                    onClick = { navController.navigate(NavRoutes.ProjectCreate.route) }
                 )
             }
         },
