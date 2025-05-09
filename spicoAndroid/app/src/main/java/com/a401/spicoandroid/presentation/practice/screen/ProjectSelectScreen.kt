@@ -1,29 +1,38 @@
 package com.a401.spicoandroid.presentation.practice.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatDateWithDay
+import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.dummy.DummyProjectList
+import com.a401.spicoandroid.presentation.practice.dummy.PracticeProject
 
 @Composable
 fun ProjectSelectScreen(
     navController: NavController,
     mode: String // "coaching" or "final"
 ) {
+    val projectList = DummyProjectList
+//    val projectList = emptyList<PracticeProject>()
+
     Scaffold(
         topBar = {
             CommonTopBar(
@@ -61,21 +70,38 @@ fun ProjectSelectScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(vertical = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
+            if (projectList.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.character_home_1),
+                        contentDescription = "프로젝트 없음 이미지",
+                        modifier = Modifier.size(140.dp)
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Text(
+                        text = "프로젝트가 없어요.\n프로젝트를 생성해보세요!",
+                        style = Typography.titleLarge.copy(lineHeight = 28.sp),
+                        color = TextSecondary,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    DummyProjectList.forEach { project ->
+                    projectList.forEach { project ->
                         CommonList(
                             modifier = Modifier.dropShadow1(),
                             imagePainter = painterResource(id = R.drawable.img_list_practice),
@@ -84,13 +110,12 @@ fun ProjectSelectScreen(
                             onClick = {
                                 when (mode) {
                                     "final" -> navController.navigate("final_setting")
-                                    "coaching" -> {// TODO: 코칭 모드 시작 화면 연결
+                                    "coaching" -> { /* TODO */
                                     }
                                 }
                             }
                         )
                     }
-
                 }
             }
         }
