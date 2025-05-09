@@ -43,11 +43,6 @@ fun CommonTextField(
                 )
             },
             shape = RoundedCornerShape(8.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = Placeholder,
-                focusedBorderColor = Hover,
-                unfocusedBorderColor = Placeholder,
-            ),
         )
     }
 }

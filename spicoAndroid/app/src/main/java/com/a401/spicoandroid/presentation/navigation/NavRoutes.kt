@@ -16,4 +16,5 @@ sealed class NavRoutes(val route: String) {
     object FinalSetting : NavRoutes("final_setting")
     object FinalScreenCheck : NavRoutes("final_check")
 
+    object VideoReplay : NavRoutes("video_replay")
 }

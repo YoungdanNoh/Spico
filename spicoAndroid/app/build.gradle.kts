@@ -97,6 +97,11 @@ dependencies {
     implementation(libs.accompanist.system.ui) // System UI Control (ex. StatusBar)
     implementation(libs.palette) // colorPicker
     implementation(libs.mpandroidchart) // android chart
+    // video player
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.exoplayer.dash)
+    implementation(libs.media3.ui)
+    implementation(libs.media3.ui.compose)
 
     // DataStore
     implementation(libs.datastore.preferences)
