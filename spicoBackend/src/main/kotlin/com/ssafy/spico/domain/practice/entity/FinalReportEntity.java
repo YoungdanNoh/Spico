@@ -9,7 +9,6 @@ import java.sql.Time;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "final_reports")
 public class FinalReportEntity {
 
@@ -62,6 +61,9 @@ public class FinalReportEntity {
 
     @Column(name = "final_practice_cnt", nullable = false)
     private Integer finalPracticeCnt; // 해당 프로젝트의 파이널 모드 연습 횟수
+
+    public FinalReportEntity() {
+    }
 
     public FinalReportEntity(PracticeEntity practiceEntity, Integer finalPracticeCnt, String script) {
         this.practiceEntity = practiceEntity;

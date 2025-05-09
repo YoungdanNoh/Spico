@@ -21,7 +21,7 @@ class PracticeController(
     ): ApiResponse<StartFinalPracticeResponseDto> {
         val setting = request.toModel()
 
-        return ApiResponse.success(practiceService.createFinalPractice(userId, projectId, setting))
+        return ApiResponse.success(practiceService.startFinalPractice(userId, projectId, setting))
 
     }
 
@@ -35,5 +35,14 @@ class PracticeController(
         val speech = request.toModel()
 
         return ApiResponse.success(practiceService.endFinalPractice(userId, projectId, practiceId, speech))
+    }
+
+    // 코칭 모드 시작
+    @PostMapping("/coaching")
+    fun startCoachingPractice(
+        @PathVariable projectId: Int
+    ): ApiResponse<StartCoachingPracticeResponseDto> {
+
+        return ApiResponse.success(practiceService.startCoachingPractice(userId, projectId))
     }
 }
