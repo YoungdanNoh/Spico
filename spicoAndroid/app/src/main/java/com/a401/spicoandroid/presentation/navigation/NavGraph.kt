@@ -8,12 +8,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.a401.spicoandroid.presentation.main.MainScreen
-import com.a401.spicoandroid.presentation.main.viewmodel.MainViewModel
-import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
+import com.a401.spicoandroid.presentation.home.screen.HomeScreen
+import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
+import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
-import com.a401.spicoandroid.presentation.project.viewmodel.Project
+import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListSelectScreen
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
+import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 
 @Composable
 fun NavGraph(
@@ -21,47 +26,68 @@ fun NavGraph(
     modifier: Modifier = Modifier
 ) {
     NavControllerProvider(navController = navController) {
-        val mainViewModel: MainViewModel = hiltViewModel()
+        val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
+        val projectViewModel: ProjectViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
-            startDestination = NavRoutes.Main.route,
+            startDestination = NavRoutes.Home.route,
             modifier = modifier
         ) {
-            composable(NavRoutes.Main.route) {
-                MainScreen(navController, modifier)
+            composable(NavRoutes.Home.route) {
+                HomeScreen(navController, modifier, weeklyCalendarViewModel)
             }
+
+            composable(NavRoutes.ProjectCreate.route) {
+                ProjectSettingScreen(navController, modifier)
+            }
+
             composable(NavRoutes.ProjectList.route) {
-                ProjectListScreen(
-                    navController = navController,
-                    onFabClick = {}
-                )
+                ProjectListScreen(navController, projectViewModel, {})
             }
+
+            composable(NavRoutes.VideoReplay.route) {
+                VideoReplayScreen()
+            }
+
             composable(
                 route = NavRoutes.ProjectDetail.route,
-                arguments = listOf(
-                    navArgument("project") {
-                        type = NavType.ParcelableType(Project::class.java)
-                    }
-                )
+                arguments = listOf(navArgument("projectId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val project = backStackEntry.arguments?.getParcelable<Project>("project")
-                if(project != null) {
-                    ProjectDetailScreen(
-                        navController = navController,
-                        onFabClick = {},
-                        project = project
-                    )
-                }
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: -1
+                ProjectDetailScreen(projectId = projectId)
             }
-            composable(route = NavRoutes.Profile.route) {
-                MyPageScreen(
+            // 연습하기
+            composable(
+                route = NavRoutes.ProjectSelect.route,
+                arguments = listOf(navArgument("mode") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val mode = backStackEntry.arguments?.getString("mode") ?: "coaching"
+                com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen(
                     navController = navController,
-                    onFabClick = {},
-                    onWithdraw = {},
-                    onLogout = {},
+                    mode = mode
                 )
             }
+            // 파이널 모드 설정 화면
+            composable(NavRoutes.FinalSetting.route) {
+                FinalSettingScreen(navController = navController)
+            }
+            composable(NavRoutes.FinalScreenCheck.route) {
+                com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen(
+                    navController = navController
+                )
+            }
+            // 랜덤 스피치
+            composable(NavRoutes.RandomSpeechLanding.route) {
+                RandomSpeechLandingScreen()
+            }
+            composable(NavRoutes.RandomSpeechTopicSelect.route) {
+                RandomSpeechTopicSelectScreen()
+            }
+            composable(NavRoutes.RandomSpeechProjectSelect.route) {
+                RandomSpeechProjectListSelectScreen()
+            }
+
         }
     }
 }

@@ -18,13 +18,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.LocalNavController
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
-fun GreetingSection(username: String = "사용자") {
+fun GreetingSection(
+    username: String = "사용자",
+    navController: NavHostController
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,7 +45,7 @@ fun GreetingSection(username: String = "사용자") {
             Column(
                 modifier = Modifier
                     .width(contentWidth)
-                    .height(260.dp)
+                    .wrapContentHeight()
                     .clip(RoundedCornerShape(12.dp))
                     .background(BrokenWhite)
                     .padding(vertical = 16.dp)
@@ -63,21 +70,16 @@ fun GreetingSection(username: String = "사용자") {
                             style = Typography.titleLarge,
                             color = TextTertiary
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-//                        Text(
-//                            text = "${username}님,",
-//                            style = Typography.bodyMedium.copy(
-//                                fontSize = 20.sp,
-//                                fontWeight = FontWeight.Medium
-//                            ),
-//                            color = TextPrimary,
-//                            maxLines = 1,
-//                            softWrap = false,
-//                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = buildAnnotatedString {
+                                val trimmedUsername = if (username.length >= 10) {
+                                    username.take(8) + "..."
+                                } else {
+                                    username
+                                }
                                 withStyle(style = SpanStyle(color = Hover)) {
-                                    append(username)
+                                    append(trimmedUsername)
                                 }
                                 withStyle(style = SpanStyle(color = TextPrimary)) {
                                     append("님,")
@@ -108,7 +110,40 @@ fun GreetingSection(username: String = "사용자") {
                             backgroundColor = Action,
                             borderColor = Action,
                             textColor = White,
-                            onClick = { /* TODO */ }
+                            onClick = {
+                                navController.navigate(NavRoutes.ProjectCreate.route)
+                            }
+                        )
+
+                        CommonButton(
+                            text = "프로젝트 목록",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.ProjectList.route)
+                            }
+                        )
+                        CommonButton(
+                            text = "랜덤스피치",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.RandomSpeechLanding.route)
+                            }
+                        )
+                        CommonButton(
+                            text = "마이페이지",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                // Todo : 마이페이지 연결
+                            }
                         )
                     }
 
@@ -125,11 +160,12 @@ fun GreetingSection(username: String = "사용자") {
     }
 }
 
-@Preview(showBackground = true,widthDp = 412)
-@Composable
-fun GreetingSectionPreview() {
-    SpeakoAndroidTheme {
-        GreetingSection()
-    }
-}
+//@Preview(showBackground = true,widthDp = 412)
+//@Composable
+//fun GreetingSectionPreview() {
+//    val fakeNavController = LocalNavController.current
+//    SpeakoAndroidTheme {
+//        GreetingSection(navController = fakeNavController)
+//    }
+//}
 

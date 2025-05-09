@@ -1,9 +1,11 @@
 package com.a401.spicoandroid.presentation.home.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +31,7 @@ fun WeeklyCalendarSection(
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("d")
     val weekdays = listOf("월", "화", "수", "목", "금", "토", "일")
+    val today = LocalDate.now()
 
     Column(
         modifier = Modifier
@@ -41,7 +44,8 @@ fun WeeklyCalendarSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .width(328.dp),
+                .width(328.dp)
+                .padding(4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -74,33 +78,54 @@ fun WeeklyCalendarSection(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             currentWeekDates.forEachIndexed { index, date ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = weekdays[index],
-                        style = Typography.titleMedium,
-                        color = TextPrimary
-                    )
+                val isToday = date == today
+                val isMarked = markedDates.contains(date)
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                val baseModifier = Modifier
+                    .width(40.dp)
+                    .height(88.dp)
 
-                    if (markedDates.contains(date)) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .clip(CircleShape)
-                                .background(Action)
+                val todayBoxModifier = baseModifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .border(1.dp, LineTertiary, RoundedCornerShape(4.dp))
+
+                val appliedModifier = if (isToday) todayBoxModifier else baseModifier
+
+                Box(
+                    modifier = appliedModifier,
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    ) {
+                        Text(
+                            text = weekdays[index],
+                            style = Typography.titleMedium,
+                            color = TextPrimary
                         )
-                    } else {
+
                         Spacer(modifier = Modifier.height(8.dp))
+
+                        if (isMarked) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(Action)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = date.format(dateFormatter),
+                            style = Typography.titleLarge,
+                            color = TextPrimary
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = date.format(dateFormatter),
-                        style = Typography.titleLarge,
-                        color = TextPrimary
-                    )
                 }
             }
         }

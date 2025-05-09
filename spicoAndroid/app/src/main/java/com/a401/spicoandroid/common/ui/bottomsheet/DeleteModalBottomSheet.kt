@@ -46,7 +46,7 @@ fun DeleteModalBottomSheet(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 
@@ -106,7 +106,7 @@ fun DeleteModalBottomSheetPreview_DesignOnly() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }

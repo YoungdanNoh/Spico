@@ -68,7 +68,7 @@ fun BaseModalBottomSheetPreview() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, bottom = 20.dp),
+                    .padding(top = 24.dp, bottom = 24.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Box(

@@ -17,8 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.LocalNavController
 
 @Composable
 fun CommonTopBar(
@@ -58,6 +61,18 @@ fun CommonTopBar(
         }
     }
 }
+
+@Composable
+fun BackIconButton(navController: NavController) {
+    IconButton(
+        iconResId = R.drawable.ic_arrow_left_black,
+        contentDescription = "뒤로가기",
+        onClick = {
+            navController.popBackStack()
+        }
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable

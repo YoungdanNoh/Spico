@@ -5,6 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.a401.spicoandroid.common.ui.theme.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import com.a401.spicoandroid.R
 
 /**
@@ -35,12 +39,12 @@ import com.a401.spicoandroid.R
  * @param width 버튼 너비
  * @param fontSize 버튼 내부 텍스트 크기
  */
-enum class ButtonSize(val height: Dp, val width: Dp, val fontSize: TextUnit) {
-  XS(height = 32.dp, width = 48.dp, fontSize = 12.sp), // AppBar 버튼
-  SM(height = 40.dp, width = 76.dp, fontSize = 16.sp), // 종료 버튼
-  MD(height = 40.dp, width = 132.dp, fontSize = 16.sp), // 알림창 버튼
-  LG(height = 40.dp, width = 328.dp, fontSize = 16.sp), // 다음 버튼
-  XL(height = 64.dp, width = 180.dp, fontSize = 20.sp), 
+enum class ButtonSize(val height: Dp, val width: Dp?, val textStyle: TextStyle) {
+    XS(height = 32.dp, width = 48.dp, textStyle = Typography.labelSmall),
+    SM(height = 40.dp, width = 76.dp, textStyle = Typography.displaySmall),
+    MD(height = 40.dp, width = 132.dp, textStyle = Typography.displaySmall),
+    LG(height = 40.dp, width = null, textStyle = Typography.displaySmall), // fillMaxWidth
+    XL(height = 64.dp, width = 180.dp, textStyle = Typography.displaySmall),
 }
 
 /**
@@ -68,10 +72,11 @@ fun CommonButton(
     borderRadius: Dp = 8.dp,
     onClick: () -> Unit,
 ) {
+    val widthModifier = size.width?.let { Modifier.width(it) } ?: Modifier.fillMaxWidth()
     Box(
         modifier = modifier
+            .then(widthModifier)
             .height(size.height)
-            .width(size.width)
             .clip(RoundedCornerShape(borderRadius))
             .border(
                 width = 1.dp,
@@ -86,12 +91,13 @@ fun CommonButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(
-              color = if (enabled) textColor else TextTertiary
+            style = size.textStyle.copy(
+                color = if (enabled) textColor else TextTertiary
             )
         )
     }
 }
+
 /**
  * 공통 원형 아이콘 버튼 컴포넌트
  *
@@ -110,6 +116,7 @@ fun IconCircleButton(
   backgroundColor: Color = Action,
   enabled: Boolean = true,
   onClick: () -> Unit,
+
 ) {
   Box(
     modifier = modifier
@@ -122,7 +129,57 @@ fun IconCircleButton(
     icon()
   }
 }
-
+@Composable
+fun CommonIconTextButton(
+    modifier: Modifier = Modifier,
+    iconResId: Int,
+    text: String,
+    size: ButtonSize = ButtonSize.LG,
+    enabled: Boolean = true,
+    backgroundColor: Color = Action,
+    borderColor: Color = Action,
+    textColor: Color = White,
+    iconTint: Color = White,
+    borderRadius: Dp = 8.dp,
+    onClick: () -> Unit,
+) {
+    val widthModifier = size.width?.let { Modifier.width(it) } ?: Modifier.fillMaxWidth()
+    Box(
+        modifier = modifier
+            .then(widthModifier)
+            .height(size.height)
+            .clip(RoundedCornerShape(borderRadius))
+            .border(
+                width = 1.dp,
+                color = if (enabled) borderColor else Disabled,
+                shape = RoundedCornerShape(borderRadius)
+            )
+            .background(
+                color = if (enabled) backgroundColor else Disabled
+            )
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = iconResId),
+                contentDescription = "아이콘",
+                modifier = Modifier.size(20.dp),
+                tint = if (enabled) iconTint else TextTertiary
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text,
+                style = size.textStyle.copy(
+                    color = if (enabled) textColor else TextTertiary
+                )
+            )
+        }
+    }
+}
 
 /**
  * 프리뷰 예제
@@ -131,7 +188,7 @@ fun IconCircleButton(
 @Composable
 fun CommonButtonPreview() {
   Column (
-    verticalArrangement = Arrangement.Center,
+    verticalArrangement = Arrangement.spacedBy(12.dp),
     modifier = Modifier.padding(16.dp)
   ) {
     // 소
@@ -167,6 +224,13 @@ fun CommonButtonPreview() {
       size = ButtonSize.LG,
       onClick = {},
     )
+      // 대 (아이콘)
+      CommonIconTextButton(
+          iconResId = R.drawable.ic_add_white,
+          text = "새 프로젝트 등록하기",
+          size = ButtonSize.LG,
+          onClick = { /* 클릭 테스트 */ }
+      )
     // 원형
     IconCircleButton(
       icon = { 

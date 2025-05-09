@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
+import com.a401.spicoandroid.common.ui.component.BackIconButton
 import com.a401.spicoandroid.common.ui.component.CommonTextField
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.DatePicker
@@ -60,12 +61,7 @@ fun ProjectSettingScreen(
             CommonTopBar(
                 centerText = "프로젝트 생성",
                 leftContent = {
-                    IconButton(
-                        iconResId = R.drawable.ic_arrow_left_black,
-                        contentDescription = "뒤로가기",
-                        //TODO: 클릭시 이벤트 추가하기
-                        onClick = {}
-                    )
+                    BackIconButton(navController)
                 }
             )
         },

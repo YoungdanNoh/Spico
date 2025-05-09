@@ -35,7 +35,6 @@ fun CommonFeedback(
             Box(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
                     .height(100.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(BackgroundPrimary)
@@ -76,8 +75,7 @@ fun CommonFeedback(
                         .align(Alignment.BottomCenter)
                         .clip(RoundedCornerShape(12.dp))
                         .background(White)
-                        .border(1.dp, LineTertiary, RoundedCornerShape(12.dp))
-                        .padding(16.dp),
+                        .border(1.dp, LineTertiary, RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -94,7 +92,6 @@ fun CommonFeedback(
             Row(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
                     .height(100.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {

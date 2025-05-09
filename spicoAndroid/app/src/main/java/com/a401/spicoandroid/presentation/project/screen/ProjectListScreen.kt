@@ -8,30 +8,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.BrokenWhite
-import com.a401.spicoandroid.presentation.project.viewmodel.Project
+import com.a401.spicoandroid.domain.project.model.ProjectScreenType
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 
 @Composable
 fun ProjectListScreen(
     navController: NavController,
+    projectViewModel: ProjectViewModel,
     onFabClick: () -> Unit
 ) {
-    val projectList = listOf(
-        Project("자율 프로젝트", "2025.04.25. 금요일"),
-        Project("특화 프로젝트", "2025.04.25. 금요일"),
-        Project("공통 프로젝트", "2025.04.25. 금요일"),
-        Project("관통 프로젝트", "2025.04.25. 금요일")
-    )
+    val projectListState by projectViewModel.projectListState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        projectViewModel.fetchProjects(size = 10, cursor = null, screenType = ProjectScreenType.LIST)
+    }
 
     Scaffold(
         topBar = {
@@ -55,17 +58,17 @@ fun ProjectListScreen(
                 .padding(16.dp)
                 .background(BrokenWhite)
         ) {
-            projectList.forEachIndexed { index, project ->
+            projectListState.projects.forEachIndexed { index, project ->
                 CommonList(
                     imagePainter = painterResource(R.drawable.img_create_project),
                     title = project.title,
-                    description = project.date,
+                    description = project.date.toString(),
                     rightIcon = painterResource(R.drawable.ic_arrow_right_balck),
                     onClick = {
-
+                        navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
                     }
                 )
-                if (index != projectList.lastIndex) {
+                if (index != projectListState.projects.lastIndex) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
@@ -73,11 +76,11 @@ fun ProjectListScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ProjectListScreenPreview() {
-    ProjectListScreen(
-        navController = rememberNavController(),
-        onFabClick = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ProjectListScreenPreview() {
+//    ProjectListScreen(
+//        navController = rememberNavController(),
+//        onFabClick = {}
+//    )
+//}
