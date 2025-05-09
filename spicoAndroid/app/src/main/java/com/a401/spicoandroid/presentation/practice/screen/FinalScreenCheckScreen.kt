@@ -2,11 +2,13 @@ package com.a401.spicoandroid.presentation.practice.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -14,6 +16,7 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.practice.component.CameraPreview
 
 @Composable
 fun FinalScreenCheckScreen(navController: NavController) {
@@ -65,12 +68,12 @@ fun FinalScreenCheckScreen(navController: NavController) {
                 color = TextSecondary
             )
 
-            // 전면 카메라 뷰가 들어갈 위치
-            Box(
+            // 전면 카메라 뷰
+            CameraPreview(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(3f / 4f)
-                    .background(BrokenWhite)
+                    .clip(RoundedCornerShape(4.dp))
             )
 
         }
