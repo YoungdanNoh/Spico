@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.a401.spicoandroid.common.ui.theme.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import com.a401.spicoandroid.R
 
 /**
@@ -37,12 +39,12 @@ import com.a401.spicoandroid.R
  * @param width 버튼 너비
  * @param fontSize 버튼 내부 텍스트 크기
  */
-enum class ButtonSize(val height: Dp, val width: Dp, val fontSize: TextUnit) {
-  XS(height = 32.dp, width = 48.dp, fontSize = 12.sp), // AppBar 버튼
-  SM(height = 40.dp, width = 76.dp, fontSize = 16.sp), // 종료 버튼
-  MD(height = 40.dp, width = 132.dp, fontSize = 16.sp), // 알림창 버튼
-  LG(height = 40.dp, width = 328.dp, fontSize = 16.sp), // 다음 버튼
-  XL(height = 64.dp, width = 180.dp, fontSize = 20.sp), 
+enum class ButtonSize(val height: Dp, val width: Dp?, val textStyle: TextStyle) {
+    XS(height = 32.dp, width = 48.dp, textStyle = Typography.labelSmall),
+    SM(height = 40.dp, width = 76.dp, textStyle = Typography.displaySmall),
+    MD(height = 40.dp, width = 132.dp, textStyle = Typography.displaySmall),
+    LG(height = 40.dp, width = null, textStyle = Typography.displaySmall), // fillMaxWidth
+    XL(height = 64.dp, width = 180.dp, textStyle = Typography.displaySmall),
 }
 
 /**
@@ -70,10 +72,11 @@ fun CommonButton(
     borderRadius: Dp = 8.dp,
     onClick: () -> Unit,
 ) {
+    val widthModifier = size.width?.let { Modifier.width(it) } ?: Modifier.fillMaxWidth()
     Box(
         modifier = modifier
+            .then(widthModifier)
             .height(size.height)
-            .width(size.width)
             .clip(RoundedCornerShape(borderRadius))
             .border(
                 width = 1.dp,
@@ -88,8 +91,8 @@ fun CommonButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(
-              color = if (enabled) textColor else TextTertiary
+            style = size.textStyle.copy(
+                color = if (enabled) textColor else TextTertiary
             )
         )
     }
@@ -140,10 +143,11 @@ fun CommonIconTextButton(
     borderRadius: Dp = 8.dp,
     onClick: () -> Unit,
 ) {
+    val widthModifier = size.width?.let { Modifier.width(it) } ?: Modifier.fillMaxWidth()
     Box(
         modifier = modifier
+            .then(widthModifier)
             .height(size.height)
-            .width(size.width)
             .clip(RoundedCornerShape(borderRadius))
             .border(
                 width = 1.dp,
@@ -169,13 +173,14 @@ fun CommonIconTextButton(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodyLarge.copy(
+                style = size.textStyle.copy(
                     color = if (enabled) textColor else TextTertiary
                 )
             )
         }
     }
 }
+
 /**
  * 프리뷰 예제
  */
