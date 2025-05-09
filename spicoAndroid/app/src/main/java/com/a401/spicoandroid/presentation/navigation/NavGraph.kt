@@ -15,6 +15,9 @@ import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListSelectScreen
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 
 @Composable
@@ -74,6 +77,17 @@ fun NavGraph(
                     navController = navController
                 )
             }
+            // 랜덤 스피치
+            composable(NavRoutes.RandomSpeechLanding.route) {
+                RandomSpeechLandingScreen()
+            }
+            composable(NavRoutes.RandomSpeechTopicSelect.route) {
+                RandomSpeechTopicSelectScreen()
+            }
+            composable(NavRoutes.RandomSpeechProjectSelect.route) {
+                RandomSpeechProjectListSelectScreen()
+            }
+
         }
     }
 }

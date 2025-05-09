@@ -20,12 +20,13 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun RandomSpeechLandingScreen(
     navController: NavController = LocalNavController.current,
-    onStartClick: () -> Unit = { /* TODO: Navigate to topic select */ },
-    onProjectClick: () -> Unit = { /* TODO: Navigate to project select */ }
+    onStartClick: () -> Unit = { navController.navigate(NavRoutes.RandomSpeechTopicSelect.route) },
+    onProjectClick: () -> Unit = { navController.navigate(NavRoutes.RandomSpeechProjectSelect.route) }
 ) {
     Column(
         modifier = Modifier

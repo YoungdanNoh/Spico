@@ -45,7 +45,7 @@ fun GreetingSection(
             Column(
                 modifier = Modifier
                     .width(contentWidth)
-                    .height(260.dp)
+                    .wrapContentHeight()
                     .clip(RoundedCornerShape(12.dp))
                     .background(BrokenWhite)
                     .padding(vertical = 16.dp)
@@ -123,6 +123,26 @@ fun GreetingSection(
                             textColor = White,
                             onClick = {
                                 navController.navigate(NavRoutes.ProjectList.route)
+                            }
+                        )
+                        CommonButton(
+                            text = "랜덤스피치",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.RandomSpeechLanding.route)
+                            }
+                        )
+                        CommonButton(
+                            text = "마이페이지",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                // Todo : 마이페이지 연결
                             }
                         )
                     }
