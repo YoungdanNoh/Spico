@@ -39,23 +39,24 @@ fun RecentReportSection(
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
-        reportList.forEachIndexed { index, report ->
-            CommonList(
-                modifier = Modifier.dropShadow1(),
-                title = report.practiceName,
-                description = report.projectName
+        if (reportList.isEmpty()) {
+            Text(
+                text = "최근 연습 리포트가 없습니다.",
+                style = Typography.titleLarge,
+                color = TextSecondary,
+                modifier = Modifier.padding(vertical = 32.dp)
             )
-            if (index < reportList.lastIndex) {
-                Spacer(modifier = Modifier.height(16.dp))
+        } else {
+            reportList.forEachIndexed { index, report ->
+                CommonList(
+                    modifier = Modifier.dropShadow1(),
+                    title = report.practiceName,
+                    description = report.projectName
+                )
+                if (index < reportList.lastIndex) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, widthDp = 360)
-@Composable
-fun RecentReportSectionPreview() {
-    SpeakoAndroidTheme {
-        RecentReportSection()
     }
 }
