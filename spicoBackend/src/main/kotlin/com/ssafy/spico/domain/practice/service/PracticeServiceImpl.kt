@@ -222,7 +222,7 @@ class PracticeServiceImpl (
             pauseRecords = pauseRecords,
             qaRecord = qaRecords
 
-        ).tooResponse()
+        ).toResponse()
     }
 
 }

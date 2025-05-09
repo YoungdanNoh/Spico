@@ -26,7 +26,7 @@ data class FinalPracticeReportResponseDto(
 
 )
 
-fun FinalPracticeReport.tooResponse(): FinalPracticeReportResponseDto {
+fun FinalPracticeReport.toResponse(): FinalPracticeReportResponseDto {
     return FinalPracticeReportResponseDto(
         projectName = this.projectName,
         practiceName = this.practiceName,
