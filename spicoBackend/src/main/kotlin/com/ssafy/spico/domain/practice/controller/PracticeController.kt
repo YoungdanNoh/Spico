@@ -45,4 +45,14 @@ class PracticeController(
 
         return ApiResponse.success(practiceService.startCoachingPractice(userId, projectId))
     }
+
+    // 파이널 모드 리포트 조회
+    @GetMapping("/final/{practiceId}")
+    fun finalPracticeReport(
+        @PathVariable projectId: Int,
+        @PathVariable practiceId: Int
+    ): ApiResponse<FinalPracticeReportResponseDto> {
+
+        return ApiResponse.success(practiceService.finalPracticeReport(userId, projectId, practiceId))
+    }
 }

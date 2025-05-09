@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "question_answer")
 public class QuestionAnswerEntity {
 
@@ -19,7 +17,7 @@ public class QuestionAnswerEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "final_report_id", nullable = false,
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private FinalReportEntity finalReportEntity;
+    private FinalReportsEntity finalReportsEntity;
 
     @Column(name = "question", columnDefinition = "TEXT")
     private String question;
@@ -27,8 +25,27 @@ public class QuestionAnswerEntity {
     @Column(name = "answer", columnDefinition = "TEXT")
     private String answer;
 
-    public QuestionAnswerEntity(FinalReportEntity finalReportEntity, String question) {
-        this.finalReportEntity = finalReportEntity;
+    public QuestionAnswerEntity() {
+    }
+
+    public QuestionAnswerEntity(FinalReportsEntity finalReportsEntity, String question) {
+        this.finalReportsEntity = finalReportsEntity;
         this.question = question;
+    }
+
+    public Integer getQuestionAnswerId() {
+        return questionAnswerId;
+    }
+
+    public FinalReportsEntity getFinalReportsEntity() {
+        return finalReportsEntity;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public String getAnswer() {
+        return answer;
     }
 }
