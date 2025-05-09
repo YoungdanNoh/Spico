@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.tooling.preview.Preview
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.common.utils.formatTime
 import com.a401.spicoandroid.presentation.practice.component.SettingStepperItem
 import com.a401.spicoandroid.presentation.practice.component.SettingToggleItem
 
@@ -23,8 +23,12 @@ fun FinalSettingScreen(
 ) {
     var hasAudience by remember { mutableStateOf(true) }
     var hasQnA by remember { mutableStateOf(true) }
-    var questionCount by remember { mutableStateOf(1) }
-    var answerTimeSec by remember { mutableStateOf(90) } // 1분 30초
+    var questionCount by remember { mutableIntStateOf(1) }
+    var answerTimeSec by remember { mutableIntStateOf(90) } // 1분 30초
+
+    // 에러 상태
+    var questionError by remember { mutableStateOf(false) }
+    var answerTimeError by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -52,8 +56,7 @@ fun FinalSettingScreen(
                     onClick = { /* 다음 화면 이동 */ }
                 )
             }
-        }
-        ,
+        },
         containerColor = White
     ) { innerPadding ->
         Column(
@@ -82,33 +85,59 @@ fun FinalSettingScreen(
             SettingStepperItem(
                 title = "질문 개수",
                 valueText = "${questionCount}개",
-                onIncrement = { if (questionCount < 3) questionCount++ },
-                onDecrement = { if (questionCount > 1) questionCount-- },
-                showError = (questionCount <= 1),
-                errorMessage = "질문 개수는 최소 1개입니다."
+                onIncrement = {
+                    if (questionCount < 3) {
+                        questionCount++
+                        questionError = false
+                    } else {
+                        questionError = true
+                    }
+                },
+                onDecrement = {
+                    if (questionCount > 1) {
+                        questionCount--
+                        questionError = false
+                    } else {
+                        questionError = true
+                    }
+                },
+                enabled = hasQnA,
+                showError = questionError,
+                errorMessage = if (questionCount <= 1) "질문 개수는 최소 1개입니다." else "질문 개수는 최대 3개입니다."
             )
 
-            // 답변 시간 (30초~180초)
-            val minutes = answerTimeSec / 60
-            val seconds = answerTimeSec % 60
-            val timeText = if (minutes > 0) "${minutes}분 ${seconds.toString().padStart(2, '0')}초" else "${seconds}초"
-
+            // 답변 시간 (최소 30, 최대 180)
             SettingStepperItem(
                 title = "답변 시간",
-                valueText = timeText,
-                onIncrement = { if (answerTimeSec < 180) answerTimeSec += 30 },
-                onDecrement = { if (answerTimeSec > 30) answerTimeSec -= 30 },
-                showError = (answerTimeSec > 180),
-                errorMessage = "답변 시간은 최대 3분입니다."
+                valueText = formatTime(answerTimeSec),
+                onIncrement = {
+                    if (answerTimeSec < 180) {
+                        answerTimeSec += 30
+                        answerTimeError = false
+                    } else {
+                        answerTimeError = true
+                    }
+                },
+                onDecrement = {
+                    if (answerTimeSec > 30) {
+                        answerTimeSec -= 30
+                        answerTimeError = false
+                    } else {
+                        answerTimeError = true
+                    }
+                },
+                enabled = hasQnA,
+                showError = answerTimeError,
+                errorMessage = if (answerTimeSec <= 30) "답변 시간은 최소 30초입니다." else "답변 시간은 최대 3분입니다."
             )
         }
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF7FAF8, widthDp = 360)
-@Composable
-fun PreviewFinalSettingScreen() {
-    SpeakoAndroidTheme {
-        FinalSettingScreen(navController = rememberNavController())
-    }
-}
+//@Preview(showBackground = true, backgroundColor = 0xFFF7FAF8, widthDp = 360)
+//@Composable
+//fun PreviewFinalSettingScreen() {
+//    SpeakoAndroidTheme {
+//        FinalSettingScreen(navController = rememberNavController())
+//    }
+//}
