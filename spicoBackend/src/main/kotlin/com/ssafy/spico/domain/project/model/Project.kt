@@ -4,14 +4,13 @@ import com.ssafy.spico.domain.user.entity.UserEntity
 import com.ssafy.spico.domain.project.entity.ProjectEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 data class Project(
-    val id: Int?,
+    val id: Int? = null,
     val userId: Int,
     val title: String,
     val date: LocalDate,
-    val limitTime: LocalTime,
+    val limitTime: Int,
     val script: String?,
     val createdAt: LocalDateTime
 )
