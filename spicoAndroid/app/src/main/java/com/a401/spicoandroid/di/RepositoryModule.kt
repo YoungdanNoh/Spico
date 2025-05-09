@@ -1,7 +1,7 @@
 package com.a401.spicoandroid.di
 
-import com.a401.spicoandroid.data.main.repository.MainRepositoryImpl
-import com.a401.spicoandroid.domain.main.repository.MainRepository
+import com.a401.spicoandroid.data.project.repository.ProjectRepositoryImpl
+import com.a401.spicoandroid.domain.project.repository.ProjectRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ internal abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindMainRepository(
-        mainRepositoryImpl: MainRepositoryImpl
-    ): MainRepository
+    abstract fun bindProjectRepository(
+        projectRepositoryImpl: ProjectRepositoryImpl
+    ): ProjectRepository
 }

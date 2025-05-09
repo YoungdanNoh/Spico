@@ -1,7 +1,7 @@
 package com.a401.spicoandroid.presentation.navigation
 
 sealed class NavRoutes(val route: String) {
-    object Main : NavRoutes("main")
+    object Home : NavRoutes("home")
 
     object ProjectCreate: NavRoutes("project_create")
     object ProjectList: NavRoutes("project_list")
