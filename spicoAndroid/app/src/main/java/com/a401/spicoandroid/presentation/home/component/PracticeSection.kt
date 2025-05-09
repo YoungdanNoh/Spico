@@ -13,11 +13,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
-fun PracticeSection() {
+fun PracticeSection(navController: NavHostController) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -33,12 +35,12 @@ fun PracticeSection() {
             PracticeModeCard(
                 title = "코칭 모드",
                 imageRes = R.drawable.img_coaching_home,
-                onClick = { /* TODO: 코칭 모드로 이동 */ }
+                onClick = { navController.navigate(NavRoutes.ProjectSelect.withMode("coaching")) }
             )
             PracticeModeCard(
                 title = "파이널 모드",
                 imageRes = R.drawable.img_final_home,
-                onClick = { /* TODO: 파이널 모드로 이동 */ }
+                onClick = { navController.navigate(NavRoutes.ProjectSelect.withMode("final")) }
             )
         }
     }
@@ -76,10 +78,10 @@ fun PracticeModeCard(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360)
-@Composable
-fun PracticeSectionPreview() {
-    SpeakoAndroidTheme {
-        PracticeSection()
-    }
-}
+//@Preview(showBackground = true, widthDp = 360)
+//@Composable
+//fun PracticeSectionPreview() {
+//    SpeakoAndroidTheme {
+//        PracticeSection()
+//    }
+//}

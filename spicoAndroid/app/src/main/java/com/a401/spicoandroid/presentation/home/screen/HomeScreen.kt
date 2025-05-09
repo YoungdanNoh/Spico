@@ -66,7 +66,7 @@ fun HomeScreen(
         )
 
         // 모드 선택
-        PracticeSection()
+        PracticeSection(navController = navController)
         // 최근 연습 리포트
         RecentReportSection()
         // 푸터

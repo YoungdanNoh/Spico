@@ -48,6 +48,17 @@ fun NavGraph(
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: -1
                 ProjectDetailScreen(projectId = projectId)
             }
+            // 연습하기
+            composable(
+                route = NavRoutes.ProjectSelect.route,
+                arguments = listOf(navArgument("mode") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val mode = backStackEntry.arguments?.getString("mode") ?: "coaching"
+                com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen(
+                    navController = navController,
+                    mode = mode
+                )
+            }
         }
     }
 }

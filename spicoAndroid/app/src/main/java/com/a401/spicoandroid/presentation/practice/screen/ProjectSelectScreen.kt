@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.common.utils.formatDateWithDay
+import com.a401.spicoandroid.presentation.practice.dummy.DummyProjectList
 
 @Composable
 fun ProjectSelectScreen(
@@ -29,7 +31,7 @@ fun ProjectSelectScreen(
                     IconButton(
                         iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로가기",
-                        onClick = { navController.popBackStack("mode_select", false) }
+                        onClick = { navController.popBackStack() }
                     )
                 }
             )
@@ -38,11 +40,13 @@ fun ProjectSelectScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 32.dp),
+                    .padding(vertical = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CommonIconTextButton(
-                    modifier = Modifier.width(328.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 16.dp),
                     iconResId = R.drawable.ic_add_white,
                     text = "새 프로젝트 등록하기",
                     size = ButtonSize.LG,
@@ -65,21 +69,23 @@ fun ProjectSelectScreen(
             ) {
                 Column(
                     modifier = Modifier
-                        .width(328.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    repeat(8) {
+                    DummyProjectList.forEach { project ->
                         CommonList(
                             modifier = Modifier.dropShadow1(),
                             imagePainter = painterResource(id = R.drawable.img_list_practice),
-                            title = "자율 프로젝트",
-                            description = "2025.04.25. 금요일",
+                            title = project.projectName,
+                            description = formatDateWithDay(project.projectDate),
                             onClick = {
                                 // TODO: 프로젝트 선택 시 다음 단계로 이동
                             }
                         )
                     }
+
                 }
             }
         }
