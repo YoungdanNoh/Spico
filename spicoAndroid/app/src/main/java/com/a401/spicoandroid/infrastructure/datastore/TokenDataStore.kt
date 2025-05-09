@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlin.collections.get
 
 object TokenDataStore {
     private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")

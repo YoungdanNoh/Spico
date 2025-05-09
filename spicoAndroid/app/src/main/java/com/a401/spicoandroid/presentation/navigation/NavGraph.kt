@@ -13,6 +13,7 @@ import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 
 @Composable
 fun NavGraph(
@@ -21,6 +22,7 @@ fun NavGraph(
 ) {
     NavControllerProvider(navController = navController) {
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
+        val projectViewModel: ProjectViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
@@ -36,7 +38,7 @@ fun NavGraph(
             }
 
             composable(NavRoutes.ProjectList.route) {
-                ProjectListScreen(navController, {})
+                ProjectListScreen(navController, projectViewModel, {})
             }
 
             composable(

@@ -14,7 +14,7 @@ internal abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindMainRepository(
-        mainRepositoryImpl: ProjectRepositoryImpl
+    abstract fun bindProjectRepository(
+        projectRepositoryImpl: ProjectRepositoryImpl
     ): ProjectRepository
 }

@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.project.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,30 +9,43 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.BrokenWhite
+import com.a401.spicoandroid.domain.project.model.Project
+import com.a401.spicoandroid.domain.project.model.ProjectScreenType
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
-import com.a401.spicoandroid.presentation.project.viewmodel.Project
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
+import java.time.LocalDate
 
 @Composable
 fun ProjectListScreen(
     navController: NavController,
+    projectViewModel: ProjectViewModel,
     onFabClick: () -> Unit
 ) {
+    val projectListState by projectViewModel.projectListState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        projectViewModel.fetchProjects(size = 10, cursor = null, screenType = ProjectScreenType.LIST)
+    }
+
+    Log.d("project list state: ", "${projectListState.projects}")
+
     val projectList = listOf(
-        Project(1, "자율 프로젝트", "2025.04.25. 금요일"),
-        Project(2, "특화 프로젝트", "2025.04.25. 금요일"),
-        Project(3, "공통 프로젝트", "2025.04.25. 금요일"),
-        Project(4, "관통 프로젝트", "2025.04.25. 금요일")
+        Project(1, "자율 프로젝트", LocalDate.of(2025, 4, 25)),
+        Project(2, "특화 프로젝트", LocalDate.of(2025, 4, 25)),
+        Project(3, "공통 프로젝트", LocalDate.of(2025, 4, 25)),
+        Project(4, "관통 프로젝트", LocalDate.of(2025, 4, 25))
     )
 
     Scaffold(
@@ -60,7 +74,7 @@ fun ProjectListScreen(
                 CommonList(
                     imagePainter = painterResource(R.drawable.img_create_project),
                     title = project.title,
-                    description = project.date,
+                    description = project.date.toString(),
                     rightIcon = painterResource(R.drawable.ic_arrow_right_balck),
                     onClick = {
                         navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
@@ -74,11 +88,11 @@ fun ProjectListScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ProjectListScreenPreview() {
-    ProjectListScreen(
-        navController = rememberNavController(),
-        onFabClick = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ProjectListScreenPreview() {
+//    ProjectListScreen(
+//        navController = rememberNavController(),
+//        onFabClick = {}
+//    )
+//}

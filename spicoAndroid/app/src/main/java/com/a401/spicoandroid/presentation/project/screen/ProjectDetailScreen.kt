@@ -25,9 +25,9 @@ import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.DropdownMenuItemData
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.presentation.project.component.ProjectEditDialog
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoHeader
-import com.a401.spicoandroid.presentation.project.viewmodel.Project
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -50,7 +50,7 @@ fun ProjectDetailScreen(
     val mockProject = Project(
         id = 1,
         title = "자율 프로젝트",
-        date = "2025.04.25. 금요일"
+        date = LocalDate.of(2025, 4 ,25)
     )
 
     val dropdownItems = listOf(
