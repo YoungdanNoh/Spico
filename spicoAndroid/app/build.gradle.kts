@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.dotlottie) // .lottie file
     implementation(libs.accompanist.system.ui) // System UI Control (ex. StatusBar)
     implementation(libs.palette) // colorPicker
+    implementation(libs.compose.reorderable)
 
     // DataStore
     implementation(libs.datastore.preferences)
