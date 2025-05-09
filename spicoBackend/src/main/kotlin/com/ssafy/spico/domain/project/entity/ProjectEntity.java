@@ -2,11 +2,9 @@ package com.ssafy.spico.domain.project.entity;
 
 import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "projects")
@@ -28,7 +26,7 @@ public class ProjectEntity {
     private LocalDate date;
 
     @Column(name = "limit_time", nullable = false)
-    private LocalTime limitTime;
+    private Integer limitTime;
 
     @Column(name = "script", columnDefinition = "TEXT")
     private String script;
@@ -36,24 +34,16 @@ public class ProjectEntity {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "last_coaching_cnt", nullable = false)
-    private Integer lastCoachingCnt;
-
-    @Column(name = "last_final_cnt", nullable = false)
-    private Integer lastFinalCnt;
-
     public ProjectEntity() {
     }
 
-    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, LocalTime limitTime, String script, LocalDateTime createdAt, Integer lastCoachingCnt, Integer lastFinalCnt) {
+    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, Integer limitTime, String script, LocalDateTime createdAt) {
         this.userEntity = userEntity;
         this.title = title;
         this.date = date;
         this.limitTime = limitTime;
         this.script = script;
         this.createdAt = createdAt;
-        this.lastCoachingCnt = lastCoachingCnt;
-        this.lastFinalCnt = lastFinalCnt;
     }
 
     public Integer getProjectId() {
@@ -72,7 +62,7 @@ public class ProjectEntity {
         return date;
     }
 
-    public LocalTime getLimitTime() {
+    public Integer getLimitTime() {
         return limitTime;
     }
 
@@ -83,8 +73,4 @@ public class ProjectEntity {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
-    public Integer getLastCoachingCnt() { return lastCoachingCnt; }
-
-    public Integer getLastFinalCnt() { return lastFinalCnt; }
 }

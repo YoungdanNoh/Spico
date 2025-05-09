@@ -2,15 +2,15 @@ package com.ssafy.spico.domain.project.dto
 
 import com.ssafy.spico.domain.project.model.Project
 
-data class ProjectResponse(
+data class ProjectResponseDto(
     val projectId: Int,
     val projectName: String,
     val projectDate: String
 )
 
-fun Project.toResponse(): ProjectResponse {
+fun Project.toResponse(): ProjectResponseDto {
     this.id ?: throw IllegalArgumentException("Project id cannot be null")
-    return ProjectResponse(
+    return ProjectResponseDto(
         projectId = this.id,
         projectName = this.title,
         projectDate = this.date.toString()
