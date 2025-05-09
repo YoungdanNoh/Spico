@@ -19,6 +19,7 @@ import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.BrokenWhite
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.project.viewmodel.Project
 
 @Composable
@@ -26,10 +27,10 @@ fun ProjectListScreen(
 
 ) {
     val projectList = listOf(
-        Project("자율 프로젝트", "2025.04.25. 금요일"),
-        Project("특화 프로젝트", "2025.04.25. 금요일"),
-        Project("공통 프로젝트", "2025.04.25. 금요일"),
-        Project("관통 프로젝트", "2025.04.25. 금요일")
+        Project(1, "자율 프로젝트", "2025.04.25. 금요일"),
+        Project(2, "특화 프로젝트", "2025.04.25. 금요일"),
+        Project(3, "공통 프로젝트", "2025.04.25. 금요일"),
+        Project(4, "관통 프로젝트", "2025.04.25. 금요일")
     )
 
     Scaffold(
@@ -61,7 +62,7 @@ fun ProjectListScreen(
                     description = project.date,
                     rightIcon = painterResource(R.drawable.ic_arrow_right_balck),
                     onClick = {
-
+                        navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
                     }
                 )
                 if (index != projectList.lastIndex) {

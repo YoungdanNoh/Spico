@@ -5,33 +5,44 @@ import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
-import com.a401.spicoandroid.presentation.home.util.getStartOfWeek
 import com.a401.spicoandroid.presentation.home.util.getWeekDates
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class WeeklyCalendarViewModel : ViewModel() {
-    private val _projectList = MutableStateFlow<List<ProjectSchedule>>(emptyList())
-    val projectList: StateFlow<List<ProjectSchedule>> = _projectList
+@HiltViewModel
+class WeeklyCalendarViewModel @Inject constructor() : ViewModel() {
 
-    private val _currentStartDate = MutableStateFlow(getStartOfWeek(LocalDate.now()))
-    val currentWeekDates = _currentStartDate.map { getWeekDates(it) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, getWeekDates(_currentStartDate.value))
+    private val _state = MutableStateFlow(WeeklyCalendarState())
+    val state: StateFlow<WeeklyCalendarState> = _state.asStateFlow()
+
+    val currentWeekDates: StateFlow<List<LocalDate>> = state
+        .map { getWeekDates(it.currentStartDate) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, getWeekDates(_state.value.currentStartDate))
+
+    val markedDates: StateFlow<List<LocalDate>> = state
+        .map { state ->
+            state.projectList.map { LocalDate.parse(it.projectDate.substring(0, 10)) }
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun moveToPreviousWeek() {
-        _currentStartDate.value = _currentStartDate.value.minusWeeks(1)
+        _state.update {
+            it.copy(currentStartDate = it.currentStartDate.minusWeeks(1))
+        }
     }
 
     fun moveToNextWeek() {
-        _currentStartDate.value = _currentStartDate.value.plusWeeks(1)
+        _state.update {
+            it.copy(currentStartDate = it.currentStartDate.plusWeeks(1))
+        }
     }
 
     fun updateProjectList(newList: List<ProjectSchedule>) {
-        _projectList.value = newList
+        _state.update {
+            it.copy(projectList = newList)
+        }
     }
 
-    fun getMarkedDates(): List<LocalDate> =
-        projectList.value.map { LocalDate.parse(it.projectDate.substring(0, 10)) }
-
     fun findProjectByDate(date: LocalDate): ProjectSchedule? =
-        projectList.value.find { LocalDate.parse(it.projectDate.substring(0, 10)) == date }
+        state.value.projectList.find { LocalDate.parse(it.projectDate.substring(0, 10)) == date }
 }
-
