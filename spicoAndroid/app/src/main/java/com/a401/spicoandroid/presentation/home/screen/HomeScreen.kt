@@ -24,6 +24,7 @@ import com.a401.spicoandroid.presentation.home.component.GreetingSection
 import com.a401.spicoandroid.presentation.home.component.PracticeSection
 import com.a401.spicoandroid.presentation.home.component.RecentReportSection
 import com.a401.spicoandroid.presentation.home.component.WeeklyCalendarSection
+import com.a401.spicoandroid.presentation.home.dummy.DummyProjectList
 import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
 import com.a401.spicoandroid.presentation.home.util.getStartOfWeek
 import com.a401.spicoandroid.presentation.home.util.getWeekDates
@@ -39,26 +40,8 @@ fun HomeScreen(
     val currentWeekDates by calendarViewModel.currentWeekDates.collectAsState()
     val markedDates by calendarViewModel.markedDates.collectAsState()
 
-    val dummyProjectList = listOf(
-        ProjectSchedule(
-            projectId = 1,
-            projectName = "UX 리서치 회의",
-            projectDate = "2025-05-06 10:00"
-        ),
-        ProjectSchedule(
-            projectId = 2,
-            projectName = "개발자 코드 리뷰",
-            projectDate = "2025-05-08 14:00"
-        ),
-        ProjectSchedule(
-            projectId = 3,
-            projectName = "기획안 발표",
-            projectDate = "2025-05-10 16:00"
-        )
-    )
-
     LaunchedEffect(Unit) {
-        calendarViewModel.updateProjectList(dummyProjectList)
+        calendarViewModel.updateProjectList(DummyProjectList)
     }
 
     Column(
