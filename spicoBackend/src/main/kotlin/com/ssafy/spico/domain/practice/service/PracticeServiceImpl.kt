@@ -2,15 +2,13 @@ package com.ssafy.spico.domain.practice.service
 
 import com.ssafy.spico.domain.gpt.service.GptService
 import com.ssafy.spico.domain.practice.dto.EndFinalPracticeResponseDto
+import com.ssafy.spico.domain.practice.dto.StartCoachingPracticeResponseDto
 import com.ssafy.spico.domain.practice.dto.StartFinalPracticeResponseDto
 import com.ssafy.spico.domain.practice.dto.toResponse
 import com.ssafy.spico.domain.practice.entity.*
 import com.ssafy.spico.domain.practice.exception.PracticeError
 import com.ssafy.spico.domain.practice.exception.PracticeException
-import com.ssafy.spico.domain.practice.model.FinalPracticeInfo
-import com.ssafy.spico.domain.practice.model.FinalPracticeQuestionList
-import com.ssafy.spico.domain.practice.model.FinalPracticeSetting
-import com.ssafy.spico.domain.practice.model.FinalPracticeSpeechText
+import com.ssafy.spico.domain.practice.model.*
 import com.ssafy.spico.domain.practice.repository.FinalReportRepository
 import com.ssafy.spico.domain.practice.repository.PracticeRepository
 import com.ssafy.spico.domain.practice.repository.QuestionAnswerRepository
@@ -31,7 +29,7 @@ class PracticeServiceImpl (
 ) : PracticeService {
 
     @Transactional
-    override fun createFinalPractice(
+    override fun startFinalPractice(
         userId: Int,
         projectId: Int,
         setting: FinalPracticeSetting
@@ -110,6 +108,30 @@ class PracticeServiceImpl (
 
         return FinalPracticeQuestionList(
             questions = questions
+        ).toResponse()
+    }
+
+    override fun startCoachingPractice(userId: Int, projectId: Int): StartCoachingPracticeResponseDto {
+
+        val projectEntity = projectRepository.findById(projectId)
+            .orElseThrow { PracticeException(PracticeError.PROJECT_NOT_FOUND) } //프로젝트 정보 가져오기
+
+        val practiceEntity = PracticeEntity(
+            projectEntity,
+            LocalDateTime.now(),
+            PracticeType.COACHING,
+            PracticeStatus.IN_PROGRESS
+        )
+
+        // 연습 테이블에 데이터 생성
+        val saved = try {
+            practiceRepository.save(practiceEntity)
+        } catch (e: Exception) {
+            throw PracticeException(PracticeError.PERSISTENCE_ERROR)
+        }
+
+        return CoachingPracticeInfo(
+            practiceId = saved.practiceId
         ).toResponse()
     }
 
