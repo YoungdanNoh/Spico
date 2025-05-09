@@ -1,6 +1,5 @@
 package com.a401.spicoandroid.presentation.project.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,11 +20,9 @@ import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.BrokenWhite
-import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.domain.project.model.ProjectScreenType
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
-import java.time.LocalDate
 
 @Composable
 fun ProjectListScreen(
@@ -38,15 +35,6 @@ fun ProjectListScreen(
     LaunchedEffect(Unit) {
         projectViewModel.fetchProjects(size = 10, cursor = null, screenType = ProjectScreenType.LIST)
     }
-
-    Log.d("project list state: ", "${projectListState.projects}")
-
-    val projectList = listOf(
-        Project(1, "자율 프로젝트", LocalDate.of(2025, 4, 25)),
-        Project(2, "특화 프로젝트", LocalDate.of(2025, 4, 25)),
-        Project(3, "공통 프로젝트", LocalDate.of(2025, 4, 25)),
-        Project(4, "관통 프로젝트", LocalDate.of(2025, 4, 25))
-    )
 
     Scaffold(
         topBar = {
@@ -70,7 +58,7 @@ fun ProjectListScreen(
                 .padding(16.dp)
                 .background(BrokenWhite)
         ) {
-            projectList.forEachIndexed { index, project ->
+            projectListState.projects.forEachIndexed { index, project ->
                 CommonList(
                     imagePainter = painterResource(R.drawable.img_create_project),
                     title = project.title,
@@ -80,7 +68,7 @@ fun ProjectListScreen(
                         navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
                     }
                 )
-                if (index != projectList.lastIndex) {
+                if (index != projectListState.projects.lastIndex) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
