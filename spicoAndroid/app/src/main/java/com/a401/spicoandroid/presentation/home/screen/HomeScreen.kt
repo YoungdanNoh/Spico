@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.common.ui.theme.BackgroundPrimary
 import com.a401.spicoandroid.presentation.home.component.GreetingSection
+import com.a401.spicoandroid.presentation.home.component.HomeFooterSection
 import com.a401.spicoandroid.presentation.home.component.PracticeSection
 import com.a401.spicoandroid.presentation.home.component.RecentReportSection
 import com.a401.spicoandroid.presentation.home.component.WeeklyCalendarSection
@@ -53,8 +54,10 @@ fun HomeScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+        // 상단 카드
         GreetingSection(navController = navController)
 
+        // 주간 달력
         WeeklyCalendarSection(
             currentWeekDates = currentWeekDates,
             markedDates = markedDates,
@@ -62,8 +65,12 @@ fun HomeScreen(
             onNextWeek = { calendarViewModel.moveToNextWeek() }
         )
 
+        // 모드 선택
         PracticeSection()
+        // 최근 연습 리포트
         RecentReportSection()
+        // 푸터
+        HomeFooterSection()
     }
 }
 
