@@ -145,6 +145,16 @@ fun GreetingSection(
                                 // Todo : 마이페이지 연결
                             }
                         )
+                        CommonButton(
+                            text = "로그인",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.Login.route)
+                            }
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))

@@ -1,15 +1,19 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.*
+import androidx.compose.ui.unit.dp
+import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 
 @Composable
-fun RandomSpeechTopicSelectScreen() {
+fun RandomSpeechTopicSelectScreen(
+    onNext: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
             CommonTopBar(centerText = "주제 선택")
@@ -21,7 +25,11 @@ fun RandomSpeechTopicSelectScreen() {
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "RandomSpeechTopicSelectScreen")
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("RandomSpeechTopicSelectScreen 스켈레톤")
+                Spacer(modifier = Modifier.height(16.dp))
+                CommonButton(text = "다음", onClick = onNext)
+            }
         }
     }
 }
