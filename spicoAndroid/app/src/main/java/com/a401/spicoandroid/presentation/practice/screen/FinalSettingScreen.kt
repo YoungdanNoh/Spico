@@ -14,6 +14,7 @@ import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatTime
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.component.SettingStepperItem
 import com.a401.spicoandroid.presentation.practice.component.SettingToggleItem
 
@@ -53,7 +54,7 @@ fun FinalSettingScreen(
                 CommonButton(
                     text = "다음",
                     size = ButtonSize.LG,
-                    onClick = { /* 다음 화면 이동 */ }
+                    onClick = { navController.navigate(NavRoutes.FinalScreenCheck.route) }
                 )
             }
         },

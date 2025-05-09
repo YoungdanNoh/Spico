@@ -64,6 +64,11 @@ fun NavGraph(
             composable(NavRoutes.FinalSetting.route) {
                 FinalSettingScreen(navController = navController)
             }
+            composable(NavRoutes.FinalScreenCheck.route) {
+                com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen(
+                    navController = navController
+                )
+            }
         }
     }
 }
