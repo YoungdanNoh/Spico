@@ -70,21 +70,16 @@ fun GreetingSection(
                             style = Typography.titleLarge,
                             color = TextTertiary
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-//                        Text(
-//                            text = "${username}님,",
-//                            style = Typography.bodyMedium.copy(
-//                                fontSize = 20.sp,
-//                                fontWeight = FontWeight.Medium
-//                            ),
-//                            color = TextPrimary,
-//                            maxLines = 1,
-//                            softWrap = false,
-//                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = buildAnnotatedString {
+                                val trimmedUsername = if (username.length >= 10) {
+                                    username.take(8) + "..."
+                                } else {
+                                    username
+                                }
                                 withStyle(style = SpanStyle(color = Hover)) {
-                                    append(username)
+                                    append(trimmedUsername)
                                 }
                                 withStyle(style = SpanStyle(color = TextPrimary)) {
                                     append("님,")
