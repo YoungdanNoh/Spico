@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
+import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
@@ -47,6 +48,26 @@ fun NavGraph(
             ) { backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: -1
                 ProjectDetailScreen(projectId = projectId)
+            }
+            // 연습하기
+            composable(
+                route = NavRoutes.ProjectSelect.route,
+                arguments = listOf(navArgument("mode") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val mode = backStackEntry.arguments?.getString("mode") ?: "coaching"
+                com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen(
+                    navController = navController,
+                    mode = mode
+                )
+            }
+            // 파이널 모드 설정 화면
+            composable(NavRoutes.FinalSetting.route) {
+                FinalSettingScreen(navController = navController)
+            }
+            composable(NavRoutes.FinalScreenCheck.route) {
+                com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen(
+                    navController = navController
+                )
             }
         }
     }

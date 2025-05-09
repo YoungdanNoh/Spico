@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.client.sdk)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.view)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -111,4 +113,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
+    // 전면 카메라
+    implementation("androidx.camera:camera-core:1.3.1")
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1") // PreviewView
 }
