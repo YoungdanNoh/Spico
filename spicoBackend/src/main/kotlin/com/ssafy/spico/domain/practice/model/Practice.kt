@@ -1,6 +1,6 @@
 package com.ssafy.spico.domain.practice.model
 
-import com.ssafy.spico.domain.practice.entity.PracticeEntity
+import com.ssafy.spico.domain.practice.entity.PracticesEntity
 import com.ssafy.spico.domain.practice.entity.PracticeStatus
 import com.ssafy.spico.domain.practice.entity.PracticeType
 import com.ssafy.spico.domain.project.entity.ProjectEntity
@@ -14,8 +14,8 @@ data class Practice(
     val status: PracticeStatus
 )
 
-fun Practice.toEntity(): PracticeEntity {
-    return PracticeEntity(
+fun Practice.toEntity(): PracticesEntity {
+    return PracticesEntity(
         this.projectEntity,
         this.createdAt,
         this.type,
@@ -23,7 +23,7 @@ fun Practice.toEntity(): PracticeEntity {
     )
 }
 
-fun PracticeEntity.toModel(): Practice {
+fun PracticesEntity.toModel(): Practice {
     return Practice(
         id = this.practiceId,
         projectEntity = this.projectEntity,
