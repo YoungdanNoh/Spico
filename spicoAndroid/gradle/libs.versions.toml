@@ -33,6 +33,7 @@ palette = "1.0.0"
 accompanistSystemUi = "0.31.1-alpha"
 materialIconsExtended = "1.7.8"
 clientSdk = "1.43.0"
+reorderable = "0.9.6"
 
 mpandroidchart = "3.1.0"
 cameraCore = "1.4.2"
@@ -86,6 +87,7 @@ palette = { group = "androidx.palette", name = "palette", version.ref = "palette
 accompanist-system-ui = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanistSystemUi" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 client-sdk = { group = "com.microsoft.cognitiveservices.speech", name = "client-sdk", version.ref = "clientSdk" }
+compose-reorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "reorderable" }
 
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "cameraCore" }

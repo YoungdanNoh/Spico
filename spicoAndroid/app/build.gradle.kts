@@ -96,7 +96,9 @@ dependencies {
     implementation(libs.dotlottie) // .lottie file
     implementation(libs.accompanist.system.ui) // System UI Control (ex. StatusBar)
     implementation(libs.palette) // colorPicker
+    implementation(libs.compose.reorderable)
     implementation(libs.mpandroidchart) // android chart
+
     // video player
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.dash)
