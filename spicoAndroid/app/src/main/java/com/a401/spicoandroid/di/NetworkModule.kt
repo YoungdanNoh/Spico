@@ -34,6 +34,7 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
             .addInterceptor(loggingInterceptor)
+//            .addInterceptor(AuthInterceptor(context))
             .build()
     }
 

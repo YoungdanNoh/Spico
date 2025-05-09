@@ -10,11 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
-import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
-import com.a401.spicoandroid.presentation.project.viewmodel.Project
 
 @Composable
 fun NavGraph(
@@ -26,10 +24,10 @@ fun NavGraph(
 
         NavHost(
             navController = navController,
-            startDestination = NavRoutes.Main.route,
+            startDestination = NavRoutes.Home.route,
             modifier = modifier
         ) {
-            composable(NavRoutes.Main.route) {
+            composable(NavRoutes.Home.route) {
                 HomeScreen(navController, modifier, weeklyCalendarViewModel)
             }
 
