@@ -144,7 +144,7 @@ fun GreetingSection(
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                // Todo : 마이페이지 연결
+                                navController.navigate(NavRoutes.Profile.route)
                             }
                         )
                         CommonButton(
