@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,7 +16,6 @@ import com.a401.spicoandroid.presentation.home.component.*
 import com.a401.spicoandroid.presentation.home.dummy.DummyProjectList
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoDialog
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,7 +28,7 @@ fun HomeScreen(
     val currentWeekDates by calendarViewModel.currentWeekDates.collectAsState()
     val markedDates by calendarViewModel.markedDates.collectAsState()
 
-    // ✅ 클릭된 날짜를 저장하는 상태
+    // 클릭된 날짜를 저장
     val selectedDate = remember { mutableStateOf<LocalDate?>(null) }
 
     LaunchedEffect(Unit) {
@@ -98,10 +96,11 @@ fun HomeScreen(
             ProjectInfoDialog(
                 dateTitle = "${clickedDate.monthValue}월 ${clickedDate.dayOfMonth}일",
                 projectList = projectListForDate,
+                navController = navController,
                 onDismiss = { selectedDate.value = null }
             )
         } else {
-            selectedDate.value = null // 일정이 없는 날이면 다이얼로그 표시 X
+            selectedDate.value = null
         }
     }
 }

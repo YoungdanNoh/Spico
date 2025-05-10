@@ -1,6 +1,5 @@
 package com.a401.spicoandroid.presentation.home.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,17 +27,17 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GreetingSection(
+    modifier: Modifier = Modifier,
     username: String = "사용자",
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(BrokenWhite),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         BoxWithConstraints {
             val screenWidth = maxWidth
@@ -50,7 +49,7 @@ fun GreetingSection(
                     .wrapContentHeight()
                     .clip(RoundedCornerShape(12.dp))
                     .background(BrokenWhite)
-                    .padding(vertical = 16.dp)
+                    .padding(top = 16.dp, bottom = 28.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo_small),
@@ -148,6 +147,16 @@ fun GreetingSection(
                             }
                         )
                         CommonButton(
+                            text = "로그인",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.Login.route)
+                            }
+                        )
+                        CommonButton(
                             text = "코칭 리포트",
                             size = ButtonSize.MD,
                             backgroundColor = Action,
@@ -157,6 +166,7 @@ fun GreetingSection(
                                 navController.navigate(NavRoutes.CoachingReport.route)
                             }
                         )
+
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -171,13 +181,3 @@ fun GreetingSection(
         }
     }
 }
-
-//@Preview(showBackground = true,widthDp = 412)
-//@Composable
-//fun GreetingSectionPreview() {
-//    val fakeNavController = LocalNavController.current
-//    SpeakoAndroidTheme {
-//        GreetingSection(navController = fakeNavController)
-//    }
-//}
-

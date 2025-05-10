@@ -23,8 +23,8 @@ data class PracticeReport(
 @Composable
 fun RecentReportSection(
     modifier: Modifier = Modifier,
-//    reportList: List<PracticeReport> = DummyPracticeReports
-    reportList: List<PracticeReport> = emptyList()
+    reportList: List<PracticeReport> = DummyPracticeReports
+//    reportList: List<PracticeReport> = emptyList()
 ) {
     Column(
         modifier = modifier
