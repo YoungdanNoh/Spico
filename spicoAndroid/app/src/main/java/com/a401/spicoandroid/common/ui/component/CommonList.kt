@@ -3,7 +3,6 @@ package com.a401.spicoandroid.common.ui.component
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,9 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -31,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -42,29 +39,31 @@ fun CommonList(
     rightIcon: Painter? = null,
     titleStyle: TextStyle? = null,
     descriptionStyle: TextStyle? = null,
+    height: Dp? = null,
     onClick: () -> Unit = {},
     onLongClick: (() -> Unit)? = null
 ) {
-    val finalTitleStyle = titleStyle ?: Typography.displaySmall
-    val finalDescriptionStyle = descriptionStyle ?: Typography.labelSmall
+    val finalTitleStyle = (titleStyle ?: Typography.displaySmall).let {
+        if (it.color == Color.Unspecified) it.copy(color = TextPrimary) else it
+    }
+    val finalDescriptionStyle = (descriptionStyle ?: Typography.labelSmall).let {
+        if (it.color == Color.Unspecified) it.copy(color = TextTertiary) else it
+    }
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
+            .dropShadow1()
             .clip(RoundedCornerShape(8.dp))
             .background(White)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
             )
-            .drawBehind {
-                drawRect(
-                    color = Color(0x1A222222),
-                    topLeft = Offset(0f, size.height),
-                    size = Size(size.width, 4f)
-                )
-            }
-            .padding(16.dp),
+            .padding(horizontal = 16.dp)
+            .let {
+                if (height != null) it.height(height) else it.padding(vertical = 16.dp)
+            },
         color = White
     ) {
         Row(
@@ -87,15 +86,13 @@ fun CommonList(
             ) {
                 Text(
                     text = title,
-                    style = finalTitleStyle,
-                    color = TextPrimary
+                    style = finalTitleStyle
                 )
                 if (!description.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = description,
-                        style = finalDescriptionStyle,
-                        color = TextTertiary
+                        style = finalDescriptionStyle
                     )
                 }
             }
