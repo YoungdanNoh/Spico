@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.randomspeech.util
+package com.a401.spicoandroid.common.utils
 
 import com.a401.spicoandroid.R
 
@@ -20,5 +20,26 @@ fun getTopicIconRes(topic: String): Int {
         "history" -> R.drawable.img_history
         "environment" -> R.drawable.img_environment
         else -> R.drawable.img_list_practice // 기본 아이콘
+    }
+}
+
+/**
+ * 랜덤 스피치 주제의 한글 변환 함수
+ */
+fun getTopicKor(topic: String): String {
+    return when (topic.lowercase()) {
+        "politics" -> "정치"
+        "economy" -> "경제"
+        "society" -> "사회"
+        "culture" -> "문화"
+        "it" -> "IT"
+        "science" -> "과학"
+        "history" -> "역사"
+        "environment" -> "환경"
+        "sports" -> "스포츠"
+        "health" -> "건강"
+        "art" -> "예술"
+        "nature" -> "자연"
+        else -> "기타"
     }
 }

@@ -131,7 +131,9 @@ fun NavGraph(
                 arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: -1
-                com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen(randomSpeechId = randomSpeechId)
+                com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen(
+                    navController = navController,
+                    randomSpeechId = randomSpeechId)
             }
 
             // 로그인

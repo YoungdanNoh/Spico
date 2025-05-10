@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.bottomsheet.DeleteModalBottomSheet
+import com.a401.spicoandroid.common.ui.component.BackIconButton
 import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.component.CommonAlert
 import com.a401.spicoandroid.common.ui.component.CommonButton
@@ -31,7 +32,7 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatDateWithDay
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.randomspeech.dummy.DummyRandomSpeechList
-import com.a401.spicoandroid.presentation.randomspeech.util.getTopicIconRes
+import com.a401.spicoandroid.common.utils.getTopicIconRes
 
 @Composable
 fun RandomSpeechProjectListScreen(
@@ -97,12 +98,7 @@ fun RandomSpeechProjectListScreen(
             CommonTopBar(
                 centerText = "리포트 목록",
                 leftContent = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow_left_black), // ← ← 아이콘 리소스 필요
-                            contentDescription = "뒤로가기"
-                        )
-                    }
+                    BackIconButton(navController)
                 },
                 rightContent = {
                     CommonButton(
@@ -116,8 +112,7 @@ fun RandomSpeechProjectListScreen(
                     )
                 }
             )
-        },
-        containerColor = BrokenWhite
+        }, containerColor = BrokenWhite
     ) { innerPadding ->
         if (projectList.isEmpty()) {
             Box(
