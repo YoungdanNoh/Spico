@@ -87,11 +87,7 @@ fun NavGraph(
                 RandomSpeechLandingScreen()
             }
             composable(NavRoutes.RandomSpeechTopicSelect.route) {
-                RandomSpeechTopicSelectScreen(
-                    onNext = {
-                        navController.navigate(NavRoutes.RandomSpeechSetting.route)
-                    }
-                )
+                RandomSpeechTopicSelectScreen(navController = navController)
             }
             composable(NavRoutes.RandomSpeechSetting.route) {
                 RandomSpeechSettingScreen(
