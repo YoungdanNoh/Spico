@@ -111,10 +111,20 @@ fun RandomSpeechScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Box(
-                modifier = Modifier
-                    .size(width = 86.dp, height = 84.dp)
-                    .background(color = Action, shape = RoundedCornerShape(50)),
+            LargeIconCircleButton(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_microphone_white),
+                        contentDescription = "마이크",
+                        tint = White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                },
+                size = 86.dp,
+                borderWidth = 6.dp,
+                borderColor = Disabled,
+                backgroundColor = Action,
+                onClick = { /* TODO: 녹음 시작 or 토글 */ }
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -132,3 +142,4 @@ fun RandomSpeechScreen(
         }
     }
 }
+
