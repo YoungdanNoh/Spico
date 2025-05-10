@@ -23,4 +23,7 @@ sealed class NavRoutes(val route: String) {
     object RandomSpeechTopicSelect : NavRoutes("randomspeech_topic_select")
     object RandomSpeechProjectSelect : NavRoutes("randomspeech_project_select")
 
+    // 코칭 모드
+    object CoachingReport : NavRoutes("coaching_report")
+
 }

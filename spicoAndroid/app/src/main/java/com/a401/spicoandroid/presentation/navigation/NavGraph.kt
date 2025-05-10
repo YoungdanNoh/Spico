@@ -19,6 +19,7 @@ import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandin
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListSelectScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
+import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 
 @Composable
 fun NavGraph(
@@ -86,6 +87,11 @@ fun NavGraph(
             }
             composable(NavRoutes.RandomSpeechProjectSelect.route) {
                 RandomSpeechProjectListSelectScreen()
+            }
+
+            // 코칭 모드
+            composable(NavRoutes.CoachingReport.route) {
+                CoachingReportScreen(navController)
             }
 
         }
