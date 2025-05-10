@@ -1,62 +1,42 @@
 package com.a401.spicoandroid.presentation.mypage.screen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
-import com.a401.spicoandroid.common.ui.component.ButtonSize
-import com.a401.spicoandroid.common.ui.component.CommonButton
-import com.a401.spicoandroid.common.ui.component.CommonTopBar
-import com.a401.spicoandroid.common.ui.theme.Error
-import com.a401.spicoandroid.common.ui.theme.Placeholder
-import com.a401.spicoandroid.common.ui.theme.SpeakoAndroidTheme
-import com.a401.spicoandroid.common.ui.theme.TextTertiary
-import com.a401.spicoandroid.common.ui.theme.Typography
-import com.a401.spicoandroid.common.ui.theme.White
+import com.a401.spicoandroid.common.ui.component.*
+import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.mypage.component.WithdrawAlert
+import com.a401.spicoandroid.presentation.mypage.viewmodel.MyPageViewModel
 
 @Composable
 fun MyPageScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    onFabClick: () -> Unit,
-    onLogout: () -> Unit,
-    onWithdraw: () -> Unit,
+    viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    var showWithdrawDialog by remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsState()
+    var isAlertVisible by remember { mutableStateOf(false) }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             CommonTopBar(
-                centerText = "프로필",
+                centerText = "프로필"
             )
         },
-        containerColor = White,
+        containerColor = White
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
@@ -69,44 +49,34 @@ fun MyPageScreen(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 16.dp)
             )
+
+            Text(text = "닉네임", style = Typography.headlineLarge, color = TextPrimary)
             Text(
-                text = "닉네임",
-                style = Typography.headlineLarge,
-            )
-            Text(
-                text = "김도영",
+                text = state.name,
                 style = Typography.bodyLarge,
+                color = TextTertiary,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        color = Placeholder,
-                        shape = RoundedCornerShape(8.dp)
-                    )
+                    .background(Placeholder, RoundedCornerShape(8.dp))
                     .padding(16.dp)
             )
+
+            Text(text = "이메일", style = Typography.headlineLarge, color = TextPrimary)
             Text(
-                text = "이메일",
-                style = Typography.headlineLarge,
-            )
-            Text(
-                text = "homerunball@gmail.com",
+                text = state.email,
                 style = Typography.bodyLarge,
+                color = TextTertiary,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        color = Placeholder,
-                        shape = RoundedCornerShape(8.dp)
-                    )
+                    .background(Placeholder, RoundedCornerShape(8.dp))
                     .padding(16.dp)
             )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(
-                    space = 8.dp,
-                    alignment = Alignment.CenterHorizontally
-                )
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
             ) {
                 CommonButton(
                     text = "로그아웃",
@@ -114,7 +84,7 @@ fun MyPageScreen(
                     backgroundColor = TextTertiary,
                     borderColor = White,
                     textColor = White,
-                    onClick = onLogout
+                    onClick = viewModel::onLogoutClicked
                 )
                 CommonButton(
                     text = "계정탈퇴",
@@ -122,39 +92,21 @@ fun MyPageScreen(
                     backgroundColor = Error,
                     borderColor = White,
                     textColor = White,
-                    onClick = { showWithdrawDialog = true }
+                    onClick = { isAlertVisible = true }
                 )
             }
         }
-        if (showWithdrawDialog) {
+
+        if (isAlertVisible) {
             WithdrawAlert(
                 onConfirm = {
-                    showWithdrawDialog = false
-                    onWithdraw()
+                    isAlertVisible = false
+                    viewModel.confirmWithdraw()
                 },
-                onDismiss = { showWithdrawDialog = false }
+                onDismiss = {
+                    isAlertVisible = false
+                }
             )
         }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(
-    showBackground = true,
-    widthDp = 360,
-    heightDp = 720,
-    name = "MyPageScreen Preview"
-)
-@Composable
-fun PreviewMyPageScreen() {
-    val navController = rememberNavController()
-
-    SpeakoAndroidTheme {
-        MyPageScreen(
-            navController = navController,
-            onFabClick = {},
-            onWithdraw = {},
-            onLogout = {}
-        )
     }
 }

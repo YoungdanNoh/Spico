@@ -2,6 +2,7 @@ package com.a401.spicoandroid.presentation.navigation
 
 sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
+    object Profile : NavRoutes("profile")
 
     // 발표 목록
     object ProjectCreate: NavRoutes("project_create")
