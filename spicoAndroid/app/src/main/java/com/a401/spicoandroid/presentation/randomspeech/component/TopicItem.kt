@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.randomspeech.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,14 +25,14 @@ fun TopicItem(
 ) {
     val iconRes = getTopicIconRes(topic)
     val topicKor = getTopicKor(topic)
-    val borderColor = if (isSelected) Action else LineTertiary
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
+            .dropShadow1()
             .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, borderColor, RoundedCornerShape(12.dp))
+            .background(White)
             .clickable { onClick() }
             .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -40,12 +41,12 @@ fun TopicItem(
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = topicKor,
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(60.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = topicKor,
-            style = Typography.titleLarge,
+            style = Typography.displayMedium,
             color = TextPrimary
         )
     }

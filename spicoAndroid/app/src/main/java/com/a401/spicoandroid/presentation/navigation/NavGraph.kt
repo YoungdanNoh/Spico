@@ -95,22 +95,59 @@ fun NavGraph(
             composable(NavRoutes.RandomSpeechTopicSelect.route) {
                 RandomSpeechTopicSelectScreen(navController = navController)
             }
-            composable(NavRoutes.RandomSpeechSetting.route) {
+            composable(
+                route = NavRoutes.RandomSpeechSetting.route,
+                arguments = listOf(navArgument("topic") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val topic = backStackEntry.arguments?.getString("topic") ?: "unknown"
                 RandomSpeechSettingScreen(
-                    onNext = {
-                        navController.navigate(NavRoutes.RandomSpeechReady.route)
+                    topic = topic,
+                    navController = navController,
+                    onNext = { prepMin, speakMin ->
+                        navController.navigate(
+                            NavRoutes.RandomSpeechReady.withTimes(prepMin, speakMin)
+                        )
                     }
                 )
             }
-            composable(NavRoutes.RandomSpeechReady.route) {
+            composable(
+                route = NavRoutes.RandomSpeechReady.route,
+                arguments = listOf(
+                    navArgument("prepMin") { type = NavType.IntType },
+                    navArgument("speakMin") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val prepMin = backStackEntry.arguments?.getInt("prepMin") ?: 1
+                val speakMin = backStackEntry.arguments?.getInt("speakMin") ?: 3
+
                 RandomSpeechReadyScreen(
-                    onNext = {
-                        navController.navigate(NavRoutes.RandomSpeech.route)
+                    prepMin = prepMin,
+                    speakMin = speakMin,
+                    onEndClick = {
+                        navController.navigate(NavRoutes.RandomSpeechLanding.route) {
+                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                        }
+                    },
+                    onStartClick = { question, speakMinValue ->
+                        navController.navigate(
+                            NavRoutes.RandomSpeech.withQuestionAndTime(question, speakMinValue)
+                        )
                     }
                 )
             }
-            composable(NavRoutes.RandomSpeech.route) {
+            composable(
+                route = "random_speech?question={question}&speakMin={speakMin}",
+                arguments = listOf(
+                    navArgument("question") { type = NavType.StringType },
+                    navArgument("speakMin") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val question = backStackEntry.arguments?.getString("question") ?: ""
+                val speakMin = backStackEntry.arguments?.getInt("speakMin") ?: 3
+
                 RandomSpeechScreen(
+                    question = question,
+                    speakMin = speakMin,
                     onFinish = {
                         navController.navigate(NavRoutes.RandomSpeechLanding.route) {
                             popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
@@ -118,6 +155,7 @@ fun NavGraph(
                     }
                 )
             }
+
             composable(NavRoutes.RandomSpeechProjectList.route) {
                 RandomSpeechProjectListScreen(
                     onProjectClick = { id ->

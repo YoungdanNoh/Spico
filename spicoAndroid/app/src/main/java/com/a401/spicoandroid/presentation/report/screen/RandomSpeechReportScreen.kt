@@ -55,7 +55,7 @@ fun RandomSpeechReportScreen(
         ) {
             RandomReportHeader(title = report.title, topic = report.topic)
 
-            InfoSection("랜덤스피치 질문") {
+            InfoSection(title = "랜덤스피치 질문") {
                 Text(
                     text = report.question,
                     style = Typography.bodyLarge,
@@ -63,7 +63,7 @@ fun RandomSpeechReportScreen(
                 )
             }
 
-            InfoSection("관련기사") {
+            InfoSection(title = "관련기사") {
                 Text(report.newsTitle, style = Typography.displaySmall, color = TextPrimary)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(report.newsSummary, style = Typography.titleMedium, color = TextTertiary)
@@ -78,7 +78,7 @@ fun RandomSpeechReportScreen(
                 )
             }
 
-            InfoSection("피드백") {
+            InfoSection(title = "피드백") {
                 Text(
                     text = report.feedback,
                     style = Typography.bodyLarge,
