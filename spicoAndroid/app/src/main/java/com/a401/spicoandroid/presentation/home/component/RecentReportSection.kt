@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.ui.theme.dropShadow1
+import com.a401.spicoandroid.presentation.home.dummy.DummyPracticeReports
 
 data class PracticeReport(
     val practiceId: Int,
@@ -20,17 +22,15 @@ data class PracticeReport(
 
 @Composable
 fun RecentReportSection(
-    reportList: List<PracticeReport> = listOf(
-        PracticeReport(101, 12343, "자율 프로젝트 결선 코칭 1트", "자율 프로젝트"),
-        PracticeReport(102, 12344, "자율 프로젝트 결선 코칭 2트", "특화 프로젝트"),
-        PracticeReport(103, 12345, "자율 프로젝트 결선 파이널 1트", "자율 프로젝트")
-    )
+    modifier: Modifier = Modifier,
+//    reportList: List<PracticeReport> = DummyPracticeReports
+    reportList: List<PracticeReport> = emptyList()
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(BrokenWhite)
-            .padding(16.dp)
+            .padding(vertical = 16.dp)
     ) {
         Text(
             text = "최근 연습 리포트",
@@ -40,12 +40,18 @@ fun RecentReportSection(
         )
 
         if (reportList.isEmpty()) {
-            Text(
-                text = "최근 연습 리포트가 없습니다.",
-                style = Typography.titleLarge,
-                color = TextSecondary,
-                modifier = Modifier.padding(vertical = 32.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp), // 원하는 여백 조절
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "최근 연습 리포트가 없습니다.",
+                    style = Typography.titleLarge,
+                    color = TextTertiary
+                )
+            }
         } else {
             reportList.forEachIndexed { index, report ->
                 CommonList(
@@ -60,3 +66,14 @@ fun RecentReportSection(
         }
     }
 }
+@Preview(showBackground = true, widthDp = 360)
+@Composable
+fun RecentReportSection_EmptyPreview() {
+    SpeakoAndroidTheme {
+        RecentReportSection(
+            reportList = emptyList(),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
+}
+

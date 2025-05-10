@@ -20,46 +20,40 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun PracticeSection(navController: NavHostController) {
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        val screenWidth = maxWidth
-        val spacing = if (screenWidth > 360.dp) 32.dp else 16.dp
-        val totalWidth = 156.dp * 2 + spacing
-
-        Row(
-            modifier = Modifier.width(totalWidth),
-            horizontalArrangement = Arrangement.spacedBy(spacing)
-        ) {
-            PracticeModeCard(
-                title = "코칭 모드",
-                imageRes = R.drawable.img_coaching_home,
-                onClick = { navController.navigate(NavRoutes.ProjectSelect.withMode("coaching")) }
-            )
-            PracticeModeCard(
-                title = "파이널 모드",
-                imageRes = R.drawable.img_final_home,
-                onClick = { navController.navigate(NavRoutes.ProjectSelect.withMode("final")) }
-            )
-        }
+        PracticeModeCard(
+            title = "코칭 모드",
+            imageRes = R.drawable.img_coaching_home,
+            onClick = { navController.navigate(NavRoutes.ProjectSelect.withMode("coaching")) },
+            modifier = Modifier.weight(1f)
+        )
+        PracticeModeCard(
+            title = "파이널 모드",
+            imageRes = R.drawable.img_final_home,
+            onClick = { navController.navigate(NavRoutes.ProjectSelect.withMode("final")) },
+            modifier = Modifier.weight(1f)
+        )
     }
 }
-
 
 @Composable
 fun PracticeModeCard(
     title: String,
     imageRes: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .size(width = 156.dp, height = 192.dp)
+        modifier = modifier
+            .aspectRatio(148f / 180f) // 기존 카드 비율 유지
             .clip(RoundedCornerShape(16.dp))
             .background(BackgroundSecondary)
             .clickable(onClick = onClick)
-            .padding(top = 24.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 32.dp, start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -73,7 +67,7 @@ fun PracticeModeCard(
             contentDescription = "$title 이미지",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(128.dp)
+                .height(136.dp)
         )
     }
 }

@@ -20,7 +20,7 @@ import com.a401.spicoandroid.common.ui.theme.TextSecondary
 import com.a401.spicoandroid.common.ui.theme.TextTertiary
 
 @Composable
-fun HomeFooterSection() {
+fun HomeFooterSection(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     fun openLink(url: String) {
@@ -40,7 +40,7 @@ fun HomeFooterSection() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp, bottom = 8.dp),
+            .padding(start = 16.dp, end=16.dp, top = 32.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HorizontalDivider(

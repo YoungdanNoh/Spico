@@ -21,17 +21,9 @@ sealed class NavRoutes(val route: String) {
     // 랜덤 스피치
     object RandomSpeechLanding : NavRoutes("randomspeech_landing")
     object RandomSpeechTopicSelect : NavRoutes("randomspeech_topic_select")
-    object RandomSpeechSetting : NavRoutes("randomspeech_setting")
-    object RandomSpeechReady : NavRoutes("randomspeech_ready")
-    object RandomSpeech : NavRoutes("randomspeech")
-    object RandomSpeechProjectList : NavRoutes("randomspeech_project_list")
-    object RandomSpeechReport : NavRoutes("randomspeech_report/{randomSpeechId}") {
-        fun withId(randomSpeechId: Int) = "randomspeech_report/$randomSpeechId"
-    }
+    object RandomSpeechProjectSelect : NavRoutes("randomspeech_project_select")
 
-    // 로그인
-    object Login : NavRoutes("login")
-
-
+    // 코칭 모드
+    object CoachingReport : NavRoutes("coaching_report")
 
 }

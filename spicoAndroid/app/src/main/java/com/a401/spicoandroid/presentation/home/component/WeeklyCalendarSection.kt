@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,8 @@ fun WeeklyCalendarSection(
     currentWeekDates: List<LocalDate>,
     markedDates: List<LocalDate> = emptyList(),
     onPreviousWeek: () -> Unit,
-    onNextWeek: () -> Unit
+    onNextWeek: () -> Unit,
+    onDateClick: (LocalDate) -> Unit
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("d")
     val weekdays = listOf("월", "화", "수", "목", "금", "토", "일")
@@ -36,7 +38,7 @@ fun WeeklyCalendarSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(vertical = 16.dp)
             .widthIn(max = 360.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -52,6 +54,7 @@ fun WeeklyCalendarSection(
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_left_small_text_tertiary),
                 contentDescription = "이전 주",
+                tint = Color.Unspecified,
                 modifier = Modifier
                     .size(20.dp)
                     .clickable { onPreviousWeek() }
@@ -64,6 +67,7 @@ fun WeeklyCalendarSection(
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right_small_text_tertiary),
                 contentDescription = "다음 주",
+                tint = Color.Unspecified,
                 modifier = Modifier
                     .size(20.dp)
                     .clickable { onNextWeek() }
@@ -74,7 +78,10 @@ fun WeeklyCalendarSection(
 
         // 요일 + 점 + 날짜
         Row(
-            modifier = Modifier.width(328.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .widthIn(max = 360.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             currentWeekDates.forEachIndexed { index, date ->
@@ -92,7 +99,8 @@ fun WeeklyCalendarSection(
                 val appliedModifier = if (isToday) todayBoxModifier else baseModifier
 
                 Box(
-                    modifier = appliedModifier,
+                    modifier = appliedModifier
+                        .clickable(enabled = isMarked) { onDateClick(date) },
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -132,17 +140,3 @@ fun WeeklyCalendarSection(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360)
-@Composable
-fun WeeklyCalendarSectionPreview() {
-    val today = LocalDate.now()
-    val startOfWeek = getStartOfWeek(today)
-    val currentWeekDates = getWeekDates(startOfWeek)
-
-    WeeklyCalendarSection(
-        currentWeekDates = currentWeekDates,
-        markedDates = listOf(currentWeekDates[2], currentWeekDates[5]),
-        onPreviousWeek = {},
-        onNextWeek = {}
-    )
-}

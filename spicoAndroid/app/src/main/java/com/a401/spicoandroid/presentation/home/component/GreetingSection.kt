@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.home.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,7 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GreetingSection(
     username: String = "사용자",
@@ -146,13 +148,13 @@ fun GreetingSection(
                             }
                         )
                         CommonButton(
-                            text = "로그인",
+                            text = "코칭 리포트",
                             size = ButtonSize.MD,
                             backgroundColor = Action,
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                navController.navigate(NavRoutes.Login.route)
+                                navController.navigate(NavRoutes.CoachingReport.route)
                             }
                         )
                     }
