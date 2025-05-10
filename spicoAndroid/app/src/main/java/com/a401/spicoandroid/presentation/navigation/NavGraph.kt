@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
+import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
@@ -41,6 +42,11 @@ fun NavGraph(
         ) {
             composable(NavRoutes.Home.route) {
                 HomeScreen(navController, modifier, weeklyCalendarViewModel)
+            }
+
+            // 마이페이지
+            composable(NavRoutes.Profile.route){
+                MyPageScreen(navController, modifier)
             }
 
             composable(NavRoutes.ProjectCreate.route) {
