@@ -20,7 +20,7 @@ import com.a401.spicoandroid.common.ui.theme.TextSecondary
 import com.a401.spicoandroid.common.ui.theme.TextTertiary
 
 @Composable
-fun HomeFooterSection() {
+fun HomeFooterSection(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     fun openLink(url: String) {
@@ -31,8 +31,8 @@ fun HomeFooterSection() {
     val teamMembers = listOf(
         "노영단" to "https://github.com/YoungdanNoh",
         "강명주" to "https://github.com/notrealsilk",
-        "김예진" to "https://github.com/z5zH0",
         "김서현" to "https://github.com/seohye-ki",
+        "김예진" to "https://github.com/z5zH0",
         "신유영" to "https://github.com/shinyou28",
         "이승연" to "http://github.com/leesyseel"
     )
@@ -40,7 +40,7 @@ fun HomeFooterSection() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp, bottom = 8.dp),
+            .padding(start = 16.dp, end=16.dp, top = 32.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HorizontalDivider(
@@ -53,13 +53,13 @@ fun HomeFooterSection() {
 
         Text(
             text = "© 2025 Spico. SSAFY 12기 자율 A401",
-            color = TextSecondary,
+            color = TextTertiary,
             fontSize = 10.sp,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(4.dp))
 
-        // 팀원 이름 반복
+        // 팀원 이름
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,

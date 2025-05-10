@@ -70,7 +70,7 @@ fun CommonAlert(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0x80000000)) // 어두운 반투명 배경
+                .background(OverlayDark20) // 어두운 반투명 배경
                 .clickable(onClick = onDismissRequest)
                 .padding(16.dp)
         ) {
