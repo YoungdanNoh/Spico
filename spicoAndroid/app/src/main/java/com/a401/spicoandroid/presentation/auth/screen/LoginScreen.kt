@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.randomspeech.screen
+package com.a401.spicoandroid.presentation.auth.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
@@ -11,12 +11,12 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 
 @Composable
-fun RandomSpeechReadyScreen(
-    onNext: () -> Unit = {}
+fun LoginScreen(
+    onLoginSuccess: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
-            CommonTopBar(centerText = "발표 준비")
+            CommonTopBar(centerText = "로그인")
         }
     ) { innerPadding ->
         Box(
@@ -26,9 +26,12 @@ fun RandomSpeechReadyScreen(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("RandomSpeechReadyScreen 스켈레톤")
+                Text("LoginScreen 스켈레톤")
                 Spacer(modifier = Modifier.height(16.dp))
-                CommonButton(text = "시작", onClick = onNext)
+                CommonButton(
+                    text = "로그인",
+                    onClick = onLoginSuccess
+                )
             }
         }
     }
