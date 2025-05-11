@@ -180,6 +180,30 @@ fun CommonIconTextButton(
         }
     }
 }
+@Composable
+fun LargeIconCircleButton(
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit,
+    size: Dp = 86.dp,
+    borderWidth: Dp = 6.dp,
+    borderColor: Color = Action,
+    backgroundColor: Color = White,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape)
+            .border(borderWidth, borderColor, CircleShape)
+            .background(backgroundColor)
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        icon()
+    }
+}
+
 
 /**
  * 프리뷰 예제
@@ -245,4 +269,22 @@ fun CommonButtonPreview() {
       onClick = {},
     )
   }
+}
+// 큰 원형
+@Preview(showBackground = true)
+@Composable
+fun LargeIconCircleButtonPreview() {
+    LargeIconCircleButton(
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_microphone_white),
+                contentDescription = "Trash",
+                tint = White,
+                modifier = Modifier.size(32.dp) // 아이콘 크기 조절 가능
+            )
+        },
+        borderColor = Disabled,
+        backgroundColor = Action,
+        onClick = { }
+    )
 }

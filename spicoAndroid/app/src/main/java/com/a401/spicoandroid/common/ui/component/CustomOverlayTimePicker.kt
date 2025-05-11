@@ -29,7 +29,6 @@ fun CustomOverlayTimePicker(
     onDismiss: () -> Unit,
     onTimeSelected: (Int, Int, Int) -> Unit
 ) {
-    var selectedHour by remember { mutableIntStateOf(initialHour) }
     var selectedMinute by remember { mutableIntStateOf(initialMinute) }
     var selectedSecond by remember { mutableIntStateOf(initialSecond) }
 
@@ -62,12 +61,6 @@ fun CustomOverlayTimePicker(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         AlignedWheelPicker(
-                            values = (0..23).toList(),
-                            selectedValue = selectedHour,
-                            onValueChange = { selectedHour = it }
-                        )
-                        AlignedColon()
-                        AlignedWheelPicker(
                             values = (0..59).toList(),
                             selectedValue = selectedMinute,
                             onValueChange = { selectedMinute = it }
@@ -86,7 +79,7 @@ fun CustomOverlayTimePicker(
                         text = "확인",
                         size = ButtonSize.MD,
                         onClick = {
-                            onTimeSelected(selectedHour, selectedMinute, selectedSecond)
+                            onTimeSelected(0, selectedMinute, selectedSecond)
                             onDismiss()
                         },
                     )

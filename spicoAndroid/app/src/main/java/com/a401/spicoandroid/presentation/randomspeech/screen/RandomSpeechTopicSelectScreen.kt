@@ -1,34 +1,80 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.a401.spicoandroid.common.ui.component.CommonButton
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.a401.spicoandroid.common.ui.component.BackIconButton
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
+import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import com.a401.spicoandroid.presentation.randomspeech.component.TopicItem
 
 @Composable
 fun RandomSpeechTopicSelectScreen(
-    onNext: () -> Unit = {}
+    navController: NavController
 ) {
+    val topics = listOf(
+        "politics", "economy", "it", "sports", "nature", "culture",
+        "society", "science", "art", "health", "history", "environment"
+    )
+
     Scaffold(
         topBar = {
-            CommonTopBar(centerText = "주제 선택")
+            CommonTopBar(
+                centerText = "주제 선택",
+                leftContent = { BackIconButton(navController) }
+            )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
+                .background(BrokenWhite)
+                .padding(innerPadding)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 24.dp)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("RandomSpeechTopicSelectScreen 스켈레톤")
-                Spacer(modifier = Modifier.height(16.dp))
-                CommonButton(text = "다음", onClick = onNext)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "어떤 주제로 \n연습하고 싶은가요?",
+                style = Typography.displayMedium.copy(letterSpacing = 1.sp),
+                color = TextPrimary
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "원하는 주제를 선택하세요.",
+                style = Typography.bodyLarge,
+                color = TextTertiary
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(BrokenWhite)
+            ) {
+                items(topics) { topic ->
+                    TopicItem(
+                        topic = topic,
+                        isSelected = false,
+                        onClick = {
+                            navController.navigate(NavRoutes.RandomSpeechSetting.withTopic(topic))
+                        }
+                    )
+                }
             }
         }
     }

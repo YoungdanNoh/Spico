@@ -51,18 +51,15 @@ fun TimePicker(
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
-    var inputHour by remember { mutableIntStateOf(hour) }
     var inputMinute by remember { mutableIntStateOf(minute) }
     var inputSecond by remember { mutableIntStateOf(second) }
 
-    fun validateAndSet(h: Int?, m: Int?, s: Int?) {
-        val hh = h?.coerceIn(0, 23) ?: inputHour
+    fun validateAndSet(m: Int?, s: Int?) {
         val mm = m?.coerceIn(0, 59) ?: inputMinute
         val ss = s?.coerceIn(0, 59) ?: inputSecond
-        inputHour = hh
         inputMinute = mm
         inputSecond = ss
-        onTimeSelected(hh, mm, ss)
+        onTimeSelected(0, mm, ss)
     }
 
     Box(
@@ -79,11 +76,9 @@ fun TimePicker(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                TimeUnitTextField(value = inputHour, onValueChange = { validateAndSet(it, null, null) })
+                TimeUnitTextField(value = inputMinute, onValueChange = { validateAndSet(it, null) })
                 Text(" : ", style = Typography.titleLarge)
-                TimeUnitTextField(value = inputMinute, onValueChange = { validateAndSet(null, it, null) })
-                Text(" : ", style = Typography.titleLarge)
-                TimeUnitTextField(value = inputSecond, onValueChange = { validateAndSet(null, null, it) })
+                TimeUnitTextField(value = inputSecond, onValueChange = { validateAndSet(null, it) })
             }
 
             Icon(
@@ -98,12 +93,12 @@ fun TimePicker(
 
         if (showPicker) {
             CustomOverlayTimePicker(
-                initialHour = inputHour,
+                initialHour = 0,
                 initialMinute = inputMinute,
                 initialSecond = inputSecond,
                 onDismiss = { showPicker = false },
-                onTimeSelected = { h, m, s ->
-                    validateAndSet(h, m, s)
+                onTimeSelected = { _, m, s ->
+                    validateAndSet(m, s)
                     showPicker = false
                 }
             )

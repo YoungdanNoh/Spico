@@ -33,19 +33,7 @@ fun RandomSpeechLandingScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 상단 바
-        CommonTopBar(
-            centerText = "랜덤스피치",
-            rightContent = {
-                CommonButton(
-                    text = "시작",
-                    size = ButtonSize.XS,
-                    backgroundColor = Action,
-                    borderColor = Action,
-                    textColor = White,
-                    onClick = onStartClick
-                )
-            }
-        )
+        CommonTopBar(centerText = "랜덤스피치")
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -56,24 +44,40 @@ fun RandomSpeechLandingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp)
-
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         // 하단 버튼
-        CommonButton(
-            text = "프로젝트 목록",
-            size = ButtonSize.LG,
-            backgroundColor = White,
-            borderColor = Action,
-            textColor = Action,
-            onClick = onProjectClick,
+        Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 32.dp)
-        )
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 40.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            CommonButton(
+                text = "리포트 목록",
+                size = ButtonSize.SM,
+                backgroundColor = White,
+                borderColor = Action,
+                textColor = Action,
+                onClick = onProjectClick,
+                modifier = Modifier.weight(1f)
+            )
+
+            CommonButton(
+                text = "시작하기",
+                size = ButtonSize.SM,
+                backgroundColor = Action,
+                borderColor = Action,
+                textColor = White,
+                onClick = onStartClick,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
