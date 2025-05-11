@@ -91,6 +91,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.material.icons.extended) // Material Icons
 
+    // 로그인 화면 캐러셀용
+    implementation(libs.androidx.foundation.pager)
+
     // UI
     implementation(libs.lottie.compose) // Lottie animation
     implementation(libs.dotlottie) // .lottie file
@@ -119,11 +122,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // For supporting Java 8+ APIs like java.time, Optional, etc. on lower Android API levels
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     // 전면 카메라
-    implementation("androidx.camera:camera-core:1.3.1")
-    implementation("androidx.camera:camera-camera2:1.3.1")
-    implementation("androidx.camera:camera-lifecycle:1.3.1")
-    implementation("androidx.camera:camera-view:1.3.1") // PreviewView
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 }

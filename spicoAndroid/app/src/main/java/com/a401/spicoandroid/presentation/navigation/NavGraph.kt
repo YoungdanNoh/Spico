@@ -184,9 +184,8 @@ fun NavGraph(
 
             // 로그인
             composable(NavRoutes.Login.route) {
-                LoginScreen()
+                LoginScreen(onKakaoLoginClick = {})
             }
-
         }
     }
 }
