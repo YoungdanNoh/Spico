@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,14 +36,14 @@ fun LogoWithPagerSection(
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(360.dp)
+                .height(356.dp)
         ) { page ->
             Image(
                 painter = painterResource(id = imageList[page]),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(360.dp)
+                    .height(356.dp)
             )
         }
     }

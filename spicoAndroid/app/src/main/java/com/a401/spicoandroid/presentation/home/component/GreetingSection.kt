@@ -14,17 +14,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
@@ -56,8 +53,10 @@ fun GreetingSection(
                     contentDescription = "앱 로고",
                     modifier = Modifier
                         .height(28.dp)
-                        .padding(bottom = 8.dp)
+                        .padding(bottom = 4.dp)
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -67,7 +66,7 @@ fun GreetingSection(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "반가워요!",
+                            text = "반가워요",
                             style = Typography.titleLarge,
                             color = TextTertiary
                         )
@@ -95,7 +94,7 @@ fun GreetingSection(
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "오늘도 연습해요",
+                            text = "오늘도 연습해요!",
                             style = Typography.displayLarge.copy(
                                 fontWeight = FontWeight.Medium,
                                 lineHeight = 36.sp,
