@@ -122,8 +122,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // For supporting Java 8+ APIs like java.time, Optional, etc. on lower Android API levels
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // 전면 카메라
     implementation(libs.androidx.camera.core)
