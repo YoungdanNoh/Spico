@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,28 +33,27 @@ fun KakaoLoginButton(
         contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(start = 14.dp, end = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.wrapContentSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_kakao_logo),
                 contentDescription = "카카오 로고",
-                modifier = Modifier
-                    .size(18.dp)
+                modifier = Modifier.size(18.dp)
             )
-
 
             Text(
                 text = "카카오 로그인",
-                modifier = Modifier.padding(start = 28.dp, end = 28.dp),
                 style = TextStyle(
                     fontFamily = Pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp
                 ),
-                color = Color(0xFF191600)
+                color = Color(0xFF191600),
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Clip
             )
         }
     }
@@ -67,7 +67,8 @@ fun KakaoLoginButtonPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             KakaoLoginButton(onClick = {})
         }
