@@ -15,6 +15,7 @@ import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
+import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
@@ -51,6 +52,10 @@ fun NavGraph(
 
             composable(NavRoutes.ProjectCreate.route) {
                 ProjectSettingScreen(navController, modifier)
+            }
+
+            composable(NavRoutes.ProjectScriptInput.route) {
+                ProjectScriptInputScreen(navController)
             }
 
             composable(NavRoutes.ProjectList.route) {
