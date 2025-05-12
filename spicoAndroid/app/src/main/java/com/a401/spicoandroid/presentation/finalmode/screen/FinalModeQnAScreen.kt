@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.a401.spicoandroid.presentation.finalmode.component.VideoBackgroundPlayer
 import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.R
@@ -20,10 +21,12 @@ import com.a401.spicoandroid.common.ui.component.CommonTimer
 import com.a401.spicoandroid.common.ui.component.FeedbackType
 import com.a401.spicoandroid.common.ui.component.TimerType
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun FinalModeQnAScreen(
     question: String,
+    navController: NavController,
     viewModel: FinalModeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -76,6 +79,7 @@ fun FinalModeQnAScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     viewModel.hideConfirmDialog()
+                    navController.navigate(NavRoutes.FinalReportLoading.route)
                 },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,
