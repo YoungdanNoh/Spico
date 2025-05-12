@@ -18,6 +18,8 @@ fun CreateProjectRequestDto.toProject(userId: Int): Project {
         date = LocalDate.parse(projectDate),
         limitTime = projectTime,
         script = script,
-        createdAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now(),
+        lastCoachingCnt = 0,
+        lastFinalCnt = 0
     )
 }
