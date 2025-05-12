@@ -101,7 +101,9 @@ fun FinalModeAudienceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     viewModel.hideConfirmDialog()
-                    navController.navigate(NavRoutes.FinalModeLoading.route)
+                    cameraService.stopRecording {
+                        navController.navigate(NavRoutes.FinalModeLoading.route)
+                    }
                 },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,
