@@ -15,10 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.report.component.*
+import com.a401.spicoandroid.presentation.report.viewmodel.FinalReportViewModel
 import com.a401.spicoandroid.ui.component.TimeSegment
 import kotlinx.coroutines.launch
 
@@ -31,9 +33,14 @@ data class ReportCategoryData(
 )
 
 @Composable
-fun FinalReportScreen() {
+fun FinalReportScreen(
+    viewModel: FinalReportViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
     val segments = listOf(TimeSegment(60000L, 90000L))
+
+    val labels = listOf("발음", "속도", "성량", "휴지", "대본")
 
     val reportItems = listOf(
         ReportCategoryData("발음", "특정 구간에서 발음이 뭉개져요", R.drawable.img_feedback_pronunciation, "1:00 ~ 1:30", segments),
@@ -97,9 +104,9 @@ fun FinalReportScreen() {
             )
             Column{
                 FinalScoreCard(
-                    modeType = "파이널 모드",
-                    roundCount = 5,
-                    score = 84
+                    modeType = state.modeType,
+                    roundCount = state.roundCount,
+                    score = state.score
                 )
 
                 Box(modifier = Modifier.fillMaxWidth()) {
@@ -107,7 +114,9 @@ fun FinalReportScreen() {
                         modifier = Modifier
                             .size(300.dp)
                             .padding(top = 24.dp)
-                            .align(Alignment.Center)
+                            .align(Alignment.Center),
+                        labels = labels,
+                        scores = state.scores
                     )
                 }
 
@@ -144,10 +153,13 @@ fun FinalReportScreen() {
             }
 
             Text("Q&A", style = Typography.headlineLarge)
-
-            ReportQnAItem("Q1. 해당 프로젝트를 하면서 어려웠던 점이 무엇인가요?", "일정 조율이 힘들었습니다.")
-            ReportQnAItem("Q2. 프로젝트에 사용한 데이터는 어디에서 구하셨나요?", "공공데이터를 이용했습니다. 공공데이터도 전처리도 했습니다.")
-            ReportQnAItem("Q3. 팀원 간 갈등은 어떻게 해결했나요?", "서로 타협하고 이야기를 했습니다.")
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                state.qnaList.forEachIndexed { index, (question, answer) ->
+                    ReportQnAItem("Q${index + 1}. $question", answer)
+                }
+            }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 CommonButton(

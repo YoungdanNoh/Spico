@@ -89,8 +89,10 @@ class FinalRecordingCameraService(
             }
     }
 
-    fun stopRecording() {
+    fun stopRecording(onFinished: () -> Unit) {
         recording?.stop()
         recording = null
+        onFinished()
     }
+
 }
