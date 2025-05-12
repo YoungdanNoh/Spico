@@ -10,6 +10,7 @@ import com.ssafy.spico.domain.project.model.toEntity
 import com.ssafy.spico.domain.project.model.toModel
 import com.ssafy.spico.domain.project.repository.ProjectRepository
 import com.ssafy.spico.domain.user.repository.UserRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -48,6 +49,23 @@ class ProjectServiceImpl(
             projectEntity.updateProject(command)
         } catch (e: Exception) {
             throw ProjectException(ProjectError.INVALID_UPDATE_REQUEST)
+        }
+    }
+
+    override fun deleteProject(projectId: Int) {
+        val projectEntity = projectRepository.findById(projectId)
+            .orElseThrow { ProjectException(ProjectError.PROJECT_NOT_FOUND) }
+        try {
+            /**
+            TODO: 하위 연습 삭제 로직 구현 必
+            List<Int> practices = getPractices(projectId)
+             practices.forEach{ practiceId ->
+                practiceService.delete(practiceId)
+            }
+            **/
+            projectRepository.delete(projectEntity)
+        } catch (e: Exception) {
+            throw ProjectException(ProjectError.DELETE_FAILED)
         }
     }
 }
