@@ -21,6 +21,8 @@ import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.TimePicker
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.getTopicKor
+import com.a401.spicoandroid.presentation.randomspeech.component.PrepTimePickerDialog
+import com.a401.spicoandroid.presentation.randomspeech.component.SpeakTimePickerDialog
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -92,29 +94,58 @@ fun RandomSpeechSettingScreen(
                 Text("준비시간", style = Typography.titleLarge, color = TextPrimary)
                 Spacer(modifier = Modifier.height(8.dp))
                 TimePicker(
-                    hour = 0,
                     minute = prepMinute,
                     second = prepSecond,
                     onTimeSelected = { _, m, s ->
                         prepMinute = m
                         prepSecond = s
+                    },
+                    validate = { m, _ ->
+                        when {
+                            m < 1 -> "준비시간은 최소 1분입니다."
+                            m > 10 -> "준비시간은 최대 10분입니다."
+                            else -> null
+                        }
+                    },
+                    guideText = "준비시간은 분 단위로 설정됩니다."
+                ) { show, onDismiss, onTimeSelected ->
+                    if (show) {
+                        PrepTimePickerDialog(
+                            initialMinute = prepMinute,
+                            onDismiss = onDismiss,
+                            onMinuteSelected = { m -> onTimeSelected(0, m, 0) }
+                        )
                     }
-                )
-
+                }
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // 발화시간
                 Text("발화시간", style = Typography.titleLarge, color = TextPrimary)
                 Spacer(modifier = Modifier.height(8.dp))
                 TimePicker(
-                    hour = 0,
                     minute = speakMinute,
                     second = speakSecond,
                     onTimeSelected = { _, m, s ->
                         speakMinute = m
                         speakSecond = s
+                    },
+                    validate = { m, _ ->
+                        when {
+                            m < 1 -> "발화시간은 최소 1분입니다."
+                            m > 20 -> "발화시간은 최대 20분입니다."
+                            else -> null
+                        }
+                    },
+                    guideText = "발화시간은 분 단위로 설정됩니다."
+                ) { show, onDismiss, onTimeSelected ->
+                    if (show) {
+                        SpeakTimePickerDialog(
+                            initialMinute = speakMinute,
+                            onDismiss = onDismiss,
+                            onMinuteSelected = { m -> onTimeSelected(0, m, 0) }
+                        )
                     }
-                )
+                }
             }
 
             // 시작 버튼

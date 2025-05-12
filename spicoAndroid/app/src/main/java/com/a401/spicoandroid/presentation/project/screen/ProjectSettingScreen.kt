@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -28,6 +27,7 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonTextField
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.DatePicker
+import com.a401.spicoandroid.common.ui.component.FlexibleTimePickerDialog
 import com.a401.spicoandroid.common.ui.component.TimePicker
 import com.a401.spicoandroid.common.ui.theme.Action
 import com.a401.spicoandroid.common.ui.theme.TextPrimary
@@ -35,7 +35,6 @@ import com.a401.spicoandroid.common.ui.theme.Typography
 import com.a401.spicoandroid.common.ui.theme.White
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectFormViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProjectSettingScreen(
@@ -108,16 +107,34 @@ fun ProjectSettingScreen(
                     modifier = Modifier.padding(bottom = 36.dp),
                 )
                 Text(
-                    text = "제한시간",
+                    text = "발표시간",
                     style = Typography.headlineLarge,
                     color = TextPrimary,
                     modifier = Modifier.padding(bottom = 12.dp),
                 )
                 TimePicker(
-                    hour = state.projectTime / 60,
                     minute = state.projectTime % 60,
                     second = 0,
                     onTimeSelected = viewModel::updateProjectTime,
+                    validate = { m, s ->
+                        val totalSeconds = m * 60 + s
+                        when {
+                            totalSeconds < 30 -> "발표시간은 최소 30초 입니다."
+                            totalSeconds > 1800 -> "발표시간은 최대 30분 입니다."
+                            else -> null
+                        }
+                    },
+                    guideText = "발표시간은 30초 ~ 30분 입니다.",
+                    timePickerDialog = { show, onDismiss, onTimeSelected ->
+                        if (show) {
+                            FlexibleTimePickerDialog(
+                                initialMinute = state.projectTime % 60,
+                                initialSecond = 0,
+                                onDismiss = onDismiss,
+                                onTimeSelected = onTimeSelected
+                            )
+                        }
+                    }
                 )
             }
         }
