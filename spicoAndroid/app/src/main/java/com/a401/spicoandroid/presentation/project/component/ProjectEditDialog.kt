@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.a401.spicoandroid.common.ui.component.*
@@ -80,12 +79,29 @@ fun ProjectEditDialog(
                         style = Typography.headlineLarge,
                     )
                     TimePicker(
-                        hour = hour,
                         minute = minute,
                         second = second,
                         onTimeSelected = onTimeSelected,
+                        validate = { m, s ->
+                            val totalSeconds = m * 60 + s
+                            when {
+                                totalSeconds < 30 -> "발표시간은 최소 30초 입니다."
+                                totalSeconds > 1800 -> "발표시간은 최대 30분 입니다."
+                                else -> null
+                            }
+                        },
+                        guideText = "발표시간은 30초 ~ 30분 입니다.",
+                        timePickerDialog = { show, onDismiss, onTimeSelectedDialog ->
+                            if (show) {
+                                FlexibleTimePickerDialog(
+                                    initialMinute = minute,
+                                    initialSecond = second,
+                                    onDismiss = onDismiss,
+                                    onTimeSelected = onTimeSelectedDialog
+                                )
+                            }
+                        }
                     )
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End

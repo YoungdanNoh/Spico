@@ -34,6 +34,6 @@ class RandomSpeechReadyViewModel : ViewModel() {
     fun formatTime(seconds: Int): String {
         val min = seconds / 60
         val sec = seconds % 60
-        return String.format(Locale.US, "%02d병 %02d초", min, sec)
+        return String.format(Locale.US, "%02d분 %02d초", min, sec)
     }
 }
