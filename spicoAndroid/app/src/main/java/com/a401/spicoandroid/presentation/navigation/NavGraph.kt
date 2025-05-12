@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeQnAScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
@@ -32,6 +33,7 @@ import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechSettin
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
+import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 
 @Composable
 fun NavGraph(
@@ -214,18 +216,35 @@ fun NavGraph(
 
             // 파이널 모드
             composable("final_mode_voice") {
-                FinalModeVoiceScreen()
+                FinalModeVoiceScreen(navController)
             }
             composable("final_mode_audience") {
                 FinalModeAudienceScreen(navController)
             }
             composable("final_mode_loading") {
-                FinalModeLoadingScreen(navController)
+                FinalModeLoadingScreen(
+                    navController = navController,
+                    type = FinalModeLoadingType.QUESTION
+                )
             }
-            composable("final_mode_qna") {
-                FinalModeQnAScreen(question = "왜 초등학생을 대상으로 하셨나요?")
+            composable("final_report_loading") {
+                FinalModeLoadingScreen(
+                    navController = navController,
+                    type = FinalModeLoadingType.REPORT
+                )
             }
-
+            composable(
+                route = NavRoutes.FinalModeQnA.route,
+                arguments = listOf(navArgument("question") { defaultValue = "기본 질문입니다." })
+            ) { backStackEntry ->
+                val question = backStackEntry.arguments?.getString("question") ?: ""
+                FinalModeQnAScreen(
+                    navController = navController,
+                    question = question)
+            }
+            composable("final_mode_report") {
+                FinalReportScreen()
+            }
 
             // 로그인
             composable(NavRoutes.Login.route) {
