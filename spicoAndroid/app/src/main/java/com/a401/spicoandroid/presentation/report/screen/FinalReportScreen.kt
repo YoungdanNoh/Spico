@@ -21,16 +21,7 @@ import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.report.component.*
 import com.a401.spicoandroid.presentation.report.viewmodel.FinalReportViewModel
-import com.a401.spicoandroid.ui.component.TimeSegment
 import kotlinx.coroutines.launch
-
-data class ReportCategoryData(
-    val title: String,
-    val description: String,
-    val iconResId: Int,
-    val timeRangeText: String,
-    val segments: List<TimeSegment>
-)
 
 @Composable
 fun FinalReportScreen(
@@ -38,21 +29,12 @@ fun FinalReportScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
-    val segments = listOf(TimeSegment(60000L, 90000L))
 
     val labels = listOf("발음", "속도", "성량", "휴지", "대본")
 
-    val reportItems = listOf(
-        ReportCategoryData("발음", "특정 구간에서 발음이 뭉개져요", R.drawable.img_feedback_pronunciation, "1:00 ~ 1:30", segments),
-        ReportCategoryData("속도", "말의 속도가 느린 편이에요", R.drawable.img_feedback_speed, "1:30 ~ 2:00", segments),
-        ReportCategoryData("휴지", "휴지 기간이 총 5회 있었어요", R.drawable.img_feedback_silence, "0:30 ~ 1:00", segments),
-        ReportCategoryData("성량", "목소리 크기가 많이 작아요", R.drawable.img_feedback_volume, "0:30 ~ 1:00", segments),
-        ReportCategoryData("대본일치도", "불일치 문장이 총 5회 있었어요", R.drawable.img_feedback_script_match, "0:30 ~ 1:00", segments)
-    )
-
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { reportItems.size }
+        pageCount = { state.reportItems.size }
     )
 
     val coroutineScope = rememberCoroutineScope()
@@ -97,9 +79,9 @@ fun FinalReportScreen(
         ) {
             ReportInfoHeader(
                 imagePainter = painterResource(id = R.drawable.img_final_practice),
-                projectTitle = "자율 프로젝트",
-                roundCount = 5,
-                chipText = "파이널모드",
+                projectTitle = state.projectName,
+                roundCount = state.roundCount,
+                chipText = state.modeType,
                 chipType = ChipType.REPORT_ERROR
             )
             Column{
@@ -128,21 +110,22 @@ fun FinalReportScreen(
                             .fillMaxWidth()
                             .height(200.dp)
                     ) { page ->
-                        val item = reportItems[page]
+                        val item = state.reportItems[page]
                         ReportCategoryCard(
                             title = item.title,
                             description = item.description,
                             iconResId = item.iconResId,
                             timeRangeText = item.timeRangeText,
-                            totalStartMillis = 0L,
-                            totalEndMillis = 180000L,
-                            segments = item.segments
+                            totalStartMillis = item.totalStartMillis,
+                            totalEndMillis = item.totalEndMillis,
+                            segments = item.segments,
+                            progress = item.progress
                         )
                     }
 
                     CommonCircularProgressBar(
                         selectedIndex = pagerState.currentPage,
-                        totalCount = reportItems.size,
+                        totalCount = state.reportItems.size,
                         onSelect = { index ->
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(index)
