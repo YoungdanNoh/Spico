@@ -31,4 +31,13 @@ class ProjectController(
         val projectId = projectService.createProject(project)
         return ApiResponse.success(CreateProjectResponseDto(projectId))
     }
+
+    @PatchMapping("/{projectId}")
+    fun updateProject(
+        @PathVariable projectId: Int,
+        @RequestBody request: UpdateProjectRequestDto
+    ): ApiResponse<Unit> {
+        projectService.updateProject(projectId, request)
+        return ApiResponse.success()
+    }
 }
