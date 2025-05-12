@@ -14,7 +14,9 @@ import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
+import com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
+import com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
@@ -27,6 +29,7 @@ import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechSettin
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
+import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
 
 @Composable
 fun NavGraph(
@@ -42,6 +45,7 @@ fun NavGraph(
             startDestination = NavRoutes.Home.route,
             modifier = modifier
         ) {
+            // 홈화면
             composable(NavRoutes.Home.route) {
                 HomeScreen(navController, modifier, weeklyCalendarViewModel)
             }
@@ -76,7 +80,7 @@ fun NavGraph(
                 arguments = listOf(navArgument("mode") { type = NavType.StringType })
             ) { backStackEntry ->
                 val mode = backStackEntry.arguments?.getString("mode") ?: "coaching"
-                com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen(
+                ProjectSelectScreen(
                     navController = navController,
                     mode = mode
                 )
@@ -86,7 +90,7 @@ fun NavGraph(
                 FinalSettingScreen(navController = navController)
             }
             composable(NavRoutes.FinalScreenCheck.route) {
-                com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen(
+                FinalScreenCheckScreen(
                     navController = navController
                 )
             }
@@ -174,7 +178,7 @@ fun NavGraph(
                 arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: -1
-                com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen(
+                RandomSpeechReportScreen(
                     navController = navController,
                     randomSpeechId = randomSpeechId)
             }
@@ -191,8 +195,7 @@ fun NavGraph(
             composable("final_mode_audience") {
                 FinalModeAudienceScreen()
             }
-
-
+            
             // 로그인
             composable(NavRoutes.Login.route) {
                 LoginScreen(onKakaoLoginClick = {})
