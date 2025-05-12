@@ -91,7 +91,7 @@ fun FinalModeVoiceScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 40.dp)
+                    .padding(bottom = 20.dp)
             ) {
                 CommonTimer(timeText = elapsedTime, type = TimerType.CHIP_LARGE)
             }
@@ -101,7 +101,7 @@ fun FinalModeVoiceScreen(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 32.dp, end = 24.dp)
+                .padding(bottom = 16.dp, end = 16.dp)
         ) {
             CommonButton(
                 text = "종료",
