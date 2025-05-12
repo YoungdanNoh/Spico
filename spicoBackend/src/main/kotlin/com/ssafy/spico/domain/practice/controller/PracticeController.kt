@@ -46,6 +46,19 @@ class PracticeController(
         return ApiResponse.success(practiceService.startCoachingPractice(userId, projectId))
     }
 
+    // 코칭모드 종료
+    @PostMapping("/coaching/{practiceId}/result")
+    fun endCoachingPractice(
+        @PathVariable projectId: Int,
+        @PathVariable practiceId: Int,
+        @RequestBody request: EndCoachingPracticeRequestDto
+    ): ApiResponse<EndCoachingPracticeResponseDto> {
+
+        val endCoachingPractice = request.toModel()
+
+        return ApiResponse.success(practiceService.endCoachingPractice(userId, projectId, practiceId, endCoachingPractice))
+    }
+
     // 파이널 모드 리포트 조회
     @GetMapping("/final/{practiceId}")
     fun finalPracticeReport(
