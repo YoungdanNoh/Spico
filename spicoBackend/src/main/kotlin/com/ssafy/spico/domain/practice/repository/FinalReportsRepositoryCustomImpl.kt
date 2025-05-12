@@ -10,15 +10,15 @@ class FinalReportsRepositoryCustomImpl(
     private val queryFactory: JPAQueryFactory
 ) : FinalReportsRepositoryCustom {
 
-    override fun findLastCntByProject(projectId: Int): Int {
-
-        return queryFactory.select(finalReportsEntity.finalPracticeCnt)
-            .from(finalReportsEntity)
-            .where(finalReportsEntity.practicesEntity.projectEntity.projectId.eq(projectId))
-            .orderBy(finalReportsEntity.finalPracticeCnt.desc())
-            .limit(1)
-            .fetchOne() ?: 0
-    }
+//    override fun findLastCntByProject(projectId: Int): Int {
+//
+//        return queryFactory.select(finalReportsEntity.finalPracticeCnt)
+//            .from(finalReportsEntity)
+//            .where(finalReportsEntity.practicesEntity.projectEntity.projectId.eq(projectId))
+//            .orderBy(finalReportsEntity.finalPracticeCnt.desc())
+//            .limit(1)
+//            .fetchOne() ?: 0
+//    }
 
     override fun findReportByPractice(practiceId: Int): FinalReportsEntity? {
 
