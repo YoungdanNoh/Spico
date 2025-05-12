@@ -50,6 +50,12 @@ sealed class NavRoutes(val route: String) {
     // 파이널 모드
     object FinalModeVoice : NavRoutes("final_mode_voice")
     object FinalModeAudience : NavRoutes("final_mode_audience")
+    object FinalModeLoading : NavRoutes("final_mode_loading")
+    object FinalModeQnA : NavRoutes("final_mode_qna?question={question}") {
+        fun withQuestion(question: String) =
+            "final_mode_qna?question=${Uri.encode(question)}"
+    }
+
 
 
     // 로그인

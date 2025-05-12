@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeQnAScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
@@ -215,7 +217,13 @@ fun NavGraph(
                 FinalModeVoiceScreen()
             }
             composable("final_mode_audience") {
-                FinalModeAudienceScreen()
+                FinalModeAudienceScreen(navController)
+            }
+            composable("final_mode_loading") {
+                FinalModeLoadingScreen(navController)
+            }
+            composable("final_mode_qna") {
+                FinalModeQnAScreen(question = "왜 초등학생을 대상으로 하셨나요?")
             }
 
 

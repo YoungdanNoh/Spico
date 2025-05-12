@@ -91,4 +91,9 @@ class FinalModeViewModel @Inject constructor(
     fun hideConfirmDialog() {
         showStopConfirm = false
     }
+
+    suspend fun fetchQuestion(): String {
+        delay(1000) // 실제 API 호출
+        return "왜 초등학생을 대상으로 하셨나요?"
+    }
 }
