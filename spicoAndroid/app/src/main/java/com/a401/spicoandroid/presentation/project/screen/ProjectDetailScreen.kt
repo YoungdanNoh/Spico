@@ -23,6 +23,7 @@ import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonReportTabBar
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.DropdownMenuItemData
+import com.a401.spicoandroid.common.ui.component.EmptyStateView
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.domain.project.model.Project
@@ -146,16 +147,23 @@ fun ProjectDetailScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            practiceList.forEachIndexed { index, round ->
-                CommonList(
-                    title = "코칭모드 ${round}회차",
-                    description = mockProject.title,
-                    onLongClick = {
-                        isBottomSheetVisible = true
-                    }
+            if (practiceList.isEmpty()) {
+                EmptyStateView(
+                    imageRes = R.drawable.character_home_1,
+                    message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
                 )
-                if (index != practiceList.lastIndex) {
-                    Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                practiceList.forEachIndexed { index, round ->
+                    CommonList(
+                        title = "코칭모드 ${round}회차",
+                        description = mockProject.title,
+                        onLongClick = {
+                            isBottomSheetVisible = true
+                        }
+                    )
+                    if (index != practiceList.lastIndex) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }
