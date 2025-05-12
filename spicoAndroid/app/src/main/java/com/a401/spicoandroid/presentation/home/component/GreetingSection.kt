@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.home.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,7 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun GreetingSection(
     modifier: Modifier = Modifier,
@@ -166,6 +168,18 @@ fun GreetingSection(
                                 navController.navigate(NavRoutes.CoachingReport.route)
                             }
                         )
+
+                        CommonButton(
+                            text = "파이널모드",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.FinalModeVoice.route)
+                            }
+                        )
+
 
                     }
 

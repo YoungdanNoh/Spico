@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
@@ -181,6 +183,15 @@ fun NavGraph(
             composable(NavRoutes.CoachingReport.route) {
                 CoachingReportScreen(navController)
             }
+
+            // 파이널 모드
+            composable("final_mode_voice") {
+                FinalModeVoiceScreen()
+            }
+            composable("final_mode_audience") {
+                FinalModeAudienceScreen()
+            }
+
 
             // 로그인
             composable(NavRoutes.Login.route) {
