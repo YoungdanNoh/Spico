@@ -10,6 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeQnAScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
@@ -21,6 +24,8 @@ import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
+import com.a401.spicoandroid.presentation.project.screen.ProjectScriptDetailScreen
+import com.a401.spicoandroid.presentation.project.screen.ProjectScriptEditScreen
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListScreen
@@ -30,6 +35,7 @@ import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechSettin
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
+import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
 
 @Composable
@@ -46,7 +52,6 @@ fun NavGraph(
             startDestination = NavRoutes.Home.route,
             modifier = modifier
         ) {
-            // 홈화면
             composable(NavRoutes.Home.route) {
                 HomeScreen(navController, modifier, weeklyCalendarViewModel)
             }
@@ -67,6 +72,25 @@ fun NavGraph(
             composable(NavRoutes.ProjectList.route) {
                 ProjectListScreen(navController, projectViewModel, {})
             }
+
+            composable(NavRoutes.ProjectScriptDetail.route) {
+                ProjectScriptDetailScreen(
+                    navController,
+                    onEdit = {
+                        navController.navigate(NavRoutes.ProjectScriptEdit.route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.ProjectScriptEdit.route) {
+                ProjectScriptEditScreen(
+                    navController,
+                    onComplete = {
+                        navController.popBackStack(NavRoutes.ProjectScriptDetail.route, inclusive = false)
+                    }
+                )
+            }
+
 
             composable(NavRoutes.VideoReplay.route) {
                 VideoReplayScreen()
@@ -195,12 +219,37 @@ fun NavGraph(
 
             // 파이널 모드
             composable("final_mode_voice") {
-                FinalModeVoiceScreen()
+                FinalModeVoiceScreen(navController)
             }
             composable("final_mode_audience") {
-                FinalModeAudienceScreen()
+                FinalModeAudienceScreen(navController)
             }
-            
+            composable("final_mode_loading") {
+                FinalModeLoadingScreen(
+                    navController = navController,
+                    type = FinalModeLoadingType.QUESTION
+                )
+            }
+            composable("final_report_loading") {
+                FinalModeLoadingScreen(
+                    navController = navController,
+                    type = FinalModeLoadingType.REPORT
+                )
+            }
+            composable(
+                route = NavRoutes.FinalModeQnA.route,
+                arguments = listOf(navArgument("question") { defaultValue = "기본 질문입니다." })
+            ) { backStackEntry ->
+                val question = backStackEntry.arguments?.getString("question") ?: ""
+                FinalModeQnAScreen(
+                    navController = navController,
+                    question = question)
+            }
+            composable("final_mode_report") {
+                FinalReportScreen()
+            }
+
+
             // 로그인
             composable(NavRoutes.Login.route) {
                 LoginScreen(onKakaoLoginClick = {})

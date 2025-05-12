@@ -13,7 +13,8 @@ sealed class NavRoutes(val route: String) {
     object ProjectDetail: NavRoutes("project_detail/{projectId}") {
         fun withId(projectId: Int) = "project_detail/$projectId"
     }
-
+    object ProjectScriptDetail : NavRoutes("script_detail")
+    object ProjectScriptEdit : NavRoutes("script_edit")
     // 연습 하기
     object ProjectSelect : NavRoutes("project_select/{mode}") {
         fun withMode(mode: String) = "project_select/$mode"
@@ -49,6 +50,14 @@ sealed class NavRoutes(val route: String) {
     // 파이널 모드
     object FinalModeVoice : NavRoutes("final_mode_voice")
     object FinalModeAudience : NavRoutes("final_mode_audience")
+    object FinalModeLoading : NavRoutes("final_mode_loading")
+    object FinalReportLoading : NavRoutes("final_report_loading")
+    object FinalModeQnA : NavRoutes("final_mode_qna?question={question}") {
+        fun withQuestion(question: String) =
+            "final_mode_qna?question=${Uri.encode(question)}"
+    }
+    object FinalModeReport : NavRoutes("final_mode_report")
+
 
 
     // 로그인
