@@ -1,11 +1,11 @@
 package com.ssafy.spico.domain.project.entity;
 
+import com.ssafy.spico.domain.project.model.UpdateProjectCommand;
 import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "projects")
@@ -86,4 +86,11 @@ public class ProjectEntity {
     public Integer getLastCoachingCnt() { return lastCoachingCnt; }
 
     public Integer getLastFinalCnt() { return lastFinalCnt; }
+
+    public void updateProject(UpdateProjectCommand command) {
+        if (command.getTitle() != null) this.title = command.getTitle();
+        if (command.getDate() != null) this.date = command.getDate();
+        if (command.getLimitTime() != null) this.limitTime = command.getLimitTime();
+        if (command.getScript() != null) this.script = command.getScript();
+    }
 }

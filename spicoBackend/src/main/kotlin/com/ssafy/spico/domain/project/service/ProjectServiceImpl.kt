@@ -1,6 +1,8 @@
 package com.ssafy.spico.domain.project.service
 
 import com.ssafy.spico.domain.project.dto.ProjectViewType
+import com.ssafy.spico.domain.project.dto.UpdateProjectRequestDto
+import com.ssafy.spico.domain.project.dto.toCommand
 import com.ssafy.spico.domain.project.exception.ProjectError
 import com.ssafy.spico.domain.project.exception.ProjectException
 import com.ssafy.spico.domain.project.model.Project
@@ -9,6 +11,7 @@ import com.ssafy.spico.domain.project.model.toModel
 import com.ssafy.spico.domain.project.repository.ProjectRepository
 import com.ssafy.spico.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProjectServiceImpl(
@@ -23,6 +26,7 @@ class ProjectServiceImpl(
         return entities.map { it.toModel() }
     }
 
+    @Transactional
     override fun createProject(project: Project): Int {
         val userEntity = userRepository.findById(project.userId)
             .orElseThrow { ProjectException(ProjectError.USER_NOT_FOUND) }
@@ -33,5 +37,17 @@ class ProjectServiceImpl(
             throw ProjectException(ProjectError.PERSISTENCE_ERROR)
         }
         return saved.projectId
+    }
+
+    @Transactional
+    override fun updateProject(projectId: Int, request: UpdateProjectRequestDto) {
+        val projectEntity = projectRepository.findById(projectId)
+            .orElseThrow { ProjectException(ProjectError.PROJECT_NOT_FOUND) }
+        val command = request.toCommand()
+        try {
+            projectEntity.updateProject(command)
+        } catch (e: Exception) {
+            throw ProjectException(ProjectError.INVALID_UPDATE_REQUEST)
+        }
     }
 }

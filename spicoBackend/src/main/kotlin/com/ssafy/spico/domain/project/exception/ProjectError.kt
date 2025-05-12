@@ -12,4 +12,6 @@ enum class ProjectError(
 
     PROJECT_NOT_FOUND("500", "J201", "해당 프로젝트를 찾을 수 없습니다."),
     PERSISTENCE_ERROR("500", "J202", "프로젝트 생성 중 오류가 발생했습니다."),
+    INVALID_UPDATE_REQUEST("400", "J203", "프로젝트 수정 중 유효하지 않은 값이 포함되어 있습니다."),
+    INVALID_DATE_FORMAT("400", "J204", "날짜 형식이 잘못되었습니다. 올바른 형식을 입력해주세요.")
 }
