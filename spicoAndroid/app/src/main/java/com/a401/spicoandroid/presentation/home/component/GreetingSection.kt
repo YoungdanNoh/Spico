@@ -128,6 +128,16 @@ fun GreetingSection(
                             }
                         )
                         CommonButton(
+                            text = "대본",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.ProjectScriptDetail.route)
+                            }
+                        )
+                        CommonButton(
                             text = "랜덤스피치",
                             size = ButtonSize.MD,
                             backgroundColor = Action,

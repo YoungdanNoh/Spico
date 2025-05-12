@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -30,7 +29,7 @@ fun ProjectScriptEditScreen(
     viewModel: ProjectScriptViewModel = hiltViewModel(),
     onComplete: (String) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.scriptState.collectAsState()
     val reorderState = rememberReorderableLazyListState(
         onMove = { from, to -> viewModel.moveParagraph(from.index, to.index) },
         onDragEnd = { _, _ -> }
@@ -140,7 +139,7 @@ fun ProjectScriptEditScreen(
                                 ) {
                                     Text(
                                         "문단 ${uiState.paragraphs.indexOf(item) + 1}",
-                                        style = Typography.displaySmall
+                                        style = Typography.displaySmall.copy(TextPrimary)
                                     )
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_drag),
@@ -167,15 +166,14 @@ fun ProjectScriptEditScreen(
                     item {
                         Box(
                             modifier = Modifier
-                                .fillParentMaxSize()
-                                .padding(top = 16.dp),
-                            contentAlignment = Alignment.Center
+                                .fillMaxSize()
+                                .padding(innerPadding)
                         ) {
-                            Text(
-                                text = "아직 문단이 없어요.\n오른쪽 아래 + 버튼을 눌러 문단을 추가해보세요!",
-                                style = Typography.bodyLarge,
-                                color = TextSecondary,
-                                textAlign = TextAlign.Center
+                            EmptyStateView(
+                                imageRes = R.drawable.character_home_1,
+                                message = "아직 문단이 없어요.\n오른쪽 아래 + 버튼을 눌러 문단을 추가해보세요!",
+                                modifier = Modifier.padding(innerPadding),
+                                backgroundColor = White
                             )
                         }
                     }

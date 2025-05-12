@@ -22,13 +22,10 @@ fun ProjectScriptDetailScreen(
     viewModel: ProjectScriptViewModel = hiltViewModel(),
     onEdit: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.scriptState.collectAsState()
 
     Scaffold (
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             CommonTopBar(
                 centerText = "대본",
@@ -62,7 +59,7 @@ fun ProjectScriptDetailScreen(
         ) {
             Text(
                 text = uiState.title,
-                style = Typography.displayMedium,
+                style = Typography.displayMedium.copy(TextPrimary),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp),
@@ -82,18 +79,18 @@ fun ProjectScriptDetailScreen(
                 ) {
                     if (uiState.paragraphs.isEmpty()) {
                         item {
-                            Text(
-                                text = "등록된 대본이 없습니다.",
-                                style = Typography.bodyLarge,
-                                textAlign = TextAlign.Left,
-                                modifier = Modifier.fillMaxWidth()
+                            EmptyStateView(
+                                imageRes = R.drawable.character_home_1,
+                                message = "등록된 대본이 없어요!",
+                                modifier = Modifier.padding(innerPadding),
+                                backgroundColor = White
                             )
                         }
                     } else {
                         items(uiState.paragraphs) { paragraph ->
                             Text(
                                 text = paragraph.text,
-                                style = Typography.bodyLarge,
+                                style = Typography.bodyLarge.copy(TextPrimary),
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Justify
                             )

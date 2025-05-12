@@ -19,6 +19,8 @@ import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
+import com.a401.spicoandroid.presentation.project.screen.ProjectScriptDetailScreen
+import com.a401.spicoandroid.presentation.project.screen.ProjectScriptEditScreen
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListScreen
@@ -63,6 +65,25 @@ fun NavGraph(
             composable(NavRoutes.ProjectList.route) {
                 ProjectListScreen(navController, projectViewModel, {})
             }
+
+            composable(NavRoutes.ProjectScriptDetail.route) {
+                ProjectScriptDetailScreen(
+                    navController,
+                    onEdit = {
+                        navController.navigate(NavRoutes.ProjectScriptEdit.route)
+                    }
+                )
+            }
+
+            composable(NavRoutes.ProjectScriptEdit.route) {
+                ProjectScriptEditScreen(
+                    navController,
+                    onComplete = {
+                        navController.popBackStack(NavRoutes.ProjectScriptDetail.route, inclusive = false)
+                    }
+                )
+            }
+
 
             composable(NavRoutes.VideoReplay.route) {
                 VideoReplayScreen()
