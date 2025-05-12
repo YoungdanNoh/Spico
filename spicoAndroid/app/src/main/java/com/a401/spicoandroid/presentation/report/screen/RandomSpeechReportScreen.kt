@@ -4,28 +4,40 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.common.utils.openExternalLink
-import com.a401.spicoandroid.presentation.report.component.RandomReportDeleteAlert
-import com.a401.spicoandroid.presentation.report.component.RandomReportHeader
-import com.a401.spicoandroid.presentation.report.dummy.DummyRandomSpeechReport
-import com.a401.spicoandroid.common.ui.component.InfoSection
+import com.a401.spicoandroid.presentation.report.component.*
+import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 
 @Composable
 fun RandomSpeechReportScreen(
     navController: NavController,
     randomSpeechId: Int
 ) {
-    val report = remember { DummyRandomSpeechReport }
+    val viewModel: RandomReportViewModel = viewModel()
+    val report = viewModel.report
     val showDeleteAlert = remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchReport(randomSpeechId)
+    }
+
+    if (report == null) {
+        LoadingInProgressView(
+            imageRes = R.drawable.character_home_5,
+            message = "리포트를 생성 중이에요.\n잠시만 기다려주세요!",
+            onHomeClick = { navController.navigate("Home") }
+        )
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -55,41 +67,19 @@ fun RandomSpeechReportScreen(
         ) {
             RandomReportHeader(title = report.title, topic = report.topic)
 
-            InfoSection(title = "랜덤스피치 질문") {
-                Text(
-                    text = report.question,
-                    style = Typography.bodyLarge,
-                    color = TextPrimary
-                )
-            }
+            RandomReportQuestionSection(question = report.question)
 
-            InfoSection(title = "관련기사") {
-                Text(report.newsTitle, style = Typography.displaySmall, color = TextPrimary)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(report.newsSummary, style = Typography.titleMedium, color = TextTertiary)
-                Spacer(modifier = Modifier.height(12.dp))
-                CommonButton(
-                    text = "기사 원문 확인하기",
-                    size = ButtonSize.LG,
-                    backgroundColor = White,
-                    borderColor = Action,
-                    textColor = Action,
-                    onClick = { openExternalLink(context, report.newsUrl) }
-                )
-            }
+            RandomReportNewsSection(
+                title = report.newsTitle,
+                summary = report.newsSummary,
+                url = report.newsUrl,
+                context = context
+            )
 
-            InfoSection(title = "피드백") {
-                Text(
-                    text = report.feedback,
-                    style = Typography.bodyLarge,
-                    color = TextPrimary
-                )
-            }
+            RandomReportFeedbackSection(feedback = report.feedback)
 
-            CommonButton(
-                text = "음성 스크립트",
-                size = ButtonSize.LG,
-                onClick = { /* 음성 스크립트 이동 */ }
+            RandomReportScriptButton(
+                onClick = { /* TODO: 음성 스크립트 보기로 이동 */ }
             )
         }
 
@@ -97,7 +87,7 @@ fun RandomSpeechReportScreen(
             RandomReportDeleteAlert(
                 onConfirm = {
                     showDeleteAlert.value = false
-                    println("리포트 삭제됨") // TODO: 실제 삭제 로직 추가
+                    println("리포트 삭제됨")
                 },
                 onCancel = { showDeleteAlert.value = false },
                 onDismiss = { showDeleteAlert.value = false }

@@ -8,6 +8,7 @@ sealed class NavRoutes(val route: String) {
 
     // 발표 목록
     object ProjectCreate: NavRoutes("project_create")
+    object ProjectScriptInput : NavRoutes("project_script_input")
     object ProjectList: NavRoutes("project_list")
     object ProjectDetail: NavRoutes("project_detail/{projectId}") {
         fun withId(projectId: Int) = "project_detail/$projectId"
@@ -45,6 +46,11 @@ sealed class NavRoutes(val route: String) {
 
     // 코칭 모드
     object CoachingReport : NavRoutes("coaching_report")
+
+    // 파이널 모드
+    object FinalModeVoice : NavRoutes("final_mode_voice")
+    object FinalModeAudience : NavRoutes("final_mode_audience")
+
 
     // 로그인
     object Login : NavRoutes("login")

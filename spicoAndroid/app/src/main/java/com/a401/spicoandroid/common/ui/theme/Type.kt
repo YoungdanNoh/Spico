@@ -83,6 +83,11 @@ val Typography = Typography(
         fontSize    = 12.sp
     ),
 
+    labelMedium = TextStyle(            // Regular   12 · 12/Auto
+        fontFamily = Pretendard,
+        fontWeight  = FontWeight.SemiBold,
+        fontSize    = 14.sp
+    ),
     // Caption
     labelSmall = TextStyle(            // Regular   12 · 12/Auto
         fontFamily = Pretendard,

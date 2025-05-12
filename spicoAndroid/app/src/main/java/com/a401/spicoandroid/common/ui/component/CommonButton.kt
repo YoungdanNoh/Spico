@@ -40,7 +40,7 @@ import com.a401.spicoandroid.R
  * @param fontSize 버튼 내부 텍스트 크기
  */
 enum class ButtonSize(val height: Dp, val width: Dp?, val textStyle: TextStyle) {
-    XS(height = 32.dp, width = 48.dp, textStyle = Typography.labelSmall),
+    XS(height = 32.dp, width = 48.dp, textStyle = Typography.labelMedium),
     SM(height = 40.dp, width = 76.dp, textStyle = Typography.displaySmall),
     MD(height = 40.dp, width = 132.dp, textStyle = Typography.displaySmall),
     LG(height = 40.dp, width = null, textStyle = Typography.displaySmall), // fillMaxWidth

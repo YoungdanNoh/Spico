@@ -1,11 +1,11 @@
 package com.a401.spicoandroid.presentation.project.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +23,7 @@ open class ProjectScriptViewModel @Inject constructor() : ViewModel() {
             scriptId = 1L,
             title = "자기소개 예시 대본",
             paragraphs = listOf(
-                ParagraphItem(text = "안녕하세요. 저는 소프트웨어 개발자를 꿈꾸는 김민규입니다."),
+                ParagraphItem(text = "안녕하세요. 저는 소프트웨어 개발자를 꿈꾸는 김도영입니다."),
                 ParagraphItem(text = "항상 사용자 경험을 먼저 생각하며, 문제 해결에 집중하는 개발자가 되기 위해 노력하고 있습니다."),
                 ParagraphItem(text = "감사합니다.")
             )

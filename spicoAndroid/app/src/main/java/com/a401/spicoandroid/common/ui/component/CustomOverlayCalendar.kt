@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -167,16 +166,16 @@ fun CustomOverlayCalendar(
                             currentMonth = currentMonth.minusMonths(1)
                             selectedDate = currentMonth.atDay(1)
                         }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_arrow_left_black), contentDescription = null)
+                            Icon(painter = painterResource(id = R.drawable.ic_arrow_left_black), contentDescription = null, tint = TextPrimary)
                         }
 
-                        Text("${currentMonth.year}년 ${currentMonth.monthValue}월", style = Typography.headlineLarge)
+                        Text("${currentMonth.year}년 ${currentMonth.monthValue}월", style = Typography.headlineLarge, color = TextPrimary)
 
                         IconButton(onClick = {
                             currentMonth = currentMonth.plusMonths(1)
                             selectedDate = currentMonth.atDay(1)
                         }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_arrow_right_black), contentDescription = null)
+                            Icon(painter = painterResource(id = R.drawable.ic_arrow_right_black), contentDescription = null, tint = TextPrimary)
                         }
                     }
 

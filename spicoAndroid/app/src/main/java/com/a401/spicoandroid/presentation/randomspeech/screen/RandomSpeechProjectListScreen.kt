@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
-import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportCard
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteBottomSheet
