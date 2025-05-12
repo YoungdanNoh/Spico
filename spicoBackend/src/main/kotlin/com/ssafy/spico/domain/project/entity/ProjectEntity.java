@@ -1,5 +1,6 @@
 package com.ssafy.spico.domain.project.entity;
 
+import com.ssafy.spico.domain.project.model.UpdateProjectCommand;
 import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 
@@ -34,16 +35,24 @@ public class ProjectEntity {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "last_coaching_cnt", nullable = false)
+    private Integer lastCoachingCnt;
+
+    @Column(name = "last_final_cnt", nullable = false)
+    private Integer lastFinalCnt;
+
     public ProjectEntity() {
     }
 
-    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, Integer limitTime, String script, LocalDateTime createdAt) {
+    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, Integer limitTime, String script, LocalDateTime createdAt, Integer lastCoachingCnt, Integer lastFinalCnt) {
         this.userEntity = userEntity;
         this.title = title;
         this.date = date;
         this.limitTime = limitTime;
         this.script = script;
         this.createdAt = createdAt;
+        this.lastCoachingCnt = lastCoachingCnt;
+        this.lastFinalCnt = lastFinalCnt;
     }
 
     public Integer getProjectId() {
@@ -72,5 +81,16 @@ public class ProjectEntity {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public Integer getLastCoachingCnt() { return lastCoachingCnt; }
+
+    public Integer getLastFinalCnt() { return lastFinalCnt; }
+
+    public void updateProject(UpdateProjectCommand command) {
+        if (command.getTitle() != null) this.title = command.getTitle();
+        if (command.getDate() != null) this.date = command.getDate();
+        if (command.getLimitTime() != null) this.limitTime = command.getLimitTime();
+        if (command.getScript() != null) this.script = command.getScript();
     }
 }
