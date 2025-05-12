@@ -175,7 +175,7 @@ fun GreetingSection(
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                navController.navigate(NavRoutes.FinalModeVoice.route)
+                                navController.navigate(NavRoutes.FinalModeAudience.route)
                             }
                         )
 
