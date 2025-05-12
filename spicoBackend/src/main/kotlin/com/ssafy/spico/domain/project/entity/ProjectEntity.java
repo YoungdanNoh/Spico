@@ -93,4 +93,12 @@ public class ProjectEntity {
         if (command.getLimitTime() != null) this.limitTime = command.getLimitTime();
         if (command.getScript() != null) this.script = command.getScript();
     }
+
+    public void setLastFinalCnt(Integer lastFinalCnt) {
+        this.lastFinalCnt = lastFinalCnt;
+    }
+
+    public void setLastCoachingCnt(Integer lastCoachingCnt) {
+        this.lastCoachingCnt = lastCoachingCnt;
+    }
 }
