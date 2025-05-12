@@ -40,4 +40,12 @@ class ProjectController(
         projectService.updateProject(projectId, request)
         return ApiResponse.success()
     }
+
+    @DeleteMapping("/{projectId}")
+    fun deleteProject(
+        @PathVariable projectId: Int
+    ): ApiResponse<Unit> {
+        projectService
+        return ApiResponse.success()
+    }
 }
