@@ -30,7 +30,7 @@ fun ProjectScriptEditScreen(
     viewModel: ProjectScriptViewModel = hiltViewModel(),
     onComplete: (String) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.scriptState.collectAsState()
     val reorderState = rememberReorderableLazyListState(
         onMove = { from, to -> viewModel.moveParagraph(from.index, to.index) },
         onDragEnd = { _, _ -> }
@@ -140,7 +140,7 @@ fun ProjectScriptEditScreen(
                                 ) {
                                     Text(
                                         "문단 ${uiState.paragraphs.indexOf(item) + 1}",
-                                        style = Typography.displaySmall
+                                        style = Typography.displaySmall.copy(TextPrimary)
                                     )
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_drag),

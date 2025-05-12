@@ -22,7 +22,7 @@ fun ProjectScriptDetailScreen(
     viewModel: ProjectScriptViewModel = hiltViewModel(),
     onEdit: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.scriptState.collectAsState()
 
     Scaffold (
         modifier = Modifier
@@ -62,7 +62,7 @@ fun ProjectScriptDetailScreen(
         ) {
             Text(
                 text = uiState.title,
-                style = Typography.displayMedium,
+                style = Typography.displayMedium.copy(TextPrimary),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp),
@@ -84,7 +84,7 @@ fun ProjectScriptDetailScreen(
                         item {
                             Text(
                                 text = "등록된 대본이 없습니다.",
-                                style = Typography.bodyLarge,
+                                style = Typography.bodyLarge.copy(TextPrimary),
                                 textAlign = TextAlign.Left,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -93,7 +93,7 @@ fun ProjectScriptDetailScreen(
                         items(uiState.paragraphs) { paragraph ->
                             Text(
                                 text = paragraph.text,
-                                style = Typography.bodyLarge,
+                                style = Typography.bodyLarge.copy(TextPrimary),
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Justify
                             )
