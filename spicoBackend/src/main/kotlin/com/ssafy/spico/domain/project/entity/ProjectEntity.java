@@ -2,7 +2,6 @@ package com.ssafy.spico.domain.project.entity;
 
 import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +27,7 @@ public class ProjectEntity {
     private LocalDate date;
 
     @Column(name = "limit_time", nullable = false)
-    private LocalTime limitTime;
+    private Integer limitTime;
 
     @Column(name = "script", columnDefinition = "TEXT")
     private String script;
@@ -45,7 +44,7 @@ public class ProjectEntity {
     public ProjectEntity() {
     }
 
-    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, LocalTime limitTime, String script, LocalDateTime createdAt, Integer lastCoachingCnt, Integer lastFinalCnt) {
+    public ProjectEntity(UserEntity userEntity, String title, LocalDate date, Integer limitTime, String script, LocalDateTime createdAt, Integer lastCoachingCnt, Integer lastFinalCnt) {
         this.userEntity = userEntity;
         this.title = title;
         this.date = date;
@@ -72,7 +71,7 @@ public class ProjectEntity {
         return date;
     }
 
-    public LocalTime getLimitTime() {
+    public Integer getLimitTime() {
         return limitTime;
     }
 

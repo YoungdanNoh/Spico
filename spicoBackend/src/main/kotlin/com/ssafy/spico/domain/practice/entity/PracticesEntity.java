@@ -3,16 +3,13 @@ package com.ssafy.spico.domain.practice.entity;
 import com.ssafy.spico.domain.project.entity.ProjectEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "practices")
-public class PracticeEntity {
+public class PracticesEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +22,7 @@ public class PracticeEntity {
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ProjectEntity projectEntity;
 
-
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
@@ -36,10 +33,10 @@ public class PracticeEntity {
     @Column(name = "status", nullable = false)
     private PracticeStatus status; // 상태 (진행중, 완료 등)
 
-    public PracticeEntity() {
+    public PracticesEntity() {
     }
 
-    public PracticeEntity(ProjectEntity projectEntity, LocalDateTime createdAt, PracticeType type, PracticeStatus status) {
+    public PracticesEntity(ProjectEntity projectEntity, LocalDateTime createdAt, PracticeType type, PracticeStatus status) {
         this.projectEntity = projectEntity;
         this.createdAt = createdAt;
         this.type = type;

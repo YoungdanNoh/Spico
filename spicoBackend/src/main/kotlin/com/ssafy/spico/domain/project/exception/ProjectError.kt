@@ -9,4 +9,7 @@ enum class ProjectError(
 
     INVALID_PARAMETER("400", "J101", "잘못된 파라미터 값입니다. 올바른 값을 입력해주세요."),
     INVALID_PAGE_SIZE("400", "J102", "페이지의 사이즈를 1 이상으로 지정해주세요."),
+
+    PROJECT_NOT_FOUND("500", "J201", "해당 프로젝트를 찾을 수 없습니다."),
+    PERSISTENCE_ERROR("500", "J202", "프로젝트 생성 중 오류가 발생했습니다."),
 }
