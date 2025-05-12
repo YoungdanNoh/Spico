@@ -10,7 +10,6 @@ import com.ssafy.spico.domain.project.model.toEntity
 import com.ssafy.spico.domain.project.model.toModel
 import com.ssafy.spico.domain.project.repository.ProjectRepository
 import com.ssafy.spico.domain.user.repository.UserRepository
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -67,5 +66,11 @@ class ProjectServiceImpl(
         } catch (e: Exception) {
             throw ProjectException(ProjectError.DELETE_FAILED)
         }
+    }
+
+    override fun getProjectDetail(projectId: Int): Project {
+        val projectEntity = projectRepository.findById(projectId)
+            .orElseThrow { ProjectException(ProjectError.PROJECT_NOT_FOUND) }
+        return projectEntity.toModel()
     }
 }

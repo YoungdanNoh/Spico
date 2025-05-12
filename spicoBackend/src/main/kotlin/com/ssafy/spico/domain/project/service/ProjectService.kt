@@ -9,4 +9,5 @@ interface ProjectService {
     fun createProject(project: Project): Int
     fun updateProject(projectId: Int, request: UpdateProjectRequestDto)
     fun deleteProject(projectId: Int)
+    fun getProjectDetail(projectId: Int): Project
 }
