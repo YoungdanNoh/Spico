@@ -18,10 +18,9 @@ enum class AuthError (
      * 101 ~ 199
      */
     LOGIN_PROVIDER_MISMATCH("401", "A101", "잘못된 OAuth2 인증입니다."),
-    MISSING_OAUTH2_INFO("400", "A102", "OAuth2 사용자 정보가 누락되었습니다."),
-    INVALID_LOGIN_PROVIDER("400", "A103", "유효하지 않은 로그인 제공자입니다."),
-    NOT_AUTHORIZATION_USER("403", "A104", "인가된 사용자가 아닙니다."),
-    AUTH_MEMBER_NOT_FOUND("404", "A105", "존재하지 않는 회원입니다."),
+    INVALID_LOGIN_PROVIDER("400", "A102", "유효하지 않은 로그인 제공자입니다."),
+    NOT_AUTHORIZATION_USER("403", "A103", "인가된 사용자가 아닙니다."),
+    AUTH_MEMBER_NOT_FOUND("404", "A104", "존재하지 않는 회원입니다."),
 
     /**
      * COMMON
