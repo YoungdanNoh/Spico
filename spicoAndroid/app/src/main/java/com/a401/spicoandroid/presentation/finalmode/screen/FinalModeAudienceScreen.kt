@@ -25,6 +25,7 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonTimer
 import com.a401.spicoandroid.common.ui.component.TimerType
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.finalmode.component.VideoBackgroundPlayer
 
 @Composable
 fun FinalModeAudienceScreen(
@@ -51,11 +52,10 @@ fun FinalModeAudienceScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.character_home_1),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+        VideoBackgroundPlayer(
+            context = context,
+            videoResId = R.raw.final_normal,
+            modifier = Modifier.fillMaxSize()
         )
 
         if (countdown >= 0) {
