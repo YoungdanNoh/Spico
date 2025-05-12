@@ -19,8 +19,7 @@ class ProjectController(
         @RequestParam type: ProjectViewType,
     ): ApiResponse<List<ProjectResponseDto>> {
         val projects = projectService.getProjects(cursor, size, type)
-        val response = projects.map { it.toResponse() }
-        return ApiResponse.success(response)
+        return ApiResponse.success(projects.map { it.toResponse() })
     }
 
     @PostMapping
@@ -45,7 +44,15 @@ class ProjectController(
     fun deleteProject(
         @PathVariable projectId: Int
     ): ApiResponse<Unit> {
-        projectService
+        projectService.deleteProject(projectId)
         return ApiResponse.success()
+    }
+
+    @GetMapping("/{projectId}")
+    fun getProjectDetail(
+        @PathVariable projectId: Int,
+    ): ApiResponse<ProjectDetailResponseDto> {
+        val projectDetail = projectService.getProjectDetail(projectId)
+        return ApiResponse.success(projectDetail.toDetailResponse())
     }
 }
