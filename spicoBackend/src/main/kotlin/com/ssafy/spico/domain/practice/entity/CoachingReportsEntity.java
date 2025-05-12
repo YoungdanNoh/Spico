@@ -24,17 +24,39 @@ public class CoachingReportsEntity {
     @Column(name = "pause_count")
     private Integer pauseCount; // 휴지 구간 횟수
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "speech_speed")
-    private String speechSpeed; // 발표 속도 피드백(적당해요, 너무 느려요 등)
+    private SpeedType speechSpeed; // 발표 속도 피드백(SLOW, MIDDLE, FAST)
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "speech_volume")
-    private String speechVolume; // 성량 피드백(적당해요, 너무 커요 등)
+    private VolumeType speechVolume; // 성량 피드백(QUIET, MIDDLE, LOUD)
 
     @Column(name = "record_url")
     private String recordUrl; // 발표 음성 url
 
     @Column(name = "coaching_practice_cnt", nullable = false)
     private Integer coachingPracticeCnt; // 해당 프로젝트의 코칭 모드 연습 횟수
+
+    public CoachingReportsEntity() {
+
+    }
+
+    public CoachingReportsEntity(PracticesEntity practicesEntity,
+                                 Integer pronunciationScore,
+                                 Integer pauseCount,
+                                 SpeedType speechSpeed,
+                                 VolumeType speechVolume,
+                                 String recordUrl,
+                                 Integer coachingPracticeCnt) {
+        this.practicesEntity = practicesEntity;
+        this.pronunciationScore = pronunciationScore;
+        this.pauseCount = pauseCount;
+        this.speechSpeed = speechSpeed;
+        this.speechVolume = speechVolume;
+        this.recordUrl = recordUrl;
+        this.coachingPracticeCnt = coachingPracticeCnt;
+    }
 
     public Integer getCoachingReportId() {
         return CoachingReportId;
@@ -52,11 +74,11 @@ public class CoachingReportsEntity {
         return pauseCount;
     }
 
-    public String getSpeechSpeed() {
+    public SpeedType getSpeechSpeed() {
         return speechSpeed;
     }
 
-    public String getSpeechVolume() {
+    public VolumeType getSpeechVolume() {
         return speechVolume;
     }
 

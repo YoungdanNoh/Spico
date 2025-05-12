@@ -56,6 +56,9 @@ dependencies {
 
     // GPT 관련 의존성 추가
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // minio 관련 의존성
+    implementation("io.minio:minio:8.5.7")
 }
 
 kotlin {
