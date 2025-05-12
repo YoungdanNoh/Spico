@@ -12,7 +12,9 @@ data class Project(
     val date: LocalDate,
     val limitTime: Int,
     val script: String?,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val lastCoachingCnt : Int,
+    val lastFinalCnt : Int
 )
 
 fun Project.toEntity(userEntity: UserEntity): ProjectEntity {
@@ -22,7 +24,9 @@ fun Project.toEntity(userEntity: UserEntity): ProjectEntity {
         this.date,
         this.limitTime,
         this.script,
-        this.createdAt
+        this.createdAt,
+        this.lastCoachingCnt,
+        this.lastFinalCnt
     )
 }
 
@@ -34,6 +38,8 @@ fun ProjectEntity.toModel(): Project {
         date = this.date,
         limitTime = this.limitTime,
         script = this.script,
-        createdAt = this.createdAt
+        createdAt = this.createdAt,
+        lastCoachingCnt = this.lastCoachingCnt,
+        lastFinalCnt = this.lastFinalCnt
     )
 }
