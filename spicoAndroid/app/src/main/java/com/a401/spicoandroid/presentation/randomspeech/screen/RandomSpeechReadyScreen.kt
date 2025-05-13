@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -35,6 +36,11 @@ fun RandomSpeechReadyScreen(
     val context = LocalContext.current
     val data = DummyRandomSpeechReady
     var showExitAlert by remember { mutableStateOf(false) }
+
+    // 뒤로 가기 방지
+    BackHandler(enabled = true) {
+        showExitAlert = true
+    }
 
     Scaffold(
         topBar = {

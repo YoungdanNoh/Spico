@@ -1,9 +1,9 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.magnifier
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,7 +52,7 @@ fun RandomSpeechLandingScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 40.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             CommonButton(
@@ -75,6 +75,7 @@ fun RandomSpeechLandingScreen(
                 modifier = Modifier.weight(1f)
             )
         }
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 

@@ -20,6 +20,7 @@ import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
 import com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScreen
@@ -46,6 +47,7 @@ fun NavGraph(
     NavControllerProvider(navController = navController) {
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
         val projectViewModel: ProjectViewModel = hiltViewModel()
+        val practiceViewModel: PracticeViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
@@ -53,7 +55,12 @@ fun NavGraph(
             modifier = modifier
         ) {
             composable(NavRoutes.Home.route) {
-                HomeScreen(navController, modifier, weeklyCalendarViewModel)
+                HomeScreen(
+                    navController = navController,
+                    modifier = modifier,
+                    calendarViewModel = weeklyCalendarViewModel,
+                    practiceViewModel = practiceViewModel
+                )
             }
 
             // 마이페이지
@@ -110,23 +117,22 @@ fun NavGraph(
                 ProjectDetailScreen(projectId = projectId)
             }
             // 연습하기
-            composable(
-                route = NavRoutes.ProjectSelect.route,
-                arguments = listOf(navArgument("mode") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val mode = backStackEntry.arguments?.getString("mode") ?: "coaching"
+            composable(route = NavRoutes.ProjectSelect.route) {
                 ProjectSelectScreen(
                     navController = navController,
-                    mode = mode
+                    viewModel = practiceViewModel
                 )
             }
             // 파이널 모드 설정 화면
             composable(NavRoutes.FinalSetting.route) {
-                FinalSettingScreen(navController = navController)
+                FinalSettingScreen(navController = navController,
+                    viewModel = practiceViewModel
+                )
             }
             composable(NavRoutes.FinalScreenCheck.route) {
                 FinalScreenCheckScreen(
-                    navController = navController
+                    navController = navController,
+                    viewModel = practiceViewModel
                 )
             }
             // 랜덤 스피치

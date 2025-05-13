@@ -16,9 +16,7 @@ sealed class NavRoutes(val route: String) {
     object ProjectScriptDetail : NavRoutes("script_detail")
     object ProjectScriptEdit : NavRoutes("script_edit")
     // 연습 하기
-    object ProjectSelect : NavRoutes("project_select/{mode}") {
-        fun withMode(mode: String) = "project_select/$mode"
-    }
+    object ProjectSelect : NavRoutes("project_select")
     object FinalSetting : NavRoutes("final_setting")
     object FinalScreenCheck : NavRoutes("final_check")
     // 영상 다시 보기
