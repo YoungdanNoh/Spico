@@ -70,7 +70,13 @@ fun NavGraph(
             }
 
             composable(NavRoutes.ProjectList.route) {
-                ProjectListScreen(navController, projectViewModel, {})
+                ProjectListScreen(
+                    navController = navController,
+                    projectViewModel = projectViewModel,
+                    onFabClick = {
+                        navController.navigate(NavRoutes.ProjectCreate.route)
+                    }
+                )
             }
 
             composable(NavRoutes.ProjectScriptDetail.route) {
