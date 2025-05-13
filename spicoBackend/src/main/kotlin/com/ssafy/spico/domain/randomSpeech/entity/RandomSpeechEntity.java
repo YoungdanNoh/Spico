@@ -7,7 +7,6 @@ import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "random_speeches")
@@ -121,7 +120,7 @@ public class RandomSpeechEntity {
         this.question = command.getQuestion();
     }
 
-    public void updateResult(UpdateResultCommand command) {
+    public void updateReport(UpdateResultCommand command) {
         this.script = command.getScript();
         this.aiFeedback = command.getFeedback();
         this.aiTitle = command.getTitle();
