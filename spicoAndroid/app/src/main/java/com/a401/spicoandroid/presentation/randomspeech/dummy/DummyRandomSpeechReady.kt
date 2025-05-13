@@ -1,6 +1,6 @@
 package com.a401.spicoandroid.presentation.randomspeech.dummy
 
-import com.a401.spicoandroid.presentation.randomspeech.model.RandomSpeechContent
+import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechContent
 
 val DummyRandomSpeechReady = RandomSpeechContent(
     id = 1,
