@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.project.api.ProjectApi
+import com.a401.spicoandroid.data.practice.api.PracticeApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +19,12 @@ object ApiModule {
     fun provideProjectApi(@NetworkModule.MainRetrofit retrofit: Retrofit)
             : ProjectApi {
         return retrofit.create(ProjectApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePracticeApi(@NetworkModule.MainRetrofit retrofit: Retrofit): PracticeApi {
+        return retrofit.create(PracticeApi::class.java)
     }
 
 }

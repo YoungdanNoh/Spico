@@ -8,17 +8,18 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.delay
 
 @Composable
-fun CountdownTimer(
+fun countdownTimer(
     totalSeconds: Int,
-    onFinish: () -> Unit = {}
+    onFinish: () -> Unit = {},
+    isRunning: Boolean = true
 ): State<Int> {
     val seconds = remember { mutableIntStateOf(totalSeconds) }
 
-    LaunchedEffect(seconds.intValue) {
-        if (seconds.intValue > 0) {
+    LaunchedEffect(seconds.intValue, isRunning) {
+        if (isRunning && seconds.intValue > 0) {
             delay(1000)
             seconds.intValue -= 1
-        } else {
+        } else if (isRunning && seconds.intValue == 0) {
             onFinish()
         }
     }
