@@ -11,14 +11,14 @@ import kotlinx.coroutines.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @HiltViewModel
-class FinalModeViewModel @Inject constructor(
-    private val application: Application
-) : AndroidViewModel(application) {
+class FinalModeViewModel @Inject constructor() : ViewModel()
+ {
 
     private val audioAnalyzer = AudioAnalyzer()
 
@@ -40,6 +40,9 @@ class FinalModeViewModel @Inject constructor(
     private var recordingStartMillis: Long = 0L
     private var timerJob: Job? = null
 
+    var question by mutableStateOf("")
+        private set
+
     fun startCountdownAndRecording(onStartRecording: () -> Unit) {
         viewModelScope.launch {
             for (i in 3 downTo 1) {
@@ -55,7 +58,7 @@ class FinalModeViewModel @Inject constructor(
         }
     }
 
-    private fun startTimer() {
+    fun startTimer() {
         recordingStartMillis = System.currentTimeMillis()
         timerJob = viewModelScope.launch {
             while (isRecording) {
@@ -92,8 +95,10 @@ class FinalModeViewModel @Inject constructor(
         showStopConfirm = false
     }
 
-    suspend fun fetchQuestion(): String {
-        delay(1000) // 실제 API 호출
-        return "왜 초등학생을 대상으로 하셨나요?"
-    }
-}
+     suspend fun fetchQuestion(): String {
+         delay(1000)
+         val result = "왜 초등학생을 대상으로 하셨나요?"
+         question = result
+         return result
+     }
+ }
