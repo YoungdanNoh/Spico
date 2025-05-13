@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.common.utils
 
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -30,4 +31,9 @@ fun formatTimeOnly(dateTimeString: String): String {
     val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.KOREAN)
     val outputFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.KOREAN)
     return LocalDateTime.parse(dateTimeString, inputFormatter).format(outputFormatter)
+}
+
+fun formatDateWithDay(date: LocalDate): String {
+    val outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd. EEEE", Locale.KOREAN)
+    return date.format(outputFormatter)
 }

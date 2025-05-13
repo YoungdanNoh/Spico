@@ -1,6 +1,5 @@
 package com.a401.spicoandroid.presentation.practice.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -12,14 +11,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.practice.component.CameraPreview
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
 @Composable
-fun FinalScreenCheckScreen(navController: NavController) {
+fun FinalScreenCheckScreen(
+    navController: NavController,
+    viewModel: PracticeViewModel = hiltViewModel()
+) {
     Scaffold(
         topBar = {
             CommonTopBar(
@@ -44,7 +48,18 @@ fun FinalScreenCheckScreen(navController: NavController) {
                     text = "시작하기",
                     size = ButtonSize.LG,
                     onClick = {
-                        // TODO: 파이널 모드 시작으로 이동
+                        viewModel.createPractice(
+                            onSuccess = {
+                                if (viewModel.hasAudience) {
+                                    navController.navigate("final_mode_audience")
+                                } else {
+                                    navController.navigate("final_mode_voice")
+                                }
+                            },
+                            onFailure = {
+                                // TODO: 실패 시 처리
+                            }
+                        )
                     }
                 )
             }
