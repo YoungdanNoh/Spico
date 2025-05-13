@@ -50,10 +50,7 @@ sealed class NavRoutes(val route: String) {
     object FinalModeAudience : NavRoutes("final_mode_audience")
     object FinalModeLoading : NavRoutes("final_mode_loading")
     object FinalReportLoading : NavRoutes("final_report_loading")
-    object FinalModeQnA : NavRoutes("final_mode_qna?question={question}") {
-        fun withQuestion(question: String) =
-            "final_mode_qna?question=${Uri.encode(question)}"
-    }
+    object FinalModeQnA : NavRoutes("final_mode_qna")
     object FinalModeReport : NavRoutes("final_mode_report")
 
 

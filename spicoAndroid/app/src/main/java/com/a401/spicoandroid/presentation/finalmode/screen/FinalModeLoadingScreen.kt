@@ -28,9 +28,9 @@ fun FinalModeLoadingScreen(
     LaunchedEffect(Unit) {
         when (type) {
             FinalModeLoadingType.QUESTION -> {
-                val result = viewModel.fetchQuestion()
+                viewModel.fetchQuestion()
                 delay(1500)
-                navController.navigate(NavRoutes.FinalModeQnA.withQuestion(result))
+                navController.navigate(NavRoutes.FinalModeQnA.route)
             }
 
             FinalModeLoadingType.REPORT -> {
