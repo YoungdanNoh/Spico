@@ -59,4 +59,7 @@ sealed class NavRoutes(val route: String) {
     // 로그인
     object Login : NavRoutes("login")
 
+    //에러
+    object NotFound : NavRoutes("not_found")
+
 }

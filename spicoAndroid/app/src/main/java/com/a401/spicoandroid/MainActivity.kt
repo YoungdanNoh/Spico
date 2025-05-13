@@ -40,12 +40,10 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-
             val navController = rememberNavController()
             val backStackEntry = navController.currentBackStackEntryAsState().value
             val currentRoute = backStackEntry?.destination?.route
 
-            // 하단바를 표시할 route만 정의
             val bottomBarRoutes = listOf(
                 NavRoutes.Home.route,
                 NavRoutes.ProjectList.route,
@@ -55,19 +53,19 @@ class MainActivity : ComponentActivity() {
                 "project_detail",
                 "coaching_report",
                 "final_mode_report",
-                "randomspeech_project_list"
+                "randomspeech_project_list",
+                "not_found"
             )
 
-            // 현재 라우트가 하단바 표시 대상인지 확인
             val shouldShowBottomBar = bottomBarRoutes.any { currentRoute?.startsWith(it) == true }
 
             SpeakoAndroidTheme {
-                Scaffold(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.safeDrawing),
-                    bottomBar = {
-                        if (shouldShowBottomBar) {
+                if (shouldShowBottomBar) {
+                    Scaffold(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.safeDrawing),
+                        bottomBar = {
                             CommonBottomBar(
                                 navController = navController,
                                 onFabClick = {
@@ -75,12 +73,23 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+                    ) { innerPadding ->
+                        NavGraph(
+                            navController = navController,
+                            modifier = Modifier.padding(innerPadding)
+                        )
                     }
-                ) { innerPadding ->
-                    NavGraph(
-                        navController = navController,
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                } else {
+                    Scaffold(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.safeDrawing)
+                    ) { innerPadding ->
+                        NavGraph(
+                            navController = navController,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 }
             }
         }
