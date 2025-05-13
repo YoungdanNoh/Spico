@@ -31,7 +31,23 @@ public class VideoFeedbackPointsEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "feedback_detail")
-    private FeedbackDetail feedbackDetail; // 지적 세부 사항(SLOW, FAST, QUIET, LOUD)
+    private FeedbackDetail feedbackDetail; // 지적 세부 사항(SLOW, FAST, QUIET, LOUD, MIDDLE)
+
+    public VideoFeedbackPointsEntity() {
+
+    }
+
+    public VideoFeedbackPointsEntity(FinalReportsEntity finalReportsEntity,
+                                     FeedbackType type,
+                                     LocalDateTime startTime,
+                                     LocalDateTime endTime,
+                                     FeedbackDetail feedbackDetail) {
+        this.finalReportsEntity = finalReportsEntity;
+        this.type = type;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.feedbackDetail = feedbackDetail;
+    }
 
     public Integer getVideoFeedbackPointId() {
         return videoFeedbackPointId;
@@ -56,4 +72,6 @@ public class VideoFeedbackPointsEntity {
     public FeedbackDetail getFeedbackDetail() {
         return feedbackDetail;
     }
+
+
 }
