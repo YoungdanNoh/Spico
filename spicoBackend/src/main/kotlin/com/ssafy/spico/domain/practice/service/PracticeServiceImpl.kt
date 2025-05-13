@@ -146,7 +146,8 @@ class PracticeServiceImpl (
         // 1. qaRecords가 비어있으면
         //    finalReportsEntity 의 final_practice_cnt 값을 1개 증가시키기
         //    projectsEntity 의 last_final_cnt 값을 1 증가시키기
-        if(endFinalPractice.answers == null){
+        println("endFinalPractice.answers${endFinalPractice.answers}")
+        if(endFinalPractice.answers.isNullOrEmpty()){
             // 1-1. 해당 practice의 상태를 COMPLETED로 변경
             practiceEntity.setStatus(PracticeStatus.COMPLETED)
 
@@ -154,6 +155,11 @@ class PracticeServiceImpl (
             val projectEntity = projectRepository.findById(projectId)
                 .orElseThrow { PracticeException(PracticeError.PROJECT_NOT_FOUND) }
             projectEntity.lastFinalCnt += 1
+
+            val existingReport = finalReportsRepository.findReportByPractice(practiceId)
+            if (existingReport != null) {
+                throw PracticeException(PracticeError.DUPLICATED_FINAL_REPORT)
+            }
 
             val finalReportsEntity = FinalReportsEntity(
                 practiceEntity,

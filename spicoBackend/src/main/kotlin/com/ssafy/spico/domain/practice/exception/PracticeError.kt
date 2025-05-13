@@ -26,6 +26,7 @@ enum class PracticeError(
     INVALID_VOLUME_STATUS("404", "P405", "유효한 성량 평가 값이 아닙니다."),
 
     QUESTION_NOT_FOUND("404", "P501","해당 question_id에 대한 정보를 찾을 수 없습니다."),
-    UNAUTHORIZED_QUESTION_ACCESS("404", "P502","현재 프로젝트 질문에 대한 question_id가 아닙니다.")
+    UNAUTHORIZED_QUESTION_ACCESS("404", "P502","현재 프로젝트 질문에 대한 question_id가 아닙니다."),
+    DUPLICATED_FINAL_REPORT("404", "P503","이미 해당 연습에 대한 리포트가 존재합니다.")
 
 }
