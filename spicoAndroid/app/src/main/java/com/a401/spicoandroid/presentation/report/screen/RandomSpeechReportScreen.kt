@@ -79,7 +79,7 @@ fun RandomSpeechReportScreen(
             RandomReportFeedbackSection(feedback = report.feedback)
 
             RandomReportScriptButton(
-                onClick = { /* TODO: 음성 스크립트 보기로 이동 */ }
+                onClick = { navController.navigate("not_found") }
             )
         }
 

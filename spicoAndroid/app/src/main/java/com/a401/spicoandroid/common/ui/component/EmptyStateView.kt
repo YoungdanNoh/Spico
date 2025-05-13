@@ -3,9 +3,12 @@ package com.a401.spicoandroid.common.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,8 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.R
+import com.a401.spicoandroid.common.ui.theme.*
 
 @Composable
 fun EmptyStateView(
@@ -24,7 +27,9 @@ fun EmptyStateView(
     modifier: Modifier = Modifier,
     backgroundColor: Color = BrokenWhite,
     actionText: String? = null,
-    onActionClick: (() -> Unit)? = null
+    onActionClick: (() -> Unit)? = null,
+    subActionText: String? = null,
+    onSubActionClick: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -48,7 +53,6 @@ fun EmptyStateView(
             textAlign = TextAlign.Center
         )
 
-        // 버튼이 필요한 경우에만 표시
         if (!actionText.isNullOrBlank() && onActionClick != null) {
             Spacer(modifier = Modifier.height(32.dp))
             CommonButton(
@@ -57,8 +61,24 @@ fun EmptyStateView(
                 onClick = onActionClick
             )
         }
+
+        if (!subActionText.isNullOrBlank() && onSubActionClick != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = subActionText,
+                style = Typography.titleMedium,
+                color = TextTertiary,
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    onSubActionClick()
+                }
+            )
+        }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun EmptyStateView_NoAction_Preview() {
@@ -69,6 +89,7 @@ fun EmptyStateView_NoAction_Preview() {
         )
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun EmptyStateView_WithAction_Preview() {
@@ -82,4 +103,16 @@ fun EmptyStateView_WithAction_Preview() {
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun EmptyStateView_WithActionAndSubAction_Preview() {
+    SpeakoAndroidTheme {
+        EmptyStateView(
+            imageRes = R.drawable.character_home_2,
+            message = "요청하신 페이지를 찾을 수 없어요.",
+            actionText = "다시 시도하기",
+            subActionText = "홈으로 가기",
+            onSubActionClick = { println("홈으로 이동") }
+        )
+    }
+}

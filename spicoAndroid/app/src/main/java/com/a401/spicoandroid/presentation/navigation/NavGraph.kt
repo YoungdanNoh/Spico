@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
+import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
@@ -266,6 +267,12 @@ fun NavGraph(
             composable(NavRoutes.Login.route) {
                 LoginScreen(onKakaoLoginClick = {})
             }
+
+            // 에러
+            composable("not_found") {
+                NotFoundScreen(navController)
+            }
+
         }
     }
 }
