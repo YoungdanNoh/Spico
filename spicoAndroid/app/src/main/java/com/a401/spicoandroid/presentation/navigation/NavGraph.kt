@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
 import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
+import com.a401.spicoandroid.presentation.auth.viewmodel.LoginViewModel
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
@@ -40,6 +41,7 @@ import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import kotlin.math.log
 
 @Composable
 fun NavGraph(
@@ -50,6 +52,7 @@ fun NavGraph(
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
         val projectViewModel: ProjectViewModel = hiltViewModel()
         val practiceViewModel: PracticeViewModel = hiltViewModel()
+        val loginViewModel: LoginViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
@@ -265,7 +268,7 @@ fun NavGraph(
 
             // 로그인
             composable(NavRoutes.Login.route) {
-                LoginScreen(onKakaoLoginClick = {})
+                LoginScreen(loginViewModel)
             }
 
             // 에러

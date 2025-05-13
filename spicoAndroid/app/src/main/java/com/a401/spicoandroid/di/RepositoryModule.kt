@@ -1,6 +1,8 @@
 package com.a401.spicoandroid.di
 
+import com.a401.spicoandroid.data.auth.repository.AuthRepositoryImpl
 import com.a401.spicoandroid.data.project.repository.ProjectRepositoryImpl
+import com.a401.spicoandroid.domain.auth.AuthRepository
 import com.a401.spicoandroid.domain.project.repository.ProjectRepository
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,10 @@ internal abstract class RepositoryModule {
     abstract fun bindProjectRepository(
         projectRepositoryImpl: ProjectRepositoryImpl
     ): ProjectRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
 }
