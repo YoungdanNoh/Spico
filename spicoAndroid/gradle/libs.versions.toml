@@ -44,6 +44,7 @@ camera-version = "1.4.2"
 cameraView = "1.4.2"
 
 media3 = "1.6.1"
+v2User = "2.21.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -109,6 +110,7 @@ media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", vers
 media3-ui-compose = { module = "androidx.media3:media3-ui-compose", version.ref = "media3" }
 
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "v2User" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

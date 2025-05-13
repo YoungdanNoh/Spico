@@ -67,8 +67,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
         ) {
-            LogoWithPagerSection(pagerState, imageList)
-            LoginDescriptionText(pagerState.currentPage, textList)
+            LoginPagerContent(pagerState, imageList, textList)
         }
 
         // indicator+button

@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.project.component
+package com.a401.spicoandroid.presentation.home.component
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.a401.spicoandroid.domain.home.model.ProjectSchedule
 import androidx.navigation.NavHostController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.ButtonSize
@@ -23,7 +24,6 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatTimeOnly
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @RequiresApi(Build.VERSION_CODES.O)

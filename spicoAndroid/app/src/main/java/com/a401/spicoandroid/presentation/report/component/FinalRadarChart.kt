@@ -19,7 +19,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 fun FinalRadarChart(
     modifier: Modifier = Modifier,
     labels: List<String> = listOf("발음", "속도", "성량", "휴지", "대본"),
-    scores: List<Float> = listOf(80f, 70f, 90f, 85f, 75f)
+    scores: List<Float>
 ) {
     AndroidView(
         modifier = modifier,
@@ -90,10 +90,4 @@ fun FinalRadarChart(
             }
         }
     )
-}
-
-@Composable
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
-fun FinalRadarChartPreview() {
-    FinalRadarChart()
 }

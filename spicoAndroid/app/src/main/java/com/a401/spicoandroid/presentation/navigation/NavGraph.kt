@@ -12,12 +12,16 @@ import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeQnAScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
+import com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
+import com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScreen
@@ -33,6 +37,8 @@ import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechSettin
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
+import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
+import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
 
 @Composable
 fun NavGraph(
@@ -42,6 +48,7 @@ fun NavGraph(
     NavControllerProvider(navController = navController) {
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
         val projectViewModel: ProjectViewModel = hiltViewModel()
+        val practiceViewModel: PracticeViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
@@ -49,7 +56,12 @@ fun NavGraph(
             modifier = modifier
         ) {
             composable(NavRoutes.Home.route) {
-                HomeScreen(navController, modifier, weeklyCalendarViewModel)
+                HomeScreen(
+                    navController = navController,
+                    modifier = modifier,
+                    calendarViewModel = weeklyCalendarViewModel,
+                    practiceViewModel = practiceViewModel
+                )
             }
 
             // 마이페이지
@@ -66,7 +78,13 @@ fun NavGraph(
             }
 
             composable(NavRoutes.ProjectList.route) {
-                ProjectListScreen(navController, projectViewModel, {})
+                ProjectListScreen(
+                    navController = navController,
+                    projectViewModel = projectViewModel,
+                    onFabClick = {
+                        navController.navigate(NavRoutes.ProjectCreate.route)
+                    }
+                )
             }
 
             composable(NavRoutes.ProjectScriptDetail.route) {
@@ -100,23 +118,22 @@ fun NavGraph(
                 ProjectDetailScreen(projectId = projectId)
             }
             // 연습하기
-            composable(
-                route = NavRoutes.ProjectSelect.route,
-                arguments = listOf(navArgument("mode") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val mode = backStackEntry.arguments?.getString("mode") ?: "coaching"
-                com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen(
+            composable(route = NavRoutes.ProjectSelect.route) {
+                ProjectSelectScreen(
                     navController = navController,
-                    mode = mode
+                    viewModel = practiceViewModel
                 )
             }
             // 파이널 모드 설정 화면
             composable(NavRoutes.FinalSetting.route) {
-                FinalSettingScreen(navController = navController)
+                FinalSettingScreen(navController = navController,
+                    viewModel = practiceViewModel
+                )
             }
             composable(NavRoutes.FinalScreenCheck.route) {
-                com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen(
-                    navController = navController
+                FinalScreenCheckScreen(
+                    navController = navController,
+                    viewModel = practiceViewModel
                 )
             }
             // 랜덤 스피치
@@ -203,7 +220,7 @@ fun NavGraph(
                 arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: -1
-                com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen(
+                RandomSpeechReportScreen(
                     navController = navController,
                     randomSpeechId = randomSpeechId)
             }
@@ -218,16 +235,30 @@ fun NavGraph(
 
             // 파이널 모드
             composable("final_mode_voice") {
-                FinalModeVoiceScreen()
+                FinalModeVoiceScreen(navController)
             }
             composable("final_mode_audience") {
                 FinalModeAudienceScreen(navController)
             }
             composable("final_mode_loading") {
-                FinalModeLoadingScreen(navController)
+                FinalModeLoadingScreen(
+                    navController = navController,
+                    type = FinalModeLoadingType.QUESTION
+                )
             }
-            composable("final_mode_qna") {
-                FinalModeQnAScreen(question = "왜 초등학생을 대상으로 하셨나요?")
+            composable("final_report_loading") {
+                FinalModeLoadingScreen(
+                    navController = navController,
+                    type = FinalModeLoadingType.REPORT
+                )
+            }
+            composable(
+                route = NavRoutes.FinalModeQnA.route
+            ) {
+                FinalModeQnAScreen(navController = navController)
+            }
+            composable("final_mode_report") {
+                FinalReportScreen()
             }
 
 

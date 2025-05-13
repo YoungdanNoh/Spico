@@ -1,6 +1,6 @@
 package com.a401.spicoandroid.presentation.report.dummy
 
-import com.a401.spicoandroid.presentation.report.model.RandomSpeechReport
+import com.a401.spicoandroid.domain.report.model.RandomSpeechReport
 
 val DummyRandomSpeechReport = RandomSpeechReport(
     title = "MZ는 개복치다",

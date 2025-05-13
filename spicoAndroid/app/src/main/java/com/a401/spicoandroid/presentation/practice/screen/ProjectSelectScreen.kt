@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.practice.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,27 +12,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatDateWithDay
-import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.dummy.DummyProjectList
-import com.a401.spicoandroid.presentation.practice.dummy.PracticeProject
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeMode
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
+
 
 @Composable
 fun ProjectSelectScreen(
     navController: NavController,
-    mode: String // "coaching" or "final"
+    viewModel: PracticeViewModel = hiltViewModel()
 ) {
     val projectList = DummyProjectList
-//    val projectList = emptyList<PracticeProject>()
+    val selectedMode = viewModel.selectedMode
+    Log.d("PracticeDebug", "ProjectSelectScreen 진입 - selectedMode: $selectedMode")
 
     Scaffold(
         topBar = {
@@ -41,7 +43,10 @@ fun ProjectSelectScreen(
                     IconButton(
                         iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로가기",
-                        onClick = { navController.popBackStack() }
+                        onClick = {
+                            viewModel.reset() // 전체 흐름 초기화
+                            navController.popBackStack()
+                        }
                     )
                 }
             )
@@ -74,6 +79,7 @@ fun ProjectSelectScreen(
             verticalArrangement = Arrangement.Top
         ) {
             if (projectList.isEmpty()) {
+                // 프로젝트 없음 화면
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -95,6 +101,7 @@ fun ProjectSelectScreen(
                     )
                 }
             } else {
+                // 프로젝트 리스트
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -105,15 +112,34 @@ fun ProjectSelectScreen(
                         CommonList(
                             modifier = Modifier.dropShadow1(),
                             imagePainter = painterResource(id = R.drawable.img_list_practice),
-                            title = project.projectName,
-                            description = formatDateWithDay(project.projectDate),
+                            title = project.title,
+                            description = formatDateWithDay(project.date),
                             onClick = {
-                                when (mode) {
-                                    "final" -> navController.navigate("final_setting")
-                                    "coaching" -> { /* TODO */
+                                viewModel.selectedProject = project
+
+
+                                when (selectedMode) {
+                                    PracticeMode.FINAL -> {
+                                        navController.navigate(NavRoutes.FinalSetting.route)
+                                    }
+
+                                    PracticeMode.COACHING -> {
+                                        viewModel.createPractice(
+                                            onSuccess = {
+                                                // TODO: 코칭모드 시작
+                                            },
+                                            onFailure = {
+                                                // TODO: 실패 시
+                                            }
+                                        )
+                                    }
+
+                                    null -> {
+                                        // TODO: 모드가 선택되지 않았을 경우 처리
                                     }
                                 }
                             }
+
                         )
                     }
                 }
@@ -122,13 +148,3 @@ fun ProjectSelectScreen(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF7FAF8, widthDp = 360)
-@Composable
-fun PreviewProjectSelectScreen() {
-    SpeakoAndroidTheme {
-        ProjectSelectScreen(
-            navController = rememberNavController(),
-            mode = "final"
-        )
-    }
-}

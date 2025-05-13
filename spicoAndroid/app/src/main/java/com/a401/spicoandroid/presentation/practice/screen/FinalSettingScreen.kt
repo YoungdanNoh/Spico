@@ -17,10 +17,12 @@ import com.a401.spicoandroid.common.utils.formatTime
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.component.SettingStepperItem
 import com.a401.spicoandroid.presentation.practice.component.SettingToggleItem
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
 @Composable
 fun FinalSettingScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: PracticeViewModel
 ) {
     var hasAudience by remember { mutableStateOf(true) }
     var hasQnA by remember { mutableStateOf(true) }

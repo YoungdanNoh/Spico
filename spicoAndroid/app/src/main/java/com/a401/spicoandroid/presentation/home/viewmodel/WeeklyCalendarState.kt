@@ -1,8 +1,8 @@
 package com.a401.spicoandroid.presentation.home.viewmodel
 
 import com.a401.spicoandroid.common.presentation.BaseState
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
-import com.a401.spicoandroid.presentation.home.util.getStartOfWeek
+import com.a401.spicoandroid.common.utils.getStartOfWeek
+import com.a401.spicoandroid.domain.home.model.ProjectSchedule
 import java.time.LocalDate
 
 data class WeeklyCalendarState(

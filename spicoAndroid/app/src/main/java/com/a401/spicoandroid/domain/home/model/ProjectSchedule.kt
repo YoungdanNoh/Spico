@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.home.model
+package com.a401.spicoandroid.domain.home.model
 
 import java.time.LocalDate
 import java.time.LocalDateTime
