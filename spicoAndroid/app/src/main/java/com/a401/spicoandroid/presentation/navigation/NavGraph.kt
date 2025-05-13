@@ -55,7 +55,12 @@ fun NavGraph(
             modifier = modifier
         ) {
             composable(NavRoutes.Home.route) {
-                HomeScreen(navController, modifier, weeklyCalendarViewModel)
+                HomeScreen(
+                    navController = navController,
+                    modifier = modifier,
+                    calendarViewModel = weeklyCalendarViewModel,
+                    practiceViewModel = practiceViewModel
+                )
             }
 
             // 마이페이지

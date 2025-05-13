@@ -15,6 +15,7 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.home.component.*
 import com.a401.spicoandroid.presentation.home.dummy.DummyProjectList
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoDialog
 import java.time.LocalDate
 
@@ -23,7 +24,8 @@ import java.time.LocalDate
 fun HomeScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    calendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
+    calendarViewModel: WeeklyCalendarViewModel = hiltViewModel(),
+    practiceViewModel: PracticeViewModel
 ) {
     val currentWeekDates by calendarViewModel.currentWeekDates.collectAsState()
     val markedDates by calendarViewModel.markedDates.collectAsState()
@@ -71,7 +73,9 @@ fun HomeScreen(
                     }
                 )
 
-                PracticeSection(navController = navController)
+                PracticeSection(
+                    navController = navController,
+                    viewModel = practiceViewModel)
             }
         }
 

@@ -33,6 +33,7 @@ fun ProjectSelectScreen(
 ) {
     val projectList = DummyProjectList
     val selectedMode = viewModel.selectedMode
+    Log.d("PracticeDebug", "ProjectSelectScreen 진입 - selectedMode: $selectedMode")
 
     Scaffold(
         topBar = {
