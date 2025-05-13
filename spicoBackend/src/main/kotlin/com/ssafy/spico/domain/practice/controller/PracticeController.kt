@@ -2,14 +2,16 @@ package com.ssafy.spico.domain.practice.controller
 
 import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.practice.dto.*
-import com.ssafy.spico.domain.practice.service.PracticeServiceImpl
+import com.ssafy.spico.domain.practice.service.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/projects/{projectId}/practices")
 class PracticeController(
-    private val practiceService: PracticeServiceImpl,
+    private val coachingPracticeService: CoachingPracticeService,
+    private val finalPracticeService: FinalPracticeService,
+    private val finalPracticeReportService: FinalPracticeReportService,
     @Value("\${user-id}") private val userId: Int
 ) {
 
@@ -22,7 +24,7 @@ class PracticeController(
 
         val setting = request.toModel()
 
-        return ApiResponse.success(practiceService.startFinalPractice(userId, projectId, setting))
+        return ApiResponse.success(finalPracticeService.startFinalPractice(userId, projectId, setting))
 
     }
 
@@ -36,7 +38,7 @@ class PracticeController(
 
         val speech = request.toModel()
 
-        return ApiResponse.success(practiceService.generateGPTQuestion(userId, projectId, practiceId, speech))
+        return ApiResponse.success(finalPracticeService.generateGPTQuestion(userId, projectId, practiceId, speech))
     }
 
     // 파이널 모드 종료
@@ -49,7 +51,7 @@ class PracticeController(
 
         val endFinalPractice = request.toModel()
 
-        return ApiResponse.success(practiceService.endFinalPractice(projectId, practiceId, endFinalPractice))
+        return ApiResponse.success(finalPracticeService.endFinalPractice(projectId, practiceId, endFinalPractice))
     }
 
     // 코칭 모드 시작
@@ -58,7 +60,7 @@ class PracticeController(
         @PathVariable projectId: Int
     ): ApiResponse<StartCoachingPracticeResponseDto> {
 
-        return ApiResponse.success(practiceService.startCoachingPractice(userId, projectId))
+        return ApiResponse.success(coachingPracticeService.startCoachingPractice(userId, projectId))
     }
 
     // 코칭모드 종료
@@ -71,7 +73,7 @@ class PracticeController(
 
         val endCoachingPractice = request.toModel()
 
-        return ApiResponse.success(practiceService.endCoachingPractice(userId, projectId, practiceId, endCoachingPractice))
+        return ApiResponse.success(coachingPracticeService.endCoachingPractice(userId, projectId, practiceId, endCoachingPractice))
     }
 
     // 파이널 모드 리포트 조회
@@ -81,6 +83,6 @@ class PracticeController(
         @PathVariable practiceId: Int
     ): ApiResponse<FinalPracticeReportResponseDto> {
 
-        return ApiResponse.success(practiceService.finalPracticeReport(userId, projectId, practiceId))
+        return ApiResponse.success(finalPracticeReportService.finalPracticeReport(userId, projectId, practiceId))
     }
 }
