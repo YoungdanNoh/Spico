@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.report.model
+package com.a401.spicoandroid.domain.report.model
 
 data class RandomSpeechReport(
     val title: String,

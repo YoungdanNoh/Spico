@@ -46,16 +46,6 @@ fun RandomSpeechReadyScreen(
         topBar = {
             CommonTopBar(
                 centerText = "랜덤스피치",
-                rightContent = {
-                    CommonButton(
-                        text = "종료",
-                        size = ButtonSize.XS,
-                        backgroundColor = Error,
-                        borderColor = Error,
-                        textColor = White,
-                        onClick = { showExitAlert = true }
-                    )
-                }
             )
         },
         bottomBar = {
