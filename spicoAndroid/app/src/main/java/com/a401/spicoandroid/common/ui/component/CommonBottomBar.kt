@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun CommonBottomBar(
@@ -27,10 +28,39 @@ fun CommonBottomBar(
     val currentRoute = backStackEntry?.destination?.route
 
     val navItems = listOf(
-        NavItem("home", R.drawable.ic_home_line, R.drawable.ic_home_filled, "홈"),
-        NavItem("project_list", R.drawable.ic_presention_line, R.drawable.ic_presention_filled, "발표목록"),
-        NavItem("random_speech", R.drawable.ic_random_line, R.drawable.ic_random_filled, "랜덤스피치"),
-        NavItem("profile", R.drawable.ic_profile_line, R.drawable.ic_profile_filled, "프로필")
+        NavItem(
+            route = NavRoutes.Home.route,
+            matchingRoutes = listOf(NavRoutes.Home.route),
+            iconRes = R.drawable.ic_home_line,
+            selectedIconRes = R.drawable.ic_home_filled,
+            label = "홈"
+        ),
+        NavItem(
+            route = NavRoutes.ProjectList.route,
+            matchingRoutes = listOf(
+                NavRoutes.ProjectList.route,
+                "project_detail",
+                NavRoutes.CoachingReport.route,
+                NavRoutes.FinalModeReport.route
+            ),
+            iconRes = R.drawable.ic_presention_line,
+            selectedIconRes = R.drawable.ic_presention_filled,
+            label = "발표목록"
+        ),
+        NavItem(
+            route = NavRoutes.RandomSpeechLanding.route,
+            matchingRoutes = listOf(NavRoutes.RandomSpeechLanding.route),
+            iconRes = R.drawable.ic_random_line,
+            selectedIconRes = R.drawable.ic_random_filled,
+            label = "랜덤스피치"
+        ),
+        NavItem(
+            route = NavRoutes.Profile.route,
+            matchingRoutes = listOf(NavRoutes.Profile.route),
+            iconRes = R.drawable.ic_profile_line,
+            selectedIconRes = R.drawable.ic_profile_filled,
+            label = "프로필"
+        )
     )
 
     Box(modifier = modifier.fillMaxWidth()) {
@@ -41,6 +71,7 @@ fun CommonBottomBar(
             color = White,
             shadowElevation = 10.dp
         ) {}
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -50,7 +81,7 @@ fun CommonBottomBar(
             navItems.take(2).forEach { item ->
                 BottomNavItem(
                     item = item,
-                    selected = currentRoute == item.route,
+                    selected = item.matchingRoutes.any { currentRoute?.startsWith(it) == true },
                     onClick = { navController.navigate(item.route) },
                     modifier = Modifier.weight(1f)
                 )
@@ -61,7 +92,7 @@ fun CommonBottomBar(
             navItems.takeLast(2).forEach { item ->
                 BottomNavItem(
                     item = item,
-                    selected = currentRoute == item.route,
+                    selected = item.matchingRoutes.any { currentRoute?.startsWith(it) == true },
                     onClick = { navController.navigate(item.route) },
                     modifier = Modifier.weight(1f)
                 )
@@ -72,7 +103,7 @@ fun CommonBottomBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = (-24).dp),
-            onClick = onFabClick // ✅ FAB 클릭 시 콜백 실행
+            onClick = onFabClick
         )
     }
 }
@@ -147,6 +178,7 @@ private fun CenterFab(
 
 private data class NavItem(
     val route: String,
+    val matchingRoutes: List<String>,
     @DrawableRes val iconRes: Int,
     @DrawableRes val selectedIconRes: Int,
     val label: String
