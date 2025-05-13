@@ -20,10 +20,6 @@ class MinioServiceImpl(
 
     override fun generatePresignedUrl(bucketName: String, objectName: String, expiryMinutes: Int): String {
 
-        println(endpoint)
-        println(accessKey)
-        println(secretKey)
-
         return minioClient.getPresignedObjectUrl(
             io.minio.GetPresignedObjectUrlArgs.builder()
                 .method(Method.PUT)

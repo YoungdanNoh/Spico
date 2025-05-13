@@ -6,7 +6,7 @@ data class EndCoachingPracticeResponseDto (
     val presignedUrl: String,
 )
 
-fun PresignedUrl.toResponse(): EndCoachingPracticeResponseDto {
+fun PresignedUrl.toEndCoachingResponse(): EndCoachingPracticeResponseDto {
     return EndCoachingPracticeResponseDto(
         presignedUrl = this.presignedUrl
     )

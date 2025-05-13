@@ -52,9 +52,6 @@ public class FinalReportsEntity {
     @Column(name = "video_url")
     private String videoUrl; // 발표 영상 url
 
-    @Column(name = "speech_time")
-    private Time speechTime; // 발표 시간
-
     @Column(name = "script", columnDefinition = "TEXT")
     private String script; // STT된 발표 내용
 
@@ -118,10 +115,6 @@ public class FinalReportsEntity {
         return videoUrl;
     }
 
-    public Time getSpeechTime() {
-        return speechTime;
-    }
-
     public String getScript() {
         return script;
     }
@@ -129,4 +122,49 @@ public class FinalReportsEntity {
     public Integer getFinalPracticeCnt() {
         return finalPracticeCnt;
     }
+
+    public void setPauseScore(Integer pauseScore) {
+        this.pauseScore = pauseScore;
+    }
+
+    public void setPronunciationScore(Integer pronunciationScore) {
+        this.pronunciationScore = pronunciationScore;
+    }
+
+    public void setSpeedScore(Integer speedScore) {
+        this.speedScore = speedScore;
+    }
+
+    public void setSpeechSpeed(SpeedType speechSpeed) {
+        this.speechSpeed = speechSpeed;
+    }
+
+    public void setVolumeScore(Integer volumeScore) {
+        this.volumeScore = volumeScore;
+    }
+
+    public void setSpeechVolume(VolumeType speechVolume) {
+        this.speechVolume = speechVolume;
+    }
+
+    public void setScriptMatchRate(Integer scriptMatchRate) {
+        this.scriptMatchRate = scriptMatchRate;
+    }
+
+    public void setPauseCount(Integer pauseCount) {
+        this.pauseCount = pauseCount;
+    }
+
+    public void setTotalScore(Integer totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
+    }
+
 }
