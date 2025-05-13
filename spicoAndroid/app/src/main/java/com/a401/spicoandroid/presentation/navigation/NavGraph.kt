@@ -272,7 +272,7 @@ fun NavGraph(
             }
 
             // 에러
-            composable("not_found") {
+            composable(NavRoutes.NotFound.route) {
                 NotFoundScreen(navController)
             }
 
