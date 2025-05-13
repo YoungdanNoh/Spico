@@ -7,12 +7,14 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
@@ -25,10 +27,12 @@ import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.DropdownMenuItemData
 import com.a401.spicoandroid.common.ui.component.EmptyStateView
 import com.a401.spicoandroid.common.ui.component.IconButton
+import com.a401.spicoandroid.common.ui.component.LoadingInProgressView
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.presentation.project.component.ProjectEditDialog
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoHeader
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -48,11 +52,16 @@ fun ProjectDetailScreen(
     var minute by remember { mutableIntStateOf(0) }
     var second by remember { mutableIntStateOf(0) }
 
-    val mockProject = Project(
-        id = 1,
-        title = "자율 프로젝트",
-        date = LocalDate.of(2025, 4 ,25)
-    )
+    val viewModel: ProjectDetailViewModel = hiltViewModel()
+    val state by viewModel.state.collectAsState()
+    val isLoading = state.isLoading
+    val error = state.error
+    val project = state.project
+
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchProjectDetail(projectId)
+    }
 
     val dropdownItems = listOf(
         DropdownMenuItemData(
@@ -129,47 +138,71 @@ fun ProjectDetailScreen(
         },
         containerColor = BrokenWhite
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
                 .background(BrokenWhite)
         ) {
-            ProjectInfoHeader(
-                title = mockProject.title,
-                time = "15:00"
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            CommonReportTabBar(
-                selectedTabIndex = selectedTab,
-                onTabSelected = { selectedTab = it }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (practiceList.isEmpty()) {
-                EmptyStateView(
-                    imageRes = R.drawable.character_home_1,
-                    message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
-                )
-            } else {
-                practiceList.forEachIndexed { index, round ->
-                    CommonList(
-                        title = "코칭모드 ${round}회차",
-                        description = mockProject.title,
-                        onLongClick = {
-                            isBottomSheetVisible = true
-                        }
+            when {
+                isLoading -> {
+                    LoadingInProgressView(
+                        imageRes = R.drawable.character_home_5,
+                        message = "프로젝트 정보를 불러오고 있어요.\n잠시만 기다려주세요!"
                     )
-                    if (index != practiceList.lastIndex) {
+                }
+
+                error != null -> {
+                    Text(
+                        text = "오류 발생: ${error.message ?: "알 수 없는 오류"}",
+                        color = Error,
+                    )
+                }
+
+                project != null -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        ProjectInfoHeader(
+                            title = project.name,
+                            time = "${project.time}:00"
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
+                        CommonReportTabBar(
+                            selectedTabIndex = selectedTab,
+                            onTabSelected = { selectedTab = it }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        if (practiceList.isEmpty()) {
+                            EmptyStateView(
+                                imageRes = R.drawable.character_home_1,
+                                message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
+                            )
+                        } else {
+                            practiceList.forEachIndexed { index, round ->
+                                CommonList(
+                                    title = "코칭모드 ${round}회차",
+                                    description = project.name,
+                                    onLongClick = {
+                                        isBottomSheetVisible = true
+                                    }
+                                )
+                                if (index != practiceList.lastIndex) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    if (isEditDialogVisible) {
+
+        if (isEditDialogVisible) {
         ProjectEditDialog(
             projectTitle = title,
             onTitleChange = { title = it },
@@ -206,13 +239,4 @@ fun ProjectDetailScreen(
             }
         )
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun ProjectDetailScreenPreview() {
-    ProjectDetailScreen(
-        projectId = 1
-    )
 }
