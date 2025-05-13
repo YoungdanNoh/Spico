@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.konan.properties.Properties
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -71,7 +71,6 @@ dependencies {
     implementation(libs.client.sdk)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.view)
-    implementation(libs.room.compiler)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.room.ktx)
 
