@@ -12,13 +12,8 @@ data class RandomSpeech(
     val createdAt: LocalDateTime,
     val speechTime: Int,
     val preparationTime: Int,
-    val newsTitle: String?,
-    val newsUrl: String?,
-    val newSummary: String?,
-    val question: String?,
-    val feedback: String?,
-    val script: String?,
-    val title: String?
+    val content: Content?,
+    val report: Report?
 )
 
 fun RandomSpeech.toEntity(userEntity: UserEntity): RandomSpeechEntity {
@@ -39,12 +34,17 @@ fun RandomSpeechEntity.toModel(): RandomSpeech {
         createdAt = this.createdAt,
         speechTime = this.speechTime,
         preparationTime = this.preparationTime,
-        newsTitle = this.newsTitle,
-        newsUrl = this.newsUrl,
-        newSummary = this.newsSummary,
-        question = this.question,
-        feedback = this.aiFeedback,
-        script = this.script,
-        title = this.aiTitle
+        content = Content(
+            id = this.randomSpeechId,
+            newsTitle = this.newsTitle,
+            newsUrl = this.newsUrl,
+            newsSummary = this.newsSummary,
+            question = this.question
+        ),
+        report = Report(
+            feedback = this.aiFeedback,
+            script = this.script,
+            title = this.aiTitle
+        )
     )
 }
