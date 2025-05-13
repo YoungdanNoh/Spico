@@ -19,8 +19,8 @@ data class FinalPracticeReportResponseDto(
     val volumeStatus: VolumeType,
     val speedStatus: SpeedType,
     val pauseCount: Int,
-    val volumeRecords: List<VolumeRecord>,
-    val speedRecords: List<SpeedRecord>,
+    val volumeRecords: List<FeedbackVolumeRecord>,
+    val speedRecords: List<FeedbackSpeedRecord>,
     val pauseRecords: List<PauseRecord>,
     val qaRecord: List<QaRecord>
 
@@ -41,8 +41,8 @@ fun FinalPracticeReport.toResponse(): FinalPracticeReportResponseDto {
         volumeStatus = this.volumeStatus,
         speedStatus = this.speedStatus,
         pauseCount = this.pauseCount,
-        volumeRecords = this.volumeRecords,
-        speedRecords = this.speedRecords,
+        volumeRecords = this.feedbackVolumeRecords,
+        speedRecords = this.feedbackSpeedRecords,
         pauseRecords = this.pauseRecords,
         qaRecord = this.qaRecord
     )
