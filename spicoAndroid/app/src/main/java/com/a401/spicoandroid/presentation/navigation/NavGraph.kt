@@ -249,13 +249,9 @@ fun NavGraph(
                 )
             }
             composable(
-                route = NavRoutes.FinalModeQnA.route,
-                arguments = listOf(navArgument("question") { defaultValue = "기본 질문입니다." })
-            ) { backStackEntry ->
-                val question = backStackEntry.arguments?.getString("question") ?: ""
-                FinalModeQnAScreen(
-                    navController = navController,
-                    question = question)
+                route = NavRoutes.FinalModeQnA.route
+            ) {
+                FinalModeQnAScreen(navController = navController)
             }
             composable("final_mode_report") {
                 FinalReportScreen()
