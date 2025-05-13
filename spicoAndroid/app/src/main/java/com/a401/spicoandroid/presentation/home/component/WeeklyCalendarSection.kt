@@ -14,12 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.presentation.home.util.getStartOfWeek
-import com.a401.spicoandroid.presentation.home.util.getWeekDates
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
