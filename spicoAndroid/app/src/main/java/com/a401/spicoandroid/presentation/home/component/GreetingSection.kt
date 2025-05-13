@@ -189,6 +189,17 @@ fun GreetingSection(
                             }
                         )
 
+                        CommonButton(
+                            text = "코칭모드",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.CoachingMode.route)
+                            }
+                        )
+
 
                     }
 

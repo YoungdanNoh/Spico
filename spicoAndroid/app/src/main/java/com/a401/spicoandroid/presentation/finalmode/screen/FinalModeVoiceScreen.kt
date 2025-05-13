@@ -20,7 +20,7 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.infrastructure.camera.FinalRecordingCameraService
-import com.a401.spicoandroid.presentation.finalmode.component.AudioWaveformView
+import com.a401.spicoandroid.common.ui.component.AudioWaveformView
 import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 

@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
+import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
@@ -225,6 +226,9 @@ fun NavGraph(
             }
 
             // 코칭 모드
+            composable(NavRoutes.CoachingMode.route) {
+                CoachingModeScreen(navController)
+            }
             composable(NavRoutes.CoachingReport.route) {
                 CoachingReportScreen(navController)
             }
