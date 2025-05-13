@@ -23,7 +23,6 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatTimeOnly
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @RequiresApi(Build.VERSION_CODES.O)

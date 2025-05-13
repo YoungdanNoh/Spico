@@ -1,7 +1,6 @@
 package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.project.api.ProjectApi
-import com.a401.spicoandroid.data.practice.api.PracticeApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

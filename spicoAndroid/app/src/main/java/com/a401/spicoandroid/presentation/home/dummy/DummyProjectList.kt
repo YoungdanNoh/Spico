@@ -1,7 +1,5 @@
 package com.a401.spicoandroid.presentation.home.dummy
 
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
-
 val DummyProjectList = listOf(
     ProjectSchedule(
         projectId = 1,

@@ -3,8 +3,6 @@ package com.a401.spicoandroid.presentation.practice.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.domain.project.model.Project
-import com.a401.spicoandroid.data.practice.api.PracticeApi
-import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

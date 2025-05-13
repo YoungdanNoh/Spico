@@ -2,10 +2,9 @@ package com.a401.spicoandroid.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
-import com.a401.spicoandroid.presentation.home.util.getWeekDates
+import com.a401.spicoandroid.common.utils.getWeekDates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

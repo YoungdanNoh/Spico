@@ -50,10 +50,12 @@ class MainActivity : ComponentActivity() {
                 NavRoutes.Home.route,
                 NavRoutes.ProjectList.route,
                 NavRoutes.RandomSpeechLanding.route,
+                NavRoutes.RandomSpeechProjectList.route,
                 NavRoutes.Profile.route,
                 "project_detail",
                 "coaching_report",
-                "final_mode_report"
+                "final_mode_report",
+                "randomspeech_project_list"
             )
 
             // 현재 라우트가 하단바 표시 대상인지 확인
