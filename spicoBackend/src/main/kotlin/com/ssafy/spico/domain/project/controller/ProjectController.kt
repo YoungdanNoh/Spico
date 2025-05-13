@@ -18,7 +18,7 @@ class ProjectController(
         @RequestParam size: Int,
         @RequestParam type: ProjectViewType,
     ): ApiResponse<List<ProjectResponseDto>> {
-        val projects = projectService.getProjects(cursor, size, type)
+        val projects = projectService.getProjects(userId, cursor, size, type)
         return ApiResponse.success(projects.map { it.toResponse() })
     }
 

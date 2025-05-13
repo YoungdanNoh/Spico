@@ -27,10 +27,10 @@ public class RandomSpeechEntity {
     private Topic topic;
 
     @Column(name = "speech_time", nullable = false)
-    private LocalTime speechTime;
+    private Integer speechTime;
 
     @Column(name = "preparation_time", nullable = false)
-    private LocalTime preparationTime;
+    private Integer preparationTime;
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
@@ -41,7 +41,7 @@ public class RandomSpeechEntity {
     @Column(name = "news_url", columnDefinition = "TEXT")
     private String newsUrl;
 
-    @Column(name = "news_summary", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "news_summary", columnDefinition = "TEXT")
     private String newsSummary;
 
     @Column(name = "question")
@@ -59,7 +59,7 @@ public class RandomSpeechEntity {
     public RandomSpeechEntity() {
     }
 
-    public RandomSpeechEntity(UserEntity userEntity, Topic topic, LocalTime speechTime, LocalTime preparationTime,
+    public RandomSpeechEntity(UserEntity userEntity, Topic topic, Integer speechTime, Integer preparationTime,
                               LocalDateTime createdAt, String newsTitle, String newsUrl, String newsSummary,
                               String question, String script, String aiFeedback, String aiTitle) {
         this.userEntity = userEntity;
@@ -76,17 +76,26 @@ public class RandomSpeechEntity {
         this.aiTitle = aiTitle;
     }
 
+    public RandomSpeechEntity(UserEntity userEntity, Topic topic, Integer speechTime,
+                              Integer preparationTime, LocalDateTime createdAt) {
+        this.userEntity = userEntity;
+        this.topic = topic;
+        this.speechTime = speechTime;
+        this.preparationTime = preparationTime;
+        this.createdAt = createdAt;
+    }
+
     public Integer getRandomSpeechId() { return randomSpeechId; }
 
     public UserEntity getUserEntity() { return userEntity; }
 
     public Topic getTopic() { return topic; }
 
-    public LocalTime getSpeechTime() { return speechTime; }
+    public Integer getSpeechTime() { return speechTime; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public LocalTime getPreparationTime() { return preparationTime; }
+    public Integer getPreparationTime() { return preparationTime; }
 
     public String getNewsTitle() { return newsTitle; }
 
