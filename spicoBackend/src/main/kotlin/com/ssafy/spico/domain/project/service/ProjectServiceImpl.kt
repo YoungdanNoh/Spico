@@ -18,11 +18,11 @@ class ProjectServiceImpl(
     private val projectRepository: ProjectRepository,
     private val userRepository: UserRepository
 ): ProjectService {
-    override fun getProjects(cursor: Int?, size: Int, type: ProjectViewType): List<Project> {
+    override fun getProjects(userId: Int, cursor: Int?, size: Int, type: ProjectViewType): List<Project> {
 
         require(size >= 1) { throw ProjectException(ProjectError.INVALID_PAGE_SIZE) }
 
-        val entities = projectRepository.findProjectWithPaging(cursor, size, type)
+        val entities = projectRepository.findProjectsWithPaging(userId, cursor, size, type)
         return entities.map { it.toModel() }
     }
 
