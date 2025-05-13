@@ -1,14 +1,11 @@
-package com.a401.spicoandroid.presentation.finalmode.component
+package com.a401.spicoandroid.common.ui.component
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.theme.*
 

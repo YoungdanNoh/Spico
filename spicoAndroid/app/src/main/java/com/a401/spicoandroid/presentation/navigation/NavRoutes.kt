@@ -45,6 +45,7 @@ sealed class NavRoutes(val route: String) {
     }
 
     // 코칭 모드
+    object CoachingMode : NavRoutes("coaching_mode")
     object CoachingReport : NavRoutes("coaching_report")
 
     // 파이널 모드
