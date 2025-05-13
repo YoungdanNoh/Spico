@@ -14,6 +14,7 @@ enum class PracticeError(
     PERSISTENCE_ERROR("500", "P202", "연습 정보 저장 중 오류가 발생했습니다."),
 
     PROJECT_NOT_FOUND("404", "P301", "프로젝트를 찾을 수 없습니다."),
+    ALREADY_COMPLETED_PRACTICE("404", "P302", "이미 종료된 프로젝트입니다."),
 
     REPORT_NOT_FOUND("404", "S001", "리포트를 찾을 수 없습니다."),
     FEEDBACK_NOT_FOUND("404", "S001", "피드백을 찾을 수 없습니다."),
@@ -22,7 +23,9 @@ enum class PracticeError(
     INVALID_PRONUNCIATION_SCORE("404", "P402", "유효한 발음 점수가 아닙니다."),
     INVALID_PAUSE_COUNT("404", "P403", "유효한 휴지 횟수가 아닙니다."),
     INVALID_SPEED_STATUS("404", "P404", "유효한 발표 속도 평가 값이 아닙니다."),
-    INVALID_VOLUME_STATUS("404", "P405", "유효한 성량 평가 값이 아닙니다.")
+    INVALID_VOLUME_STATUS("404", "P405", "유효한 성량 평가 값이 아닙니다."),
 
+    QUESTION_NOT_FOUND("404", "P501","해당 question_id에 대한 정보를 찾을 수 없습니다."),
+    UNAUTHORIZED_QUESTION_ACCESS("404", "P502","현재 프로젝트 질문에 대한 question_id가 아닙니다.")
 
 }
