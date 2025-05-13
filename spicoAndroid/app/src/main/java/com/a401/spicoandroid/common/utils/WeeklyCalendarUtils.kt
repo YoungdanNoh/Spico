@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.home.util
+package com.a401.spicoandroid.common.utils
 
 import java.time.LocalDate
 

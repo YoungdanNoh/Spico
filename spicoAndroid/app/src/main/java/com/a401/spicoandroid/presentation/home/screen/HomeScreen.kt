@@ -16,7 +16,7 @@ import com.a401.spicoandroid.presentation.home.component.*
 import com.a401.spicoandroid.presentation.home.dummy.DummyProjectList
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
-import com.a401.spicoandroid.presentation.project.component.ProjectInfoDialog
+import com.a401.spicoandroid.presentation.home.component.ProjectInfoDialog
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)

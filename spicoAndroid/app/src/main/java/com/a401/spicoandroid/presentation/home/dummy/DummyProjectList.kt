@@ -1,8 +1,8 @@
 package com.a401.spicoandroid.presentation.home.dummy
 
-import com.a401.spicoandroid.presentation.home.model.ProjectSchedule
+import com.a401.spicoandroid.domain.home.model.ProjectSchedule
 
-val DummyProjectList = listOf(
+val DummyProjectList: List<ProjectSchedule> = listOf(
     ProjectSchedule(
         projectId = 1,
         projectName = "UX 리서치 회의",

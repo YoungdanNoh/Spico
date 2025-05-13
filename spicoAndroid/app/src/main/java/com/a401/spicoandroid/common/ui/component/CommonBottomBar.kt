@@ -49,7 +49,10 @@ fun CommonBottomBar(
         ),
         NavItem(
             route = NavRoutes.RandomSpeechLanding.route,
-            matchingRoutes = listOf(NavRoutes.RandomSpeechLanding.route),
+            matchingRoutes = listOf(
+                NavRoutes.RandomSpeechLanding.route,
+                NavRoutes.RandomSpeechProjectList.route
+            ),
             iconRes = R.drawable.ic_random_line,
             selectedIconRes = R.drawable.ic_random_filled,
             label = "랜덤스피치"
