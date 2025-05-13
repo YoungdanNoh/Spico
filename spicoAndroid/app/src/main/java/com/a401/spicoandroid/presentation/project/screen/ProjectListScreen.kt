@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
+import com.a401.spicoandroid.common.ui.component.EmptyStateView
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.BrokenWhite
 import com.a401.spicoandroid.domain.project.model.ProjectScreenType
@@ -44,43 +45,42 @@ fun ProjectListScreen(
                     IconButton(
                         iconResId = R.drawable.ic_add_black,
                         contentDescription = "프로젝트 추가",
-                        onClick = {}
+                        onClick = onFabClick
                     )
                 }
             )
         },
         containerColor = BrokenWhite
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-                .background(BrokenWhite)
-        ) {
-            projectListState.projects.forEachIndexed { index, project ->
-                CommonList(
-                    imagePainter = painterResource(R.drawable.img_create_project),
-                    title = project.title,
-                    description = project.date.toString(),
-                    rightIcon = painterResource(R.drawable.ic_arrow_right_balck),
-                    onClick = {
-                        navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
+        if (projectListState.projects.isEmpty()) {
+            EmptyStateView(
+                imageRes = R.drawable.character_home_1,
+                message = "진행 중인 프로젝트가 없어요.\n새 프로젝트를 만들어볼까요?",
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp)
+                    .background(BrokenWhite)
+            ) {
+                projectListState.projects.forEachIndexed { index, project ->
+                    CommonList(
+                        imagePainter = painterResource(R.drawable.img_create_project),
+                        title = project.title,
+                        description = project.date.toString(),
+                        rightIcon = painterResource(R.drawable.ic_arrow_right_balck),
+                        onClick = {
+                            navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
+                        }
+                    )
+                    if (index != projectListState.projects.lastIndex) {
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
-                )
-                if (index != projectListState.projects.lastIndex) {
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ProjectListScreenPreview() {
-//    ProjectListScreen(
-//        navController = rememberNavController(),
-//        onFabClick = {}
-//    )
-//}

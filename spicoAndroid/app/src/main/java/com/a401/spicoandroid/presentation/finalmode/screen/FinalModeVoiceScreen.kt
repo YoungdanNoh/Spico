@@ -122,7 +122,6 @@ fun FinalModeVoiceScreen(
                 title = "파이널 모드를 종료하시겠습니까?",
                 confirmText = "종료",
                 onConfirm = {
-                    cameraService.stopRecording()
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     viewModel.hideConfirmDialog()

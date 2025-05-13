@@ -15,37 +15,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.report.component.*
-import com.a401.spicoandroid.ui.component.TimeSegment
+import com.a401.spicoandroid.presentation.report.viewmodel.FinalReportViewModel
 import kotlinx.coroutines.launch
 
-data class ReportCategoryData(
-    val title: String,
-    val description: String,
-    val iconResId: Int,
-    val timeRangeText: String,
-    val segments: List<TimeSegment>
-)
-
 @Composable
-fun FinalReportScreen() {
+fun FinalReportScreen(
+    viewModel: FinalReportViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
-    val segments = listOf(TimeSegment(60000L, 90000L))
 
-    val reportItems = listOf(
-        ReportCategoryData("발음", "특정 구간에서 발음이 뭉개져요", R.drawable.img_feedback_pronunciation, "1:00 ~ 1:30", segments),
-        ReportCategoryData("속도", "말의 속도가 느린 편이에요", R.drawable.img_feedback_speed, "1:30 ~ 2:00", segments),
-        ReportCategoryData("휴지", "휴지 기간이 총 5회 있었어요", R.drawable.img_feedback_silence, "0:30 ~ 1:00", segments),
-        ReportCategoryData("성량", "목소리 크기가 많이 작아요", R.drawable.img_feedback_volume, "0:30 ~ 1:00", segments),
-        ReportCategoryData("대본일치도", "불일치 문장이 총 5회 있었어요", R.drawable.img_feedback_script_match, "0:30 ~ 1:00", segments)
-    )
+    val labels = listOf("발음", "속도", "성량", "휴지", "대본")
 
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { reportItems.size }
+        pageCount = { state.reportItems.size }
     )
 
     val coroutineScope = rememberCoroutineScope()
@@ -90,16 +79,16 @@ fun FinalReportScreen() {
         ) {
             ReportInfoHeader(
                 imagePainter = painterResource(id = R.drawable.img_final_practice),
-                projectTitle = "자율 프로젝트",
-                roundCount = 5,
-                chipText = "파이널모드",
+                projectTitle = state.projectName,
+                roundCount = state.roundCount,
+                chipText = state.modeType,
                 chipType = ChipType.REPORT_ERROR
             )
             Column{
                 FinalScoreCard(
-                    modeType = "파이널 모드",
-                    roundCount = 5,
-                    score = 84
+                    modeType = state.modeType,
+                    roundCount = state.roundCount,
+                    score = state.score
                 )
 
                 Box(modifier = Modifier.fillMaxWidth()) {
@@ -107,7 +96,9 @@ fun FinalReportScreen() {
                         modifier = Modifier
                             .size(300.dp)
                             .padding(top = 24.dp)
-                            .align(Alignment.Center)
+                            .align(Alignment.Center),
+                        labels = labels,
+                        scores = state.scores
                     )
                 }
 
@@ -119,21 +110,22 @@ fun FinalReportScreen() {
                             .fillMaxWidth()
                             .height(200.dp)
                     ) { page ->
-                        val item = reportItems[page]
+                        val item = state.reportItems[page]
                         ReportCategoryCard(
                             title = item.title,
                             description = item.description,
                             iconResId = item.iconResId,
                             timeRangeText = item.timeRangeText,
-                            totalStartMillis = 0L,
-                            totalEndMillis = 180000L,
-                            segments = item.segments
+                            totalStartMillis = item.totalStartMillis,
+                            totalEndMillis = item.totalEndMillis,
+                            segments = item.segments,
+                            progress = item.progress
                         )
                     }
 
                     CommonCircularProgressBar(
                         selectedIndex = pagerState.currentPage,
-                        totalCount = reportItems.size,
+                        totalCount = state.reportItems.size,
                         onSelect = { index ->
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(index)
@@ -144,10 +136,13 @@ fun FinalReportScreen() {
             }
 
             Text("Q&A", style = Typography.headlineLarge)
-
-            ReportQnAItem("Q1. 해당 프로젝트를 하면서 어려웠던 점이 무엇인가요?", "일정 조율이 힘들었습니다.")
-            ReportQnAItem("Q2. 프로젝트에 사용한 데이터는 어디에서 구하셨나요?", "공공데이터를 이용했습니다. 공공데이터도 전처리도 했습니다.")
-            ReportQnAItem("Q3. 팀원 간 갈등은 어떻게 해결했나요?", "서로 타협하고 이야기를 했습니다.")
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                state.qnaList.forEachIndexed { index, (question, answer) ->
+                    ReportQnAItem("Q${index + 1}. $question", answer)
+                }
+            }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 CommonButton(
