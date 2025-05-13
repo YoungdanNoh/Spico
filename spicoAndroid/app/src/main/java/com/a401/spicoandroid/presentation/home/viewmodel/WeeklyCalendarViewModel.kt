@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import com.a401.spicoandroid.common.utils.getWeekDates
+import com.a401.spicoandroid.domain.home.model.ProjectSchedule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

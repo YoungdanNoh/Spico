@@ -1,6 +1,8 @@
 package com.a401.spicoandroid.data.practice.api
 
 import com.a401.spicoandroid.common.data.dto.ApiResponse
+import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
+import com.a401.spicoandroid.data.practice.dto.PracticeIdResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

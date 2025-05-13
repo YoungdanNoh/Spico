@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+import com.a401.spicoandroid.data.practice.api.PracticeApi
+import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
 
 @HiltViewModel
 class PracticeViewModel @Inject constructor(
