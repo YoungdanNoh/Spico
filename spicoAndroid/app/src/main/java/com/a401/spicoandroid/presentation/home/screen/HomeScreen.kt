@@ -88,6 +88,7 @@ fun HomeScreen(
         HomeFooterSection(
             modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
         )
+        Spacer(modifier = Modifier.height(36.dp))
     }
 
     // 일정이 있는 날짜 클릭 시만 다이얼로그 표시
