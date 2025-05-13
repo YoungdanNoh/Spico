@@ -12,27 +12,36 @@ class ProjectRepositoryCustomImpl(
     private val queryFactory: JPAQueryFactory
 ) : ProjectRepositoryCustom {
 
-    override fun findProjectWithPaging(cursor: Int?, size: Int, type: ProjectViewType): List<ProjectEntity> {
+    override fun findProjectsWithPaging(userId: Int, cursor: Int?, size: Int, type: ProjectViewType): List<ProjectEntity> {
         val project = QProjectEntity.projectEntity
+
+        val today = LocalDate.now()
+
+        val cursorCondition = when (type) {
+            ProjectViewType.HOME -> {
+                val dateCondition = project.date.goe(today)
+                if (cursor != null) dateCondition.and(project.projectId.gt(cursor)) else dateCondition
+            }
+            ProjectViewType.LIST -> {
+                if (cursor != null) project.projectId.lt(cursor) else null
+            }
+            ProjectViewType.CAL -> {
+                if (cursor != null) project.projectId.gt(cursor) else null
+            }
+        }
+
+        val userCondition = project.userEntity.id.eq(userId)
+
+        val whereCondition = if (cursorCondition != null) {
+            userCondition.and(cursorCondition)
+        } else {
+            userCondition
+        }
 
         val baseQuery = queryFactory
             .selectFrom(project)
+            .where(whereCondition)
             .limit(size.toLong())
-            .where(
-                when(type) {
-                    ProjectViewType.HOME -> {
-                        val today = LocalDate.now()
-                        val condition = project.date.goe(today)
-                        if(cursor != null) condition.and(project.projectId.gt(cursor)) else condition
-                    }
-                    ProjectViewType.LIST -> {
-                        if (cursor != null) project.projectId.lt(cursor) else null
-                    }
-                    ProjectViewType.CAL -> {
-                        if (cursor != null) project.projectId.gt(cursor) else null
-                    }
-                }
-            )
             .orderBy(
                 when (type) {
                     ProjectViewType.HOME, ProjectViewType.CAL -> project.date.asc()
