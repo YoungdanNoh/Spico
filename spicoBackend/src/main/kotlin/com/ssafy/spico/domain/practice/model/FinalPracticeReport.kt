@@ -18,8 +18,8 @@ data class FinalPracticeReport(
     val volumeStatus: VolumeType,
     val speedStatus: SpeedType,
     val pauseCount: Int,
-    val volumeRecords: List<VolumeRecord>,
-    val speedRecords: List<SpeedRecord>,
+    val feedbackVolumeRecords: List<FeedbackVolumeRecord>,
+    val feedbackSpeedRecords: List<FeedbackSpeedRecord>,
     val pauseRecords: List<PauseRecord>,
     val qaRecord: List<QaRecord>
 )

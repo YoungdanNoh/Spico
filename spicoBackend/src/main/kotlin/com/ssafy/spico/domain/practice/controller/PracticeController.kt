@@ -19,6 +19,7 @@ class PracticeController(
         @PathVariable projectId: Int,
         @RequestBody request: StartFinalPracticeRequestDto
     ): ApiResponse<StartFinalPracticeResponseDto> {
+
         val setting = request.toModel()
 
         return ApiResponse.success(practiceService.startFinalPractice(userId, projectId, setting))
@@ -27,14 +28,28 @@ class PracticeController(
 
     // 파이널 모드 종료 -> GPT 질문 생성
     @PostMapping("/final/{practiceId}/qa")
+    fun generateGPTQuestion(
+        @PathVariable projectId: Int,
+        @PathVariable practiceId: Int,
+        @RequestBody request: GenerateGPTQuestionRequestDto
+    ): ApiResponse<GenerateGPTQuestionResponseDto> {
+
+        val speech = request.toModel()
+
+        return ApiResponse.success(practiceService.generateGPTQuestion(userId, projectId, practiceId, speech))
+    }
+
+    // 파이널 모드 종료
+    @PostMapping("/final/{practiceId}/result")
     fun endFinalPractice(
         @PathVariable projectId: Int,
         @PathVariable practiceId: Int,
         @RequestBody request: EndFinalPracticeRequestDto
-    ): ApiResponse<EndFinalPracticeResponseDto> {
-        val speech = request.toModel()
+    ): ApiResponse<EndFinalPracticeResponseDto>{
 
-        return ApiResponse.success(practiceService.endFinalPractice(userId, projectId, practiceId, speech))
+        val endFinalPractice = request.toModel()
+
+        return ApiResponse.success(practiceService.endFinalPractice(projectId, practiceId, endFinalPractice))
     }
 
     // 코칭 모드 시작
