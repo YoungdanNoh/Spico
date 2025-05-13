@@ -48,6 +48,7 @@ fun ProjectInfoHeader(
                 textColor = TextPrimary,
                 borderColor = BackgroundSecondary,
                 modifier = Modifier.weight(1f),
+                enabled = false,
                 onClick = {}
             )
         }

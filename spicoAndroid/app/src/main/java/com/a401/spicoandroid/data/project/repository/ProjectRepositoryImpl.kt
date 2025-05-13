@@ -6,6 +6,7 @@ import com.a401.spicoandroid.common.utils.safeApiCall
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import com.a401.spicoandroid.data.project.dto.toDomain
 import com.a401.spicoandroid.domain.project.model.Project
+import com.a401.spicoandroid.domain.project.model.ProjectDetail
 import com.a401.spicoandroid.domain.project.model.ProjectScreenType
 import com.a401.spicoandroid.domain.project.repository.ProjectRepository
 import javax.inject.Inject
@@ -22,5 +23,11 @@ class ProjectRepositoryImpl @Inject constructor(
         api.getProjectList(cursor, size, screenType.name).getOrThrow { list ->
             list.map { it.toDomain() }
         }
+    }
+
+    override suspend fun getProjectDetail(
+        projectId: Int
+    ): DataResource<ProjectDetail> = safeApiCall {
+        api.getProjectDetail(projectId).getOrThrow { it.toDomain() }
     }
 }
