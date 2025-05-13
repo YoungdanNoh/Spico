@@ -18,6 +18,10 @@ import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.theme.SpeakoAndroidTheme
 import com.a401.spicoandroid.presentation.navigation.NavGraph
 import dagger.hilt.android.AndroidEntryPoint
+import com.a401.spicoandroid.presentation.navigation.NavGraph
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.a401.spicoandroid.common.ui.component.CommonBottomBar
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -38,12 +42,38 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val navController = rememberNavController()
+            val backStackEntry = navController.currentBackStackEntryAsState().value
+            val currentRoute = backStackEntry?.destination?.route
+
+            // 하단바를 표시할 route만 정의
+            val bottomBarRoutes = listOf(
+                NavRoutes.Home.route,
+                NavRoutes.ProjectList.route,
+                NavRoutes.RandomSpeechLanding.route,
+                NavRoutes.Profile.route,
+                "project_detail",
+                "coaching_report",
+                "final_mode_report"
+            )
+
+            // 현재 라우트가 하단바 표시 대상인지 확인
+            val shouldShowBottomBar = bottomBarRoutes.any { currentRoute?.startsWith(it) == true }
 
             SpeakoAndroidTheme {
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.safeDrawing)
+                        .windowInsetsPadding(WindowInsets.safeDrawing),
+                    bottomBar = {
+                        if (shouldShowBottomBar) {
+                            CommonBottomBar(
+                                navController = navController,
+                                onFabClick = {
+                                    navController.navigate(NavRoutes.ProjectCreate.route)
+                                }
+                            )
+                        }
+                    }
                 ) { innerPadding ->
                     NavGraph(
                         navController = navController,
