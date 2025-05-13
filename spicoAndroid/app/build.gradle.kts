@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,9 @@ plugins {
     alias(libs.plugins.hilt.android)
     id("kotlin-parcelize")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
     namespace = "com.a401.spicoandroid"
@@ -18,6 +23,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["KAKAO_APP_KEY"] = properties.getProperty("kakao.native.app.key")
     }
 
     buildTypes {
@@ -64,6 +71,7 @@ dependencies {
     implementation(libs.client.sdk)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.view)
+    implementation(libs.room.compiler)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -129,4 +137,8 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+
+    // kakao
+    implementation(libs.v2.user)
+
 }
