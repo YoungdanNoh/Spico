@@ -4,16 +4,17 @@ import com.ssafy.spico.domain.user.entity.UserEntity
 import com.ssafy.spico.domain.project.entity.ProjectEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 data class Project(
-    val id: Int?,
+    val id: Int? = null,
     val userId: Int,
     val title: String,
     val date: LocalDate,
-    val limitTime: LocalTime,
+    val limitTime: Int,
     val script: String?,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val lastCoachingCnt : Int,
+    val lastFinalCnt : Int
 )
 
 fun Project.toEntity(userEntity: UserEntity): ProjectEntity {
@@ -23,7 +24,9 @@ fun Project.toEntity(userEntity: UserEntity): ProjectEntity {
         this.date,
         this.limitTime,
         this.script,
-        this.createdAt
+        this.createdAt,
+        this.lastCoachingCnt,
+        this.lastFinalCnt
     )
 }
 
@@ -35,6 +38,8 @@ fun ProjectEntity.toModel(): Project {
         date = this.date,
         limitTime = this.limitTime,
         script = this.script,
-        createdAt = this.createdAt
+        createdAt = this.createdAt,
+        lastCoachingCnt = this.lastCoachingCnt,
+        lastFinalCnt = this.lastFinalCnt
     )
 }
