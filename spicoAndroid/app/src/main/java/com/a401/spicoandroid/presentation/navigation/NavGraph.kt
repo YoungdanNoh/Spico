@@ -96,7 +96,6 @@ fun NavGraph(
                     navController = navController,
                     projectViewModel = projectViewModel,
                     projectFormViewModel = projectFormViewModel,
-                    onFabClick = {}
                 )
             }
 
