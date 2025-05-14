@@ -12,7 +12,7 @@ public class CoachingReportsEntity {
     private Integer CoachingReportId;
 
     // 연관 엔티티 참조 (외래키 제약 없이)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "practice_id",
             nullable = false,
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
