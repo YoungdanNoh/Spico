@@ -20,8 +20,6 @@ sealed class NavRoutes(val route: String) {
     object ProjectSelect : NavRoutes("project_select")
     object FinalSetting : NavRoutes("final_setting")
     object FinalScreenCheck : NavRoutes("final_check")
-    // 영상 다시 보기
-    object VideoReplay : NavRoutes("video_replay")
 
     // 랜덤 스피치
     object RandomSpeechLanding : NavRoutes("randomspeech_landing")
@@ -46,7 +44,9 @@ sealed class NavRoutes(val route: String) {
     object FinalModeQnA : NavRoutes("final_mode_qna")
     object FinalModeReport : NavRoutes("final_mode_report")
 
-
+    // 영상 다시 보기
+    object VoiceScript : NavRoutes("voice_script")
+    object VideoReplay : NavRoutes("video_replay")
 
     // 로그인
     object Login : NavRoutes("login")

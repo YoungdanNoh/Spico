@@ -10,12 +10,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 
 @Composable
-fun VoiceScriptScreen() {
+fun VoiceScriptScreen(
+    navController: NavController
+) {
     val scrollState = rememberScrollState()
 
     // 임시 스크립트
@@ -84,10 +87,4 @@ fun VoiceScriptScreen() {
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun VoiceScriptScreenPreview() {
-    VoiceScriptScreen()
 }
