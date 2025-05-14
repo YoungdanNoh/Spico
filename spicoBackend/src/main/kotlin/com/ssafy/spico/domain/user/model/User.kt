@@ -3,9 +3,9 @@ package com.ssafy.spico.domain.user.model
 import com.ssafy.spico.domain.user.entity.UserEntity
 
 data class User(
-    val id: Int?,
-    val email: String,
-    val name: String,
+    val id: Int,
+    val kakaoId: Long,
+    val nickname: String,
     var hasAudience: Boolean,
     var hasQna: Boolean,
     var questionCount: Int,
@@ -15,8 +15,8 @@ data class User(
 fun UserEntity.toModel(): User {
     return User(
         id = this.id,
-        email = this.email,
-        name = this.name,
+        kakaoId = this.kakaoId,
+        nickname = this.nickname,
         hasAudience = this.isHasAudience,
         hasQna = this.isHasQna,
         questionCount = this.questionCount,
@@ -26,8 +26,8 @@ fun UserEntity.toModel(): User {
 
 fun User.toEntity(): UserEntity {
     return UserEntity(
-        this.email,
-        this.name,
+        this.kakaoId,
+        this.nickname,
         this.hasAudience,
         this.hasQna,
         this.questionCount,
