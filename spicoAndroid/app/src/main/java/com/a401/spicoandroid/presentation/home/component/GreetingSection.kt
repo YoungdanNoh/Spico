@@ -138,13 +138,13 @@ fun GreetingSection(
                             }
                         )
                         CommonButton(
-                            text = "랜덤스피치",
+                            text = "연습하기",
                             size = ButtonSize.MD,
                             backgroundColor = Action,
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                navController.navigate(NavRoutes.RandomSpeechLanding.route)
+                                navController.navigate(NavRoutes.ModeSelect.route)
                             }
                         )
                         CommonButton(

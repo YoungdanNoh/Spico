@@ -14,7 +14,7 @@ import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportCar
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteBottomSheet
 import com.a401.spicoandroid.presentation.randomspeech.dummy.DummyRandomSpeechList
-import com.a401.spicoandroid.presentation.randomspeech.model.RandomSpeech
+import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeech
 
 @Composable
 fun RandomSpeechProjectListScreen(

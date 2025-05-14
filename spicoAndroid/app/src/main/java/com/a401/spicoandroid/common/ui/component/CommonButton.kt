@@ -50,15 +50,18 @@ enum class ButtonSize(val height: Dp, val width: Dp?, val textStyle: TextStyle) 
 /**
  * 공통 사각형 버튼 컴포넌트
  *
- * @param text 버튼에 표시될 텍스트
- * @param size 버튼 크기 (ButtonSize Enum)
- * @param enabled 버튼 활성화 여부
- * @param backgroundColor 버튼 배경색
- * @param borderColor 버튼 테두리 색
- * @param textColor 텍스트 색상
- * @param borderRadius 버튼 모서리 둥글기
- * @param modifier 추가 Modifier 확장
- * @param onClick 버튼 클릭 시 동작할 함수
+ * @param modifier        추가 Modifier 확장
+ * @param text            버튼에 표시될 텍스트
+ * @param size            버튼 크기 (ButtonSize Enum)
+ * @param enabled         버튼 활성화 여부 (false 시 클릭 비활성화)
+ * @param backgroundColor 활성화 상태일 때 버튼 배경색
+ * @param borderColor     활성화 상태일 때 버튼 테두리 색
+ * @param textColor       활성화 상태일 때 텍스트 색상
+ * @param disabledBackgroundColor 비활성화 상태일 때 배경색 (null이면 기본 Disabled 색 사용)
+ * @param disabledBorderColor     비활성화 상태일 때 테두리 색 (null이면 기본 Disabled 색 사용)
+ * @param disabledTextColor       비활성화 상태일 때 텍스트 색 (null이면 기본 TextTertiary 사용)
+ * @param borderRadius    버튼 모서리 둥글기
+ * @param onClick         버튼 클릭 시 동작할 함수
  */
 @Composable
 fun CommonButton(
@@ -69,10 +72,18 @@ fun CommonButton(
     backgroundColor: Color = Action,
     borderColor: Color = Action,
     textColor: Color = White,
+    disabledBackgroundColor: Color? = null,
+    disabledBorderColor: Color? = null,
+    disabledTextColor: Color? = null,
     borderRadius: Dp = 8.dp,
     onClick: () -> Unit,
 ) {
     val widthModifier = size.width?.let { Modifier.width(it) } ?: Modifier.fillMaxWidth()
+
+    val bgColor = if (enabled) backgroundColor else disabledBackgroundColor ?: Disabled
+    val bdColor = if (enabled) borderColor else disabledBorderColor ?: Disabled
+    val txtColor = if (enabled) textColor else disabledTextColor ?: TextTertiary
+
     Box(
         modifier = modifier
             .then(widthModifier)
@@ -80,20 +91,16 @@ fun CommonButton(
             .clip(RoundedCornerShape(borderRadius))
             .border(
                 width = 1.dp,
-                color = if (enabled) borderColor else Disabled,
+                color = bdColor,
                 shape = RoundedCornerShape(borderRadius)
             )
-            .background(
-                color = if (enabled) backgroundColor else Disabled
-            )
+            .background(bgColor)
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
-            style = size.textStyle.copy(
-                color = if (enabled) textColor else TextTertiary
-            )
+            style = size.textStyle.copy(color = txtColor)
         )
     }
 }

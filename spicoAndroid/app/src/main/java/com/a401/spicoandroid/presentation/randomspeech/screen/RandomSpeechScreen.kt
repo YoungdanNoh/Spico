@@ -70,8 +70,13 @@ fun RandomSpeechScreen(
                             backgroundColor = Error,
                             borderColor = Error,
                             textColor = White,
-                            onClick = { showExitAlert = true }
+                            disabledBackgroundColor = Error,
+                            disabledBorderColor = Error,
+                            disabledTextColor = White,
+                            enabled = prepCountdown == 0,
+                            onClick = { showExitAlert = true },
                         )
+
                     }
                 )
             }
