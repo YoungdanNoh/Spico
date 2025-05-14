@@ -8,6 +8,7 @@ import com.ssafy.spico.domain.landingPage.repository.LandingPageReportRepository
 import com.ssafy.spico.domain.practice.entity.PracticeType
 import com.ssafy.spico.domain.practice.repository.CoachingReportsRepository
 import com.ssafy.spico.domain.practice.repository.FinalReportsRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,6 +18,7 @@ class LandingPageReportServiceImpl(
     private val coachingReportsRepository: CoachingReportsRepository
 ) : LandingPageReportService {
 
+    @Transactional
     override fun landingPageReports(userId: Int) : LandingPageReportsResponseDto {
 
         val practicesEntity = landingPageReportRepository.findTop3ByUserIdOrderByCreatedAtDesc(userId)
