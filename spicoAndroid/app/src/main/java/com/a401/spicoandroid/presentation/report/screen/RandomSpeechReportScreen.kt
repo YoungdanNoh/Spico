@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.report.component.*
 import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 
@@ -79,7 +80,7 @@ fun RandomSpeechReportScreen(
             RandomReportFeedbackSection(feedback = report.feedback)
 
             RandomReportScriptButton(
-                onClick = { navController.navigate("not_found") }
+                onClick = { navController.navigate(NavRoutes.VoiceScript.route) }
             )
         }
 
