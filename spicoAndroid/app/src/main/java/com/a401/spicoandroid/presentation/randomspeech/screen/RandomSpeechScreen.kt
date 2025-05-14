@@ -1,5 +1,8 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,11 +12,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
@@ -21,6 +27,7 @@ import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.timer.rememberElapsedSeconds
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechExitAlert
@@ -39,14 +46,32 @@ fun RandomSpeechScreen(
 ) {
     val viewModel: RandomSpeechSharedViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activity = context as? Activity
 
-    var showExitAlert by remember { mutableStateOf(false) }           // 30초 이상 종료 시 확인
-    var showExitConfirmDialog by remember { mutableStateOf(false) }   // 30초 미만 종료 시 안내
+    var showExitAlert by remember { mutableStateOf(false) }
+    var showExitConfirmDialog by remember { mutableStateOf(false) }
 
     var prepCountdown by remember { mutableIntStateOf(3) }
     var startMainTimer by remember { mutableStateOf(false) }
 
-    // 준비 카운트다운
+    val waveform = remember { mutableStateOf(emptyList<Float>()) }
+    val audioAnalyzer = remember { AudioAnalyzer() }
+
+    // 권한 요청
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity ?: return@LaunchedEffect,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                1001
+            )
+        }
+    }
+
+    // 준비 타이머
     LaunchedEffect(Unit) {
         while (prepCountdown > 0) {
             delay(1000)
@@ -55,7 +80,15 @@ fun RandomSpeechScreen(
         startMainTimer = true
     }
 
-    // 발표 타이머
+    // 녹음 시작
+    LaunchedEffect(startMainTimer) {
+        if (startMainTimer) {
+            audioAnalyzer.start(scope = coroutineScope) { amps ->
+                waveform.value = amps
+            }
+        }
+    }
+
     val totalSeconds = speakMin * 60
     val remainingSeconds by countdownTimer(
         totalSeconds = totalSeconds,
@@ -64,8 +97,8 @@ fun RandomSpeechScreen(
     )
     val elapsedSeconds by rememberElapsedSeconds(isRunning = startMainTimer)
 
-    // 종료 처리 함수
     fun handleExit() {
+        audioAnalyzer.stop()
         if (elapsedSeconds < 30) {
             showExitConfirmDialog = true
         } else {
@@ -73,9 +106,7 @@ fun RandomSpeechScreen(
         }
     }
 
-    BackHandler {
-        handleExit()
-    }
+    BackHandler { handleExit() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -135,15 +166,13 @@ fun RandomSpeechScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Box(
+                // 실시간 음성 파형
+                AudioWaveformView(
+                    waveform = waveform.value,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp)
-                        .background(Action.copy(alpha = 0.1f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("음성 주파수", color = TextSecondary)
-                }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -178,8 +207,7 @@ fun RandomSpeechScreen(
 
                 Spacer(modifier = Modifier.height(48.dp))
             }
-
-            // 30초 이상 → 리포트로 이동
+            // 30초 이상 종료 다이얼로그
             if (showExitAlert) {
                 RandomSpeechExitAlert(
                     onDismissRequest = { showExitAlert = false },
@@ -189,14 +217,11 @@ fun RandomSpeechScreen(
                         val id = viewModel.getSpeechIdForReport()
                         if (id != null) {
                             navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
-                        } else {
-                            // 예외 처리
                         }
                     }
                 )
             }
-
-            // 30초 미만 → 리포트 생성 안됨
+            // 30초 미만 종료 다이얼로그
             if (showExitConfirmDialog) {
                 ExitConfirmDialog(
                     onDismiss = { showExitConfirmDialog = false },
@@ -206,17 +231,14 @@ fun RandomSpeechScreen(
                         navController.navigate(
                             route = NavRoutes.RandomSpeechLanding.route,
                             navOptions = navOptions {
-                                popUpTo(NavRoutes.RandomSpeechLanding.route) {
-                                    inclusive = true
-                                }
+                                popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
                             }
                         )
                     }
                 )
             }
         }
-
-        // 중앙 준비 타이머
+        // 중앙 타이머
         if (prepCountdown > 0) {
             Box(modifier = Modifier.align(Alignment.Center)) {
                 CommonTimer(

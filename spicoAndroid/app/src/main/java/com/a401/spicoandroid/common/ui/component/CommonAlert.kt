@@ -83,7 +83,7 @@ fun CommonAlert(
                     .align(Alignment.Center)
                     .background(White, RoundedCornerShape(8.dp))
                     .border(1.dp, borderColor, RoundedCornerShape(8.dp))
-                    .padding(16.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -141,7 +141,7 @@ fun CommonAlertPreview() {
     ) {
         CommonAlert(
             title = "리포트가 삭제됩니다.\n정말 삭제하시겠습니까?",
-            confirmText = "종료",
+            confirmText = "삭제",
             onConfirm = {},
             confirmTextColor = White,
             confirmBackgroundColor = Error,
