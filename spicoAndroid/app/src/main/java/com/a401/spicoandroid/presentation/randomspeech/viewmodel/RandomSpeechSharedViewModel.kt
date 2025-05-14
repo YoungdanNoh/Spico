@@ -91,4 +91,8 @@ class RandomSpeechSharedViewModel @Inject constructor(
     fun reset() {
         _uiState.value = RandomSpeechState()
     }
+
+    fun getSpeechIdForReport(): Int? {
+        return uiState.value.speechId
+    }
 }
