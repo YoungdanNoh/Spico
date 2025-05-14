@@ -53,7 +53,7 @@ public class RandomSpeechEntity {
     @Column(name = "ai_feedback", columnDefinition = "TEXT")
     private String aiFeedback;
 
-    @Column(name = "ai_title", length = 20)
+    @Column(name = "ai_title")
     private String aiTitle;
 
     public RandomSpeechEntity() {
