@@ -1,31 +1,50 @@
 package com.ssafy.spico.domain.randomSpeech.service
 
-import com.ssafy.spico.domain.randomSpeech.model.Content
-import com.ssafy.spico.domain.randomSpeech.model.RandomSpeech
-import com.ssafy.spico.domain.randomSpeech.model.toModel
+import com.ssafy.spico.domain.gpt.service.GptService
+import com.ssafy.spico.domain.news.service.NewsService
+import com.ssafy.spico.domain.randomSpeech.model.*
 import com.ssafy.spico.domain.randomSpeech.repository.RandomSpeechRepository
+import com.ssafy.spico.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class RandomSpeechServiceImpl(
-    private val randomSpeechRepository: RandomSpeechRepository
+    private val randomSpeechRepository: RandomSpeechRepository,
+    private val userRepository: UserRepository,
+    private val newsService: NewsService,
+    private val gptService: GptService
 ): RandomSpeechService {
 
     @Transactional
     override fun startRandomSpeech(randomSpeech: RandomSpeech): Content {
-        // 1. 일단 randomSpeech 엔티티 저장
-        // 2. 뉴스 가져와서 content 객체에 저장, 엔티티에 업데이트
-        // 3. gpt 갔다와서 content 객체에 질문 저장, 엔티티에 업데이트
-        // 4. 내려주기
-        val content = Content(
-            id = 1,
-            newsTitle = "",
-            newsUrl = "",
-            newsSummary = "",
-            question = ""
+        val userEntity = userRepository.getReferenceById(randomSpeech.userId)
+        val savedRandomSpeech = randomSpeechRepository.save(randomSpeech.toEntity(userEntity))
+
+        val newsList = newsService.searchNewsByTopic(randomSpeech.topic)
+        val selectedNews = newsList
+            .filter { it.description.length >= 50 }
+            .shuffled()
+            .first()
+
+        selectedNews.let{
+            savedRandomSpeech.updateNews(UpdateNewsCommand(
+                title = selectedNews.title,
+                url = selectedNews.link,
+                summary = selectedNews.description
+            ))
+        }
+
+        val question = gptService.generateRandomSpeechQuestion(randomSpeech.topic, selectedNews)
+        savedRandomSpeech.updateQuestion(UpdateQuestionCommand(question))
+
+        return Content(
+            id = savedRandomSpeech.randomSpeechId,
+            newsTitle = selectedNews.title,
+            newsUrl = selectedNews.link,
+            newsSummary = selectedNews.description,
+            question = question
         )
-        return content
     }
 
     override fun endRandomSpeech() {

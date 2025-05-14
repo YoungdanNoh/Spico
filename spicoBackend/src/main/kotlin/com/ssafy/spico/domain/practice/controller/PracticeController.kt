@@ -12,6 +12,7 @@ class PracticeController(
     private val coachingPracticeService: CoachingPracticeService,
     private val finalPracticeService: FinalPracticeService,
     private val finalPracticeReportService: FinalPracticeReportService,
+    private val coachingPracticeReportService: CoachingPracticeReportService,
     @Value("\${user-id}") private val userId: Int
 ) {
 
@@ -83,6 +84,17 @@ class PracticeController(
         @PathVariable practiceId: Int
     ): ApiResponse<FinalPracticeReportResponseDto> {
 
+        // TODO: videoUrl 응답 수정(minio에서 get 해와야 함)
         return ApiResponse.success(finalPracticeReportService.finalPracticeReport(userId, projectId, practiceId))
+    }
+
+    // 코칭 모드 리포트 조회
+    @GetMapping("/coaching/{practiceId}")
+    fun coachingPracticeReport(
+        @PathVariable projectId: Int,
+        @PathVariable practiceId: Int
+    ): ApiResponse<CoachingPracticeReportResponseDto> {
+
+        return ApiResponse.success(coachingPracticeReportService.coachingPracticeReport(projectId, practiceId))
     }
 }

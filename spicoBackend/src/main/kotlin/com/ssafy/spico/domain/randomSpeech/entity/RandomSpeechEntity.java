@@ -1,12 +1,13 @@
 package com.ssafy.spico.domain.randomSpeech.entity;
 
+import com.ssafy.spico.domain.randomSpeech.model.Topic;
 import com.ssafy.spico.domain.randomSpeech.model.UpdateNewsCommand;
 import com.ssafy.spico.domain.randomSpeech.model.UpdateQuestionCommand;
 import com.ssafy.spico.domain.randomSpeech.model.UpdateResultCommand;
 import com.ssafy.spico.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+        import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "random_speeches")
