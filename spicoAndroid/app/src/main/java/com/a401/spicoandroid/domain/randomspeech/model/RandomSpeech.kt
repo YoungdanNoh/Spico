@@ -1,4 +1,4 @@
-package com.a401.spicoandroid.presentation.randomspeech.model
+package com.a401.spicoandroid.domain.randomspeech.model
 
 data class RandomSpeech(
     val id: Int,

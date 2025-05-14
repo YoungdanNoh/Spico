@@ -16,6 +16,7 @@ sealed class NavRoutes(val route: String) {
     object ProjectScriptDetail : NavRoutes("script_detail")
     object ProjectScriptEdit : NavRoutes("script_edit")
     // 연습 하기
+    object ModeSelect : NavRoutes("mode_select")
     object ProjectSelect : NavRoutes("project_select")
     object FinalSetting : NavRoutes("final_setting")
     object FinalScreenCheck : NavRoutes("final_check")
@@ -58,5 +59,8 @@ sealed class NavRoutes(val route: String) {
 
     // 로그인
     object Login : NavRoutes("login")
+
+    //에러
+    object NotFound : NavRoutes("not_found")
 
 }

@@ -32,15 +32,17 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.presentation.project.component.ProjectEditDialog
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoHeader
+import com.a401.spicoandroid.presentation.project.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProjectDetailScreen(
+    navController: NavController,
     projectId: Int
 ) {
-    val practiceList = listOf(1, 2, 3)
     var selectedTab by remember { mutableStateOf(0) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
     var isBottomSheetVisible by remember { mutableStateOf(false) }
@@ -58,9 +60,46 @@ fun ProjectDetailScreen(
     val error = state.error
     val project = state.project
 
+    val practiceViewModel: PracticeViewModel = hiltViewModel()
+    val practiceState by practiceViewModel.practiceListState.collectAsState()
+    val practiceDeleteState by practiceViewModel.practiceDeleteState.collectAsState()
 
+    val projectViewModel: ProjectViewModel = hiltViewModel()
+    val deleteState by projectViewModel.deleteState.collectAsState()
+
+    var selectedPracticeId by remember { mutableIntStateOf(-1) }
+
+    // 프로젝트 정보는 최초 1회만 호출
     LaunchedEffect(Unit) {
         viewModel.fetchProjectDetail(projectId)
+    }
+
+    // 탭 선택이 변경될 때마다 연습 목록 다시 불러오기
+    LaunchedEffect(selectedTab) {
+        val filter = if (selectedTab == 0) "coaching" else "final"
+        practiceViewModel.fetchPracticeList(
+            projectId = projectId,
+            filter = filter,
+            cursor = null,
+            size = 10
+        )
+    }
+
+    LaunchedEffect(deleteState.isSuccess) {
+        if (deleteState.isSuccess) {
+            navController.popBackStack()
+        }
+    }
+
+    LaunchedEffect(practiceDeleteState.isSuccess) {
+        if (practiceDeleteState.isSuccess) {
+            practiceViewModel.fetchPracticeList(
+                projectId = projectId,
+                filter = if (selectedTab == 0) "coaching" else "final",
+                cursor = null,
+                size = 10
+            )
+        }
     }
 
     val dropdownItems = listOf(
@@ -98,6 +137,10 @@ fun ProjectDetailScreen(
         DeleteModalBottomSheet(
             onDeleteClick = {
                 isBottomSheetVisible = false
+                if (selectedPracticeId != -1) {
+                    practiceViewModel.deletePractice(projectId, selectedPracticeId)
+                }
+                practiceViewModel.resetDeleteState()
             },
             onDismissRequest = {
                 isBottomSheetVisible = false
@@ -176,21 +219,22 @@ fun ProjectDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        if (practiceList.isEmpty()) {
+                        if (practiceState.practices.isEmpty()) {
                             EmptyStateView(
                                 imageRes = R.drawable.character_home_1,
                                 message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
                             )
                         } else {
-                            practiceList.forEachIndexed { index, round ->
+                            practiceState.practices.forEachIndexed { index, practice ->
                                 CommonList(
-                                    title = "코칭모드 ${round}회차",
-                                    description = project.name,
+                                    title = "${practice.name} ${practice.count}회차",
+                                    description = practice.createdAt,
                                     onLongClick = {
+                                        selectedPracticeId = practice.id
                                         isBottomSheetVisible = true
                                     }
                                 )
-                                if (index != practiceList.lastIndex) {
+                                if (index != practiceState.practices.lastIndex) {
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
                             }
@@ -229,6 +273,7 @@ fun ProjectDetailScreen(
             confirmText = "삭제",
             onConfirm = {
                 showDeleteAlert = false
+                projectViewModel.deleteProject(projectId)
             },
             cancelText = "취소",
             onCancel = {

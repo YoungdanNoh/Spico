@@ -17,6 +17,7 @@ import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.Pretendard
 import com.a401.spicoandroid.common.ui.theme.TextPrimary
 import com.a401.spicoandroid.common.ui.theme.White
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.component.ModeSelectOptionCard
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeMode
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
@@ -76,8 +77,9 @@ fun ModeSelectScreen(
                     chips = listOf("# 대본있음", "# 음성녹음"),
                     imageRes = R.drawable.img_coaching_practice,
                     onClick = {
-                        viewModel.selectedMode = PracticeMode.COACHING // ✅ 저장
-                        navController.navigate("project_select")
+                        viewModel.selectedMode = PracticeMode.COACHING // 저장
+                        navController.navigate(NavRoutes.ProjectSelect.route)
+
                     }
                 )
 
@@ -87,8 +89,9 @@ fun ModeSelectScreen(
                     chips = listOf("# 대본없음", "# 영상녹화"),
                     imageRes = R.drawable.img_final_practice,
                     onClick = {
-                        viewModel.selectedMode = PracticeMode.FINAL // ✅ 저장
-                        navController.navigate("project_select")
+                        viewModel.selectedMode = PracticeMode.FINAL // 저장
+                        navController.navigate(NavRoutes.ProjectSelect.route)
+
                     }
                 )
             }

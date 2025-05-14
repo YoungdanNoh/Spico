@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
+import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
+import com.a401.spicoandroid.presentation.auth.viewmodel.LoginViewModel
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
@@ -20,6 +22,7 @@ import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
+import com.a401.spicoandroid.presentation.practice.screen.ModeSelectScreen
 import com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
@@ -40,6 +43,7 @@ import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import kotlin.math.log
 
 @Composable
 fun NavGraph(
@@ -50,6 +54,7 @@ fun NavGraph(
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
         val projectViewModel: ProjectViewModel = hiltViewModel()
         val practiceViewModel: PracticeViewModel = hiltViewModel()
+        val loginViewModel: LoginViewModel = hiltViewModel()
         val projectFormViewModel: ProjectFormViewModel = hiltViewModel()
 
 
@@ -121,9 +126,19 @@ fun NavGraph(
                 arguments = listOf(navArgument("projectId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: -1
-                ProjectDetailScreen(projectId = projectId)
+                ProjectDetailScreen(
+                    navController = navController,
+                    projectId = projectId
+                )
             }
             // 연습하기
+            composable(NavRoutes.ModeSelect.route) {
+                ModeSelectScreen(
+                    navController = navController,
+                    viewModel = practiceViewModel
+                )
+            }
+
             composable(route = NavRoutes.ProjectSelect.route) {
                 ProjectSelectScreen(
                     navController = navController,
@@ -270,8 +285,14 @@ fun NavGraph(
 
             // 로그인
             composable(NavRoutes.Login.route) {
-                LoginScreen(onKakaoLoginClick = {})
+                LoginScreen(loginViewModel)
             }
+
+            // 에러
+            composable(NavRoutes.NotFound.route) {
+                NotFoundScreen(navController)
+            }
+
         }
     }
 }
