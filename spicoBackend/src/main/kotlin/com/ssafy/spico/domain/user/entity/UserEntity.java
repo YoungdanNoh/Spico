@@ -10,9 +10,9 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String email;
+    private Long kakaoId;
 
-    private String name;
+    private String nickname;
 
     private boolean hasAudience;
 
@@ -24,27 +24,25 @@ public class UserEntity {
 
     public UserEntity() {}
 
-    public UserEntity(String email, String name) {
-        this.email = email;
-        this.name = name;
+    public UserEntity(Long kakaoId, String nickname) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
         this.hasAudience = true;
         this.hasQna = true;
         this.questionCount = 1;
         this.answerTimeLimit = 1;
     }
 
-    public UserEntity(String email, String name, boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
-        this.email = email;
-        this.name = name;
+    public UserEntity(Long kakaoId, String nickname, boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
         this.hasAudience = hasAudience;
         this.hasQna = hasQna;
         this.questionCount = questionCount;
         this.answerTimeLimit = answerTimeLimit;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    public Long getKakaoId() { return kakaoId; }
 
     public boolean isHasAudience() {
         return hasAudience;
@@ -66,8 +64,8 @@ public class UserEntity {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getNickname() {
+        return nickname;
     }
 
     public void updateSetting(boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
