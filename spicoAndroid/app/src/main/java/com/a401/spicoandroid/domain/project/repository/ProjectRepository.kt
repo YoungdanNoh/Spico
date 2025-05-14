@@ -15,4 +15,12 @@ interface ProjectRepository {
     suspend fun getProjectDetail(
         projectId: Int
     ): DataResource<ProjectDetail>
+
+    suspend fun createProject(
+        name: String,
+        date: String,
+        time: Int,
+        script: String
+    ): DataResource<Int>
+
 }
