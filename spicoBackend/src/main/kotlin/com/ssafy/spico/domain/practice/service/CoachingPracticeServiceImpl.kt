@@ -64,12 +64,13 @@ class CoachingPracticeServiceImpl (
         //    해당 practice의 상태를 COMPLETED로 변경
         val practiceEntity = practicesRepository.findById(practiceId)
             .orElseThrow { PracticeException(PracticeError.PRACTICE_NOT_FOUND) }
-        practiceEntity.setStatus(PracticeStatus.COMPLETED)
 
         // 이미 완료된 상태라면 예외 발생
         if (practiceEntity.status == PracticeStatus.COMPLETED) {
             throw PracticeException(PracticeError.ALREADY_COMPLETED_PRACTICE)
         }
+
+        practiceEntity.setStatus(PracticeStatus.COMPLETED)
 
         // 3. minio에 영상 저장, url db에 넣기
         if(endCoachingPractice.fileName.isNullOrBlank()) {
