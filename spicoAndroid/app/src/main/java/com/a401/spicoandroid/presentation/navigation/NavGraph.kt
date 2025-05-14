@@ -44,6 +44,7 @@ import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import kotlin.math.log
 
 @Composable
 fun NavGraph(
@@ -78,7 +79,6 @@ fun NavGraph(
                 MyPageScreen(navController, modifier)
             }
 
-            // 프로젝트 생성
             composable(NavRoutes.ProjectCreate.route) {
                 ProjectCreateScreen(
                     navController = navController,
@@ -117,6 +117,7 @@ fun NavGraph(
                     }
                 )
             }
+
 
             composable(NavRoutes.VideoReplay.route) {
                 VideoReplayScreen()
