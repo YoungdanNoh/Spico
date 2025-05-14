@@ -22,4 +22,11 @@ class PracticeRepositoryImpl @Inject constructor(
             .getOrThrow { it.practices.map { dto -> dto.toDomain() } }
     }
 
+    override suspend fun deletePractice(
+        projectId: Int,
+        practiceId: Int
+    ): DataResource<Unit> = safeApiCall {
+        api.deletePractice(projectId, practiceId).getOrThrow { Unit }
+    }
+
 }
