@@ -74,10 +74,10 @@ class FinalPracticeServiceImpl (
     ): GenerateGPTQuestionResponseDto {
 
         // 1. 해당 practice의 상태를 COMPLETED로 변경
+        // 이미 완료된 상태라면 예외 발생
         val practiceEntity = practicesRepository.findById(practiceId)
             .orElseThrow { PracticeException(PracticeError.PRACTICE_NOT_FOUND) }
 
-        // 이미 완료된 상태라면 예외 발생
         if (practiceEntity.status == PracticeStatus.COMPLETED) {
             throw PracticeException(PracticeError.ALREADY_COMPLETED_PRACTICE)
         }
@@ -137,17 +137,17 @@ class FinalPracticeServiceImpl (
         val practiceEntity = practicesRepository.findById(practiceId)
             .orElseThrow { PracticeException(PracticeError.PRACTICE_NOT_FOUND) }
 
-        // 이미 완료된 프로젝트 상태라면 예외 발생
-        if (practiceEntity.status == PracticeStatus.COMPLETED) {
-            throw PracticeException(PracticeError.ALREADY_COMPLETED_PRACTICE)
-        }
-
         // 1. qaRecords가 비어있으면
         //    finalReportsEntity 의 final_practice_cnt 값을 1개 증가시키기
         //    projectsEntity 의 last_final_cnt 값을 1 증가시키기
         println("endFinalPractice.answers${endFinalPractice.answers}")
         if(endFinalPractice.answers.isNullOrEmpty()){
             // 1-1. 해당 practice의 상태를 COMPLETED로 변경
+            // 이미 완료된 프로젝트 상태라면 예외 발생
+            if (practiceEntity.status == PracticeStatus.COMPLETED) {
+                throw PracticeException(PracticeError.ALREADY_COMPLETED_PRACTICE)
+            }
+
             practiceEntity.setStatus(PracticeStatus.COMPLETED)
 
             // 1-2. final_reports 테이블에 practice_id 넣고, 기존 개수 기반으로 final_practice_cnt 증가
@@ -238,7 +238,7 @@ class FinalPracticeServiceImpl (
         }
 
         val presignedUrl = minioService.generatePresignedUrl("video", endFinalPractice.fileName)
-        val playbackUrl = "record/${endFinalPractice.fileName}"
+        val playbackUrl = "video/${endFinalPractice.fileName}"
 
         finalReportsEntity.videoUrl = playbackUrl
 
