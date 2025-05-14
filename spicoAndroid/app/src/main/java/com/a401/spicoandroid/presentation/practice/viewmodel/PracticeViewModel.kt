@@ -9,6 +9,8 @@ import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.domain.project.model.ProjectScreenType
 import com.a401.spicoandroid.domain.project.usecase.GetProjectListUseCase
 import com.a401.spicoandroid.common.domain.DataResource
+import com.a401.spicoandroid.domain.practice.usecase.CreateCoachingPracticeUseCase
+import com.a401.spicoandroid.domain.practice.usecase.CreateFinalPracticeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,7 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PracticeViewModel @Inject constructor(
     private val practiceApi: PracticeApi,
-    private val getProjectListUseCase: GetProjectListUseCase
+    private val getProjectListUseCase: GetProjectListUseCase,
+    private val createCoachingPracticeUseCase: CreateCoachingPracticeUseCase,
+    private val createFinalPracticeUseCase: CreateFinalPracticeUseCase
 ) : ViewModel() {
 
     // 모드: coaching or final
@@ -76,38 +80,40 @@ class PracticeViewModel @Inject constructor(
         val projectId = selectedProject?.id ?: return
 
         viewModelScope.launch {
-            try {
-                when (selectedMode) {
-                    PracticeMode.COACHING -> {
-                        val response = practiceApi.createCoachingPractice(projectId)
-                        if (response.isSuccessful) {
-                            _practiceId.value = response.body()?.data?.practiceId
+            when (selectedMode) {
+                PracticeMode.COACHING -> {
+                    when (val result = createCoachingPracticeUseCase(projectId)) {
+                        is DataResource.Success -> {
+                            _practiceId.value = result.data
                             onSuccess()
-                        } else {
-                            onFailure(Exception("코칭 연습 생성 실패"))
                         }
-                    }
-
-                    PracticeMode.FINAL -> {
-                        val request = FinalPracticeRequest(
-                            hasAudience = hasAudience,
-                            hasQnA = hasQnA,
-                            questionCount = questionCount,
-                            answerTimeLimit = answerTimeLimit
-                        )
-                        val response = practiceApi.createFinalPractice(projectId, request)
-                        if (response.isSuccessful) {
-                            _practiceId.value = response.body()?.data?.practiceId
-                            onSuccess()
-                        } else {
-                            onFailure(Exception("파이널 연습 생성 실패"))
+                        is DataResource.Error -> {
+                            onFailure(result.throwable)
                         }
+                        is DataResource.Loading -> Unit
                     }
-
-                    null -> onFailure(IllegalStateException("모드가 선택되지 않았습니다."))
                 }
-            } catch (e: Exception) {
-                onFailure(e)
+
+                PracticeMode.FINAL -> {
+                    val request = FinalPracticeRequest(
+                        hasAudience = hasAudience,
+                        hasQnA = hasQnA,
+                        questionCount = questionCount,
+                        answerTimeLimit = answerTimeLimit
+                    )
+                    when (val result = createFinalPracticeUseCase(projectId, request)) {
+                        is DataResource.Success -> {
+                            _practiceId.value = result.data
+                            onSuccess()
+                        }
+                        is DataResource.Error -> {
+                            onFailure(result.throwable)
+                        }
+                        is DataResource.Loading -> Unit
+                    }
+                }
+
+                null -> onFailure(IllegalStateException("모드가 선택되지 않았습니다."))
             }
         }
     }
