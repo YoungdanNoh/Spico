@@ -10,4 +10,9 @@ interface PracticeRepository {
         cursor: Int?,
         size: Int
     ): DataResource<List<Practice>>
+
+    suspend fun deletePractice(
+        projectId: Int,
+        practiceId: Int
+    ): DataResource<Unit>
 }

@@ -62,9 +62,12 @@ fun ProjectDetailScreen(
 
     val practiceViewModel: PracticeViewModel = hiltViewModel()
     val practiceState by practiceViewModel.practiceListState.collectAsState()
+    val practiceDeleteState by practiceViewModel.practiceDeleteState.collectAsState()
 
     val projectViewModel: ProjectViewModel = hiltViewModel()
     val deleteState by projectViewModel.deleteState.collectAsState()
+
+    var selectedPracticeId by remember { mutableIntStateOf(-1) }
 
     // 프로젝트 정보는 최초 1회만 호출
     LaunchedEffect(Unit) {
@@ -88,6 +91,16 @@ fun ProjectDetailScreen(
         }
     }
 
+    LaunchedEffect(practiceDeleteState.isSuccess) {
+        if (practiceDeleteState.isSuccess) {
+            practiceViewModel.fetchPracticeList(
+                projectId = projectId,
+                filter = if (selectedTab == 0) "coaching" else "final",
+                cursor = null,
+                size = 10
+            )
+        }
+    }
 
     val dropdownItems = listOf(
         DropdownMenuItemData(
@@ -124,6 +137,10 @@ fun ProjectDetailScreen(
         DeleteModalBottomSheet(
             onDeleteClick = {
                 isBottomSheetVisible = false
+                if (selectedPracticeId != -1) {
+                    practiceViewModel.deletePractice(projectId, selectedPracticeId)
+                }
+                practiceViewModel.resetDeleteState()
             },
             onDismissRequest = {
                 isBottomSheetVisible = false
@@ -213,6 +230,7 @@ fun ProjectDetailScreen(
                                     title = "${practice.name} ${practice.count}회차",
                                     description = practice.createdAt,
                                     onLongClick = {
+                                        selectedPracticeId = practice.id
                                         isBottomSheetVisible = true
                                     }
                                 )
