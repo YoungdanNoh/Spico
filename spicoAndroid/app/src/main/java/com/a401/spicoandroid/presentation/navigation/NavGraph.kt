@@ -22,6 +22,7 @@ import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalScreenCheckScreen
 import com.a401.spicoandroid.presentation.practice.screen.FinalSettingScreen
+import com.a401.spicoandroid.presentation.practice.screen.ModeSelectScreen
 import com.a401.spicoandroid.presentation.practice.screen.ProjectSelectScreen
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
@@ -73,6 +74,7 @@ fun NavGraph(
                 MyPageScreen(navController, modifier)
             }
 
+            // 프로젝트 생성
             composable(NavRoutes.ProjectCreate.route) {
                 ProjectSettingScreen(navController, modifier)
             }
@@ -109,7 +111,6 @@ fun NavGraph(
                 )
             }
 
-
             composable(NavRoutes.VideoReplay.route) {
                 VideoReplayScreen()
             }
@@ -122,6 +123,13 @@ fun NavGraph(
                 ProjectDetailScreen(projectId = projectId)
             }
             // 연습하기
+            composable(NavRoutes.ModeSelect.route) {
+                ModeSelectScreen(
+                    navController = navController,
+                    viewModel = practiceViewModel
+                )
+            }
+
             composable(route = NavRoutes.ProjectSelect.route) {
                 ProjectSelectScreen(
                     navController = navController,
