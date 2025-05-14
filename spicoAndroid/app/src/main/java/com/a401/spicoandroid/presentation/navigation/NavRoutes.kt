@@ -26,18 +26,9 @@ sealed class NavRoutes(val route: String) {
     // 랜덤 스피치
     object RandomSpeechLanding : NavRoutes("randomspeech_landing")
     object RandomSpeechTopicSelect : NavRoutes("randomspeech_topic_select")
-    object RandomSpeechSetting : NavRoutes("random_speech_setting/{topic}") {
-        fun withTopic(topic: String) = "random_speech_setting/$topic"
-    }
-    object RandomSpeechReady : NavRoutes("random_ready?prepMin={prepMin}&speakMin={speakMin}") {
-        fun withTimes(prepMin: Int, speakMin: Int) =
-            "random_ready?prepMin=$prepMin&speakMin=$speakMin"
-    }
-    object RandomSpeech : NavRoutes("random_speech") {
-        fun withQuestionAndTime(question: String, speakMin: Int): String {
-            return "random_speech?question=${Uri.encode(question)}&speakMin=$speakMin"
-        }
-    }
+    object RandomSpeechSetting : NavRoutes("randomspeech_setting")
+    object RandomSpeechReady : NavRoutes("randomspeech_ready")
+    object RandomSpeech : NavRoutes("randomspeech")
     object RandomSpeechProjectList : NavRoutes("randomspeech_project_list")
     object RandomSpeechReport : NavRoutes("randomspeech_report/{randomSpeechId}") {
         fun withId(randomSpeechId: Int) = "randomspeech_report/$randomSpeechId"

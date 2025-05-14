@@ -16,10 +16,6 @@ interface ProjectRepository {
         projectId: Int
     ): DataResource<ProjectDetail>
 
-    suspend fun deleteProject(
-        projectId: Int
-    ): DataResource<Unit>
-
     suspend fun createProject(
         name: String,
         date: String,
@@ -27,4 +23,8 @@ interface ProjectRepository {
         script: String
     ): DataResource<Int>
 
+
+    suspend fun deleteProject(
+        projectId: Int
+    ): DataResource<Unit>
 }

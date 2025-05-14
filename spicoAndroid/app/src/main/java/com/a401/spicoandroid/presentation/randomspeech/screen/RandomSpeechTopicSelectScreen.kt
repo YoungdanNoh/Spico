@@ -11,21 +11,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.a401.spicoandroid.common.ui.component.BackIconButton
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechTopic
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.TopicItem
+import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 
 @Composable
 fun RandomSpeechTopicSelectScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: RandomSpeechSharedViewModel
 ) {
-    val topics = listOf(
-        "politics", "economy", "it", "sports", "nature", "culture",
-        "society", "science", "art", "health", "history", "environment"
-    )
+    val topics = RandomSpeechTopic.entries.toList()
 
     Scaffold(
         topBar = {
@@ -71,7 +72,8 @@ fun RandomSpeechTopicSelectScreen(
                         topic = topic,
                         isSelected = false,
                         onClick = {
-                            navController.navigate(NavRoutes.RandomSpeechSetting.withTopic(topic))
+                            viewModel.setTopic(topic)
+                            navController.navigate(NavRoutes.RandomSpeechSetting.route)
                         }
                     )
                 }

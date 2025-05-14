@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +46,7 @@ import com.a401.spicoandroid.common.ui.theme.*
  * @param borderColor 다이얼로그 전체 테두리 색상 (기본값: White)
  * @param onDismissRequest 바깥 영역 클릭 시 다이얼로그 닫힘 처리 콜백
  */
+
 @Composable
 fun CommonAlert(
     modifier: Modifier = Modifier,
@@ -69,38 +72,35 @@ fun CommonAlert(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(OverlayDark20) // 어두운 반투명 배경
+                .background(OverlayDark20)
                 .clickable(onClick = onDismissRequest)
                 .padding(16.dp)
         ) {
             Box(
                 modifier = modifier
-                    .size(width = 312.dp, height = 180.dp)
+                    .width(312.dp)
+                    .wrapContentHeight()
                     .align(Alignment.Center)
                     .background(White, RoundedCornerShape(8.dp))
                     .border(1.dp, borderColor, RoundedCornerShape(8.dp))
-                    .padding(16.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Box(
+                    Text(
+                        text = title,
+                        fontSize = 18.sp,
+                        lineHeight = 28.sp,
+                        color = TextPrimary,
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .height(64.dp)
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = title,
-                            fontSize = 20.sp,
-                            color = TextPrimary,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(vertical = 8.dp)
+                    )
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -130,9 +130,7 @@ fun CommonAlert(
         }
     }
 }
-/**
- * 프리뷰 예제
- */
+
 @Preview(showBackground = true)
 @Composable
 fun CommonAlertPreview() {
@@ -142,12 +140,12 @@ fun CommonAlertPreview() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CommonAlert(
-            title = "문단을 나누시겠습니까?",
-            confirmText = "나누기",
+            title = "리포트가 삭제됩니다.\n정말 삭제하시겠습니까?",
+            confirmText = "삭제",
             onConfirm = {},
             confirmTextColor = White,
-            confirmBackgroundColor = Action,
-            confirmBorderColor = Action,
+            confirmBackgroundColor = Error,
+            confirmBorderColor = Error,
             cancelText = "취소",
             onCancel = {},
             cancelTextColor = TextTertiary,
