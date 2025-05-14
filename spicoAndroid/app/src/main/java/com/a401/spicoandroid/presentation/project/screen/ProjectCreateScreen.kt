@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.project.screen
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,10 +36,11 @@ import com.a401.spicoandroid.common.ui.theme.TextPrimary
 import com.a401.spicoandroid.common.ui.theme.Typography
 import com.a401.spicoandroid.common.ui.theme.White
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectFormViewModel
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ProjectSettingScreen(
+fun ProjectCreateScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: ProjectFormViewModel = hiltViewModel()
@@ -45,6 +48,14 @@ fun ProjectSettingScreen(
     val focusManager = LocalFocusManager.current
     val isFocused = remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+    val today = remember { LocalDate.now() }
+
+    val isFormValid = remember(state.projectName, state.projectDate, state.projectTime) {
+        state.projectName.isNotBlank() &&
+        state.projectDate?.let { !it.isBefore(today) } == true &&
+        state.projectTime in 30..1800
+    }
 
     Scaffold (
         topBar = {
@@ -61,7 +72,13 @@ fun ProjectSettingScreen(
                     backgroundColor = Action,
                     borderColor = Action,
                     textColor = White,
-                    onClick = { navController.navigate("project_script_input") },
+                    onClick = {
+                        if (isFormValid) {
+                            navController.navigate("project_script_input")
+                        } else {
+                            Toast.makeText(context, "모든 항목을 올바르게 입력해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -103,7 +120,10 @@ fun ProjectSettingScreen(
                 )
                 DatePicker(
                     selectedDate = state.projectDate,
-                    onDateSelected = viewModel::updateProjectDate,
+                    onDateSelected = {
+                        focusManager.clearFocus(force = true)
+                        viewModel.updateProjectDate(it)
+                    },
                     modifier = Modifier.padding(bottom = 36.dp),
                 )
                 Text(
@@ -127,6 +147,7 @@ fun ProjectSettingScreen(
                     guideText = "발표시간은 30초 ~ 30분 입니다.",
                     timePickerDialog = { show, onDismiss, onTimeSelected ->
                         if (show) {
+                            focusManager.clearFocus(force = true)
                             FlexibleTimePickerDialog(
                                 initialMinute = state.projectTime % 60,
                                 initialSecond = 0,

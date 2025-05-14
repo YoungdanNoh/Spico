@@ -23,12 +23,14 @@ import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.theme.BrokenWhite
 import com.a401.spicoandroid.domain.project.model.ProjectScreenType
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectFormViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 
 @Composable
 fun ProjectListScreen(
     navController: NavController,
     projectViewModel: ProjectViewModel,
+    projectFormViewModel: ProjectFormViewModel,
     onFabClick: () -> Unit
 ) {
     val projectListState by projectViewModel.projectListState.collectAsState()
@@ -45,7 +47,10 @@ fun ProjectListScreen(
                     IconButton(
                         iconResId = R.drawable.ic_add_black,
                         contentDescription = "프로젝트 추가",
-                        onClick = onFabClick
+                        onClick = {
+                            projectFormViewModel.resetForm()
+                            navController.navigate("project_create")
+                        }
                     )
                 }
             )

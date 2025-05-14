@@ -28,9 +28,10 @@ import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.screen.ProjectDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectListScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScreen
-import com.a401.spicoandroid.presentation.project.screen.ProjectSettingScreen
+import com.a401.spicoandroid.presentation.project.screen.ProjectCreateScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptEditScreen
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectFormViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListScreen
@@ -54,6 +55,8 @@ fun NavGraph(
         val projectViewModel: ProjectViewModel = hiltViewModel()
         val practiceViewModel: PracticeViewModel = hiltViewModel()
         val loginViewModel: LoginViewModel = hiltViewModel()
+        val projectFormViewModel: ProjectFormViewModel = hiltViewModel()
+
 
         NavHost(
             navController = navController,
@@ -74,22 +77,24 @@ fun NavGraph(
                 MyPageScreen(navController, modifier)
             }
 
-            // 프로젝트 생성
             composable(NavRoutes.ProjectCreate.route) {
-                ProjectSettingScreen(navController, modifier)
+                ProjectCreateScreen(
+                    navController = navController,
+                    modifier = modifier,
+                    viewModel = projectFormViewModel
+                )
             }
 
             composable(NavRoutes.ProjectScriptInput.route) {
-                ProjectScriptInputScreen(navController)
+                ProjectScriptInputScreen(navController, modifier, projectFormViewModel)
             }
 
             composable(NavRoutes.ProjectList.route) {
                 ProjectListScreen(
                     navController = navController,
                     projectViewModel = projectViewModel,
-                    onFabClick = {
-                        navController.navigate(NavRoutes.ProjectCreate.route)
-                    }
+                    projectFormViewModel = projectFormViewModel,
+                    onFabClick = {}
                 )
             }
 
@@ -110,6 +115,7 @@ fun NavGraph(
                     }
                 )
             }
+
 
             composable(NavRoutes.VideoReplay.route) {
                 VideoReplayScreen()
