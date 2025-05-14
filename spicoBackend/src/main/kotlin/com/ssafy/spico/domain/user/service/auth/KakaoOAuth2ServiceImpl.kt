@@ -7,16 +7,12 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-
 @Service
 class KakaoOAuth2ServiceImpl(
     private val webClientBuilder: WebClient.Builder
 ) : KakaoOAuth2Service {
 
     override fun getUserInfo(accessToken: String): KakaoOAuth2Response {
-        val objectMapper = jacksonObjectMapper()
         return webClientBuilder.build()
             .get()
             .uri("https://kapi.kakao.com/v2/user/me")
