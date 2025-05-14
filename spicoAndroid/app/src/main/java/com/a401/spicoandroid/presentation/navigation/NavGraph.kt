@@ -44,6 +44,7 @@ import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
 import kotlin.math.log
 
 @Composable
@@ -115,11 +116,6 @@ fun NavGraph(
                         navController.popBackStack(NavRoutes.ProjectScriptDetail.route, inclusive = false)
                     }
                 )
-            }
-
-
-            composable(NavRoutes.VideoReplay.route) {
-                VideoReplayScreen()
             }
 
             composable(
@@ -249,8 +245,15 @@ fun NavGraph(
                 FinalModeQnAScreen(navController = navController)
             }
             composable("final_mode_report") {
-                FinalReportScreen()
+                FinalReportScreen(navController = navController)
             }
+            composable(NavRoutes.VoiceScript.route) {
+                VoiceScriptScreen(navController = navController)
+            }
+            composable(NavRoutes.VideoReplay.route) {
+                VideoReplayScreen(navController = navController)
+            }
+
 
 
             // 로그인

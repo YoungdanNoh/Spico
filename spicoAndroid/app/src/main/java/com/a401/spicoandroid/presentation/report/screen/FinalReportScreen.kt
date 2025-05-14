@@ -16,15 +16,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.report.component.*
 import com.a401.spicoandroid.presentation.report.viewmodel.FinalReportViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun FinalReportScreen(
+    navController: NavController,
     viewModel: FinalReportViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -147,18 +150,24 @@ fun FinalReportScreen(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 CommonButton(
                     text = "음성 스크립트",
-                    onClick = {},
+                    onClick = {
+                        navController.navigate(NavRoutes.VoiceScript.route)
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 CommonButton(
                     text = "발표 영상 다시 보기",
-                    onClick = {},
+                    onClick = {
+                        navController.navigate(NavRoutes.VideoReplay.route)
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     backgroundColor = White,
                     textColor = Action,
                     borderColor = Action
                 )
+
+                Spacer(modifier = Modifier.height(40.dp))
             }
         }
         if (isAlertVisible) {
@@ -181,10 +190,4 @@ fun FinalReportScreen(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FinalReportScreenPreview() {
-    FinalReportScreen()
 }

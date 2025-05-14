@@ -43,7 +43,27 @@ class FinalModeViewModel @Inject constructor() : ViewModel()
     var question by mutableStateOf("")
         private set
 
-    fun startCountdownAndRecording(onStartRecording: () -> Unit) {
+     var showEarlyExitDialog by mutableStateOf(false)
+         private set
+
+     var showNormalExitDialog by mutableStateOf(false)
+         private set
+
+     fun checkElapsedAndShowDialog(elapsedSeconds: Int) {
+         if (elapsedSeconds < 30) {
+             showEarlyExitDialog = true
+         } else {
+             showNormalExitDialog = true
+         }
+     }
+
+     fun hideAllDialogs() {
+         showEarlyExitDialog = false
+         showNormalExitDialog = false
+     }
+
+
+     fun startCountdownAndRecording(onStartRecording: () -> Unit) {
         viewModelScope.launch {
             for (i in 3 downTo 1) {
                 countdown = i
