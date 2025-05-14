@@ -87,4 +87,7 @@ class ProjectViewModel @Inject constructor(
             }
         }
     }
+    fun resetDeleteState() {
+        _deleteState.value = ProjectDeleteState()
+    }
 }
