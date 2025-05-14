@@ -148,13 +148,13 @@ fun GreetingSection(
                             }
                         )
                         CommonButton(
-                            text = "마이페이지",
+                            text = "랜덤리포트",
                             size = ButtonSize.MD,
                             backgroundColor = Action,
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                navController.navigate(NavRoutes.Profile.route)
+                                navController.navigate(NavRoutes.RandomSpeechReport.route)
                             }
                         )
                         CommonButton(

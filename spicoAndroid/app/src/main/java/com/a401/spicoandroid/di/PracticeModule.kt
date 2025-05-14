@@ -10,9 +10,4 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class PracticeModule {
-
-    @Binds
-    abstract fun bindPracticeRepository(
-        impl: PracticeRepositoryImpl
-    ): PracticeRepository
 }
