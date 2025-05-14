@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.a401.spicoandroid.common.timer.rememberElapsedSeconds
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.infrastructure.camera.FinalRecordingCameraService
@@ -35,8 +36,8 @@ fun FinalModeVoiceScreen(
 
     val countdown = viewModel.countdown
     val elapsedTime = viewModel.elapsedTime
-    val showConfirm = viewModel.showStopConfirm
     val waveform by viewModel.waveform.collectAsState()
+    val elapsedSeconds = rememberElapsedSeconds(isRunning = countdown < 0)
 
     val cameraService = remember {
         FinalRecordingCameraService(context, lifecycleOwner)
@@ -112,31 +113,61 @@ fun FinalModeVoiceScreen(
                 borderColor = Error,
                 textColor = White,
                 size = ButtonSize.SM,
-                onClick = { viewModel.showConfirmDialog() }
+                onClick = {
+                    viewModel.checkElapsedAndShowDialog(elapsedSeconds.value)
+                }
             )
         }
 
-        // 종료 확인 팝업
-        if (showConfirm) {
+        // 30초 이상 종료 다이얼로그
+        if (viewModel.showNormalExitDialog) {
             CommonAlert(
-                title = "파이널 모드를 종료하시겠습니까?",
+                title = "파이널 모드를\n종료하시겠습니까?",
                 confirmText = "종료",
                 onConfirm = {
+                    viewModel.hideAllDialogs()
                     viewModel.stopRecording()
                     viewModel.stopAudio()
-                    viewModel.hideConfirmDialog()
-                    navController.navigate(NavRoutes.FinalModeLoading.route)
+                    cameraService.stopRecording {
+                        navController.navigate(NavRoutes.FinalModeLoading.route)
+                    }
                 },
+                onCancel = { viewModel.hideAllDialogs() },
+                onDismissRequest = { viewModel.hideAllDialogs() },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,
                 confirmBorderColor = Error,
                 cancelText = "취소",
-                onCancel = { viewModel.hideConfirmDialog() },
                 cancelTextColor = TextTertiary,
                 cancelBackgroundColor = BackgroundSecondary,
                 cancelBorderColor = BackgroundSecondary,
-                borderColor = White,
-                onDismissRequest = { viewModel.hideConfirmDialog() }
+                borderColor = White
+            )
+        }
+
+// 30초 미만 종료 다이얼로그
+        if (viewModel.showEarlyExitDialog) {
+            CommonAlert(
+                title = "30초 미만의 발표는\n리포트가 제공되지 않아요.\n종료하시겠어요?",
+                confirmText = "종료",
+                onConfirm = {
+                    viewModel.hideAllDialogs()
+                    viewModel.stopRecording()
+                    viewModel.stopAudio()
+                    cameraService.stopRecording {
+                        navController.navigate(NavRoutes.ProjectList.route)
+                    }
+                },
+                onCancel = { viewModel.hideAllDialogs() },
+                onDismissRequest = { viewModel.hideAllDialogs() },
+                confirmTextColor = White,
+                confirmBackgroundColor = Error,
+                confirmBorderColor = Error,
+                cancelText = "취소",
+                cancelTextColor = TextTertiary,
+                cancelBackgroundColor = BackgroundSecondary,
+                cancelBorderColor = BackgroundSecondary,
+                borderColor = White
             )
         }
     }

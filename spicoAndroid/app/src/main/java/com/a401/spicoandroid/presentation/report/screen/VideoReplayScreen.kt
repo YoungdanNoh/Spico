@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
@@ -22,6 +23,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun VideoReplayScreen(
+    navController: NavController,
     viewModel: VideoReplayViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
