@@ -15,4 +15,8 @@ interface ProjectRepository {
     suspend fun getProjectDetail(
         projectId: Int
     ): DataResource<ProjectDetail>
+
+    suspend fun deleteProject(
+        projectId: Int
+    ): DataResource<Unit>
 }

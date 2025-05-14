@@ -34,11 +34,13 @@ import com.a401.spicoandroid.presentation.project.component.ProjectEditDialog
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoHeader
 import com.a401.spicoandroid.presentation.project.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProjectDetailScreen(
+    navController: NavController,
     projectId: Int
 ) {
     var selectedTab by remember { mutableStateOf(0) }
@@ -61,6 +63,8 @@ fun ProjectDetailScreen(
     val practiceViewModel: PracticeViewModel = hiltViewModel()
     val practiceState by practiceViewModel.practiceListState.collectAsState()
 
+    val projectViewModel: ProjectViewModel = hiltViewModel()
+    val deleteState by projectViewModel.deleteState.collectAsState()
 
     // 프로젝트 정보는 최초 1회만 호출
     LaunchedEffect(Unit) {
@@ -77,6 +81,13 @@ fun ProjectDetailScreen(
             size = 10
         )
     }
+
+    LaunchedEffect(deleteState.isSuccess) {
+        if (deleteState.isSuccess) {
+            navController.popBackStack()
+        }
+    }
+
 
     val dropdownItems = listOf(
         DropdownMenuItemData(
@@ -244,6 +255,7 @@ fun ProjectDetailScreen(
             confirmText = "삭제",
             onConfirm = {
                 showDeleteAlert = false
+                projectViewModel.deleteProject(projectId)
             },
             cancelText = "취소",
             onCancel = {
