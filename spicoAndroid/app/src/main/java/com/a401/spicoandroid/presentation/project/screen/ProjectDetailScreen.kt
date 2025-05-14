@@ -3,38 +3,26 @@ package com.a401.spicoandroid.presentation.project.screen
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.bottomsheet.DeleteModalBottomSheet
-import com.a401.spicoandroid.common.ui.component.CommonAlert
-import com.a401.spicoandroid.common.ui.component.CommonDropdown
-import com.a401.spicoandroid.common.ui.component.CommonList
-import com.a401.spicoandroid.common.ui.component.CommonReportTabBar
-import com.a401.spicoandroid.common.ui.component.CommonTopBar
-import com.a401.spicoandroid.common.ui.component.DropdownMenuItemData
-import com.a401.spicoandroid.common.ui.component.EmptyStateView
-import com.a401.spicoandroid.common.ui.component.IconButton
-import com.a401.spicoandroid.common.ui.component.LoadingInProgressView
+import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.domain.project.model.Project
+import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
 import com.a401.spicoandroid.presentation.project.component.ProjectEditDialog
 import com.a401.spicoandroid.presentation.project.component.ProjectInfoHeader
 import com.a401.spicoandroid.presentation.project.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -69,12 +57,10 @@ fun ProjectDetailScreen(
 
     var selectedPracticeId by remember { mutableIntStateOf(-1) }
 
-    // 프로젝트 정보는 최초 1회만 호출
     LaunchedEffect(Unit) {
         viewModel.fetchProjectDetail(projectId)
     }
 
-    // 탭 선택이 변경될 때마다 연습 목록 다시 불러오기
     LaunchedEffect(selectedTab) {
         val filter = if (selectedTab == 0) "coaching" else "final"
         practiceViewModel.fetchPracticeList(
@@ -83,12 +69,6 @@ fun ProjectDetailScreen(
             cursor = null,
             size = 10
         )
-    }
-
-    LaunchedEffect(deleteState.isSuccess) {
-        if (deleteState.isSuccess) {
-            navController.popBackStack()
-        }
     }
 
     LaunchedEffect(practiceDeleteState.isSuccess) {
@@ -107,7 +87,7 @@ fun ProjectDetailScreen(
             text = "수정하기",
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_add_black),
+                    painter = painterResource(id = R.drawable.ic_edit_black),
                     contentDescription = "Edit",
                     tint = TextPrimary
                 )
@@ -159,7 +139,9 @@ fun ProjectDetailScreen(
                     IconButton(
                         iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로가기",
-                        onClick = {}
+                        onClick = {
+                            navController.popBackStack()
+                        }
                     )
                 },
                 rightContent = {
@@ -196,10 +178,7 @@ fun ProjectDetailScreen(
                 }
 
                 error != null -> {
-                    Text(
-                        text = "오류 발생: ${error.message ?: "알 수 없는 오류"}",
-                        color = Error,
-                    )
+                    NotFoundScreen(navController = navController)
                 }
 
                 project != null -> {
@@ -210,7 +189,7 @@ fun ProjectDetailScreen(
                     ) {
                         ProjectInfoHeader(
                             title = project.name,
-                            time = "${project.time}:00"
+                            time = formatTimeFromMinutes(project.time)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         CommonReportTabBar(
@@ -245,8 +224,7 @@ fun ProjectDetailScreen(
         }
     }
 
-
-        if (isEditDialogVisible) {
+    if (isEditDialogVisible) {
         ProjectEditDialog(
             projectTitle = title,
             onTitleChange = { title = it },
@@ -274,6 +252,7 @@ fun ProjectDetailScreen(
             onConfirm = {
                 showDeleteAlert = false
                 projectViewModel.deleteProject(projectId)
+                navController.navigate(NavRoutes.ProjectList.route) // 바로 이동
             },
             cancelText = "취소",
             onCancel = {
@@ -284,4 +263,10 @@ fun ProjectDetailScreen(
             }
         )
     }
+}
+
+fun formatTimeFromMinutes(totalMinutes: Int): String {
+    val hours = totalMinutes / 60
+    val minutes = totalMinutes % 60
+    return String.format("%d:%02d", hours, minutes)
 }
