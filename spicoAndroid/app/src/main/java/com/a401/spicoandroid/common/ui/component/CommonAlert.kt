@@ -92,7 +92,7 @@ fun CommonAlert(
                 ) {
                     Text(
                         text = title,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         lineHeight = 28.sp,
                         color = TextPrimary,
                         textAlign = TextAlign.Center,

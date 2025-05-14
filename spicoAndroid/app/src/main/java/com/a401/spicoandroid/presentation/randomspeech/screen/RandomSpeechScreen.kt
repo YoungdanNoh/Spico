@@ -34,17 +34,18 @@ import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechExi
 import com.a401.spicoandroid.presentation.randomspeech.component.countdownTimer
 import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
 fun RandomSpeechScreen(
+    viewModel: RandomSpeechSharedViewModel,
     navController: NavController = LocalNavController.current,
-    question: String,
-    speakMin: Int,
     onFinish: () -> Unit = {}
 ) {
-    val viewModel: RandomSpeechSharedViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val question = uiState.question
+    val speakMin = uiState.speakTime / 60
+
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val activity = context as? Activity

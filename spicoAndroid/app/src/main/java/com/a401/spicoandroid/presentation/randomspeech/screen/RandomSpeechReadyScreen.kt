@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
@@ -25,36 +27,38 @@ import com.a401.spicoandroid.common.utils.openExternalLink
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechExitAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechReadyTimerSection
 import com.a401.spicoandroid.presentation.randomspeech.dummy.DummyRandomSpeechReady
+import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 
 @Composable
 fun RandomSpeechReadyScreen(
-    prepMin: Int,
-    speakMin: Int,
     onEndClick: () -> Unit = {},
-    onStartClick: (question: String, speakMin: Int) -> Unit
+    onStartClick: (question: String, speakMin: Int) -> Unit,
+    viewModel: RandomSpeechSharedViewModel
 ) {
     val context = LocalContext.current
-    val data = DummyRandomSpeechReady
+    val uiState by viewModel.uiState.collectAsState()
     var showExitAlert by remember { mutableStateOf(false) }
 
-    // 뒤로 가기 방지
+    val question = uiState.question
+    val newsTitle = uiState.newsTitle
+    val newsSummary = uiState.newsSummary
+    val newsUrl = uiState.newsUrl
+    val prepMin = uiState.prepTime / 60
+    val speakMin = uiState.speakTime / 60
+
     BackHandler(enabled = true) {
         showExitAlert = true
     }
 
     Scaffold(
         topBar = {
-            CommonTopBar(
-                centerText = "랜덤스피치",
-            )
+            CommonTopBar(centerText = "랜덤스피치")
         },
         bottomBar = {
             CommonButton(
                 text = "바로 시작하기",
                 size = ButtonSize.LG,
-                onClick = {
-                    onStartClick(data.question, speakMin)
-                },
+                onClick = { onStartClick(question, speakMin) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
@@ -84,35 +88,38 @@ fun RandomSpeechReadyScreen(
 
                 RandomSpeechReadyTimerSection(
                     prepMin = prepMin,
-                    onFinish = { onStartClick(data.question, speakMin) }
+                    onFinish = { onStartClick(question, speakMin) }
                 )
             }
 
             InfoSection(title = "랜덤스피치 질문") {
-                Text(data.question, style = Typography.bodyLarge, color = TextPrimary)
+                Text(question, style = Typography.bodyLarge, color = TextPrimary)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            InfoSection(title = "관련기사") {
-                Text(data.newsTitle, style = Typography.displaySmall, color = TextPrimary)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(data.newsSummary, style = Typography.titleMedium, color = TextTertiary)
-                Spacer(modifier = Modifier.height(12.dp))
-                CommonButton(
-                    text = "기사 원문 확인하기",
-                    size = ButtonSize.LG,
-                    backgroundColor = White,
-                    borderColor = Action,
-                    textColor = Action,
-                    onClick = { openExternalLink(context, data.newsUrl) }
-                )
+            if (newsTitle.isNotBlank() && newsSummary.isNotBlank() && newsUrl.isNotBlank()) {
+                InfoSection(title = "관련기사") {
+                    Text(newsTitle, style = Typography.displaySmall, color = TextPrimary)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(newsSummary, style = Typography.titleMedium, color = TextTertiary)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    CommonButton(
+                        text = "기사 원문 확인하기",
+                        size = ButtonSize.LG,
+                        backgroundColor = White,
+                        borderColor = Action,
+                        textColor = Action,
+                        onClick = { openExternalLink(context, newsUrl) }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Spacer(modifier = Modifier.height(100.dp)) // 버튼 위 여백 확보
+            Spacer(modifier = Modifier.height(100.dp))
         }
 
-        // 다이얼로그 조건부 렌더링
         if (showExitAlert) {
             RandomSpeechExitAlert(
                 onDismissRequest = { showExitAlert = false },
@@ -125,4 +132,5 @@ fun RandomSpeechReadyScreen(
         }
     }
 }
+
 

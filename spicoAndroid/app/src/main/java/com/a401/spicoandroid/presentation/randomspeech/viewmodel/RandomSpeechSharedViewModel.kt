@@ -3,6 +3,7 @@ package com.a401.spicoandroid.presentation.randomspeech.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
+import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechTopic
 import com.a401.spicoandroid.domain.randomspeech.usecase.CreateRandomSpeechUseCase
 import com.a401.spicoandroid.domain.randomspeech.usecase.SubmitRandomSpeechScriptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,7 @@ class RandomSpeechSharedViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RandomSpeechState())
     val uiState: StateFlow<RandomSpeechState> = _uiState.asStateFlow()
 
-    fun setTopic(topic: String) {
+    fun setTopic(topic: RandomSpeechTopic) {
         _uiState.update { it.copy(topic = topic) }
     }
 
@@ -40,7 +41,7 @@ class RandomSpeechSharedViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             when (val result = createRandomSpeechUseCase(
-                topic,
+                topic.name,
                 _uiState.value.prepTime,
                 _uiState.value.speakTime
             )) {
