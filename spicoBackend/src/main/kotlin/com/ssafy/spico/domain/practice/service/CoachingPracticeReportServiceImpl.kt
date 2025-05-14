@@ -8,6 +8,7 @@ import com.ssafy.spico.domain.practice.repository.CoachingReportsRepository
 import com.ssafy.spico.domain.practice.repository.FinalReportsRepository
 import com.ssafy.spico.domain.practice.repository.PracticesRepository
 import com.ssafy.spico.domain.project.repository.ProjectRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +19,7 @@ class CoachingPracticeReportServiceImpl(
     private val minioService: MinioService,
 ) : CoachingPracticeReportService {
 
+    @Transactional
     override fun coachingPracticeReport(projectId: Int, practiceId: Int): CoachingPracticeReportResponseDto {
 
         // 1. 프로젝트 제목. projectEntity.title
