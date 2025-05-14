@@ -120,7 +120,10 @@ fun NavGraph(
                 arguments = listOf(navArgument("projectId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: -1
-                ProjectDetailScreen(projectId = projectId)
+                ProjectDetailScreen(
+                    navController = navController,
+                    projectId = projectId
+                )
             }
             // 연습하기
             composable(NavRoutes.ModeSelect.route) {
