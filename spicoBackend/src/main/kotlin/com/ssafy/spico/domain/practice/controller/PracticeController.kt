@@ -95,6 +95,6 @@ class PracticeController(
         @PathVariable practiceId: Int
     ): ApiResponse<CoachingPracticeReportResponseDto> {
 
-        return ApiResponse.success(coachingPracticeReportService.coachingPracticeReport(userId, practiceId))
+        return ApiResponse.success(coachingPracticeReportService.coachingPracticeReport(projectId, practiceId))
     }
 }
