@@ -5,7 +5,7 @@ import com.ssafy.spico.domain.randomSpeech.model.RandomSpeech
 
 interface RandomSpeechService {
     fun startRandomSpeech(randomSpeech: RandomSpeech): Content
-    fun endRandomSpeech()
+    fun endRandomSpeech(randomSpeechId: Int, script: String)
     fun getRandomSpeechList(userId: Int): List<RandomSpeech>
     fun getRandomSpeechDetail()
     fun deleteRandomSpeech()
