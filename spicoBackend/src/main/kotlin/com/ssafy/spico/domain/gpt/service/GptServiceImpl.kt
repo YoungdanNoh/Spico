@@ -4,6 +4,8 @@ import com.ssafy.spico.domain.gpt.dto.OpenAiResponse
 import com.ssafy.spico.domain.news.model.News
 import com.ssafy.spico.domain.practice.exception.GPTError
 import com.ssafy.spico.domain.practice.exception.GPTException
+import com.ssafy.spico.domain.randomSpeech.dto.gpt.GptFeedbackRequest
+import com.ssafy.spico.domain.randomSpeech.dto.gpt.GptFeedbackResponse
 import com.ssafy.spico.domain.randomSpeech.model.Topic
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -110,5 +112,62 @@ class GptServiceImpl(
         return response?.choices?.firstOrNull()?.message?.content
             ?.trim()
             ?: throw GPTException(GPTError.GPT_EMPTY_RESPONSE)
+    }
+
+    override fun generateRandomSpeechFeedback(request: GptFeedbackRequest): GptFeedbackResponse {
+        val prompt = """
+        You are a professional speaking coach helping users improve their impromptu speeches.
+        
+        The user has been given a question and prepared a short speech using the following news article as background material.
+        
+        Please carefully read the information below and generate a helpful response.
+        
+        News Summary (Korean): "${request.newsSummary}"
+        
+        Audience Question (Korean): "${request.question}"
+        
+        User Speech (Korean): "${request.script}"
+        
+        Your task is to provide the following information **in Korean**, with the title and feedback **separated by '|||'** as follows:
+        
+        - title: Write a single-line Korean title that summarizes the speech, like a news headline. It should capture the core message of the speech.
+        - feedback: Provide warm and supportive feedback in Korean. Include 3 to 5 sentences that point out what was done well and what can be improved.
+        
+        Please return **only the title and feedback** separated by '|||' and in the following format:
+            title ||| feedback
+        Do NOT include any JSON or extra explanations. Just return the result with the separator.
+        """.trimIndent()
+
+        val requestBody = mapOf(
+            "model" to "gpt-4",
+            "messages" to listOf(
+                mapOf("role" to "user", "content" to prompt)
+            ),
+            "temperature" to 0.8
+        )
+
+        val response = try {
+            webClient.post()
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(OpenAiResponse::class.java)
+                .block()
+        } catch (e: Exception) {
+            throw GPTException(GPTError.GPT_GENERATION_ERROR)
+        }
+
+        val content = response?.choices?.firstOrNull()?.message?.content
+            ?.trim()
+            ?: throw GPTException(GPTError.GPT_EMPTY_RESPONSE)
+
+        val parts = content.split("|||").map { it.trim() }
+        if (parts.size != 2) {
+            throw GPTException(GPTError.GPT_PARSING_ERROR)
+        }
+
+        return GptFeedbackResponse(
+            title = parts[0],
+            feedback = parts[1]
+        )
     }
 }
