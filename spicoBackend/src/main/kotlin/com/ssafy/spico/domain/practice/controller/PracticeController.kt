@@ -13,8 +13,20 @@ class PracticeController(
     private val finalPracticeService: FinalPracticeService,
     private val finalPracticeReportService: FinalPracticeReportService,
     private val coachingPracticeReportService: CoachingPracticeReportService,
+    private val deletePracticeService: DeletePracticeService,
     @Value("\${user-id}") private val userId: Int
 ) {
+
+    // 연습 삭제
+    @DeleteMapping("/{practiceId}")
+    fun deletePractice(
+        @PathVariable("practiceId") practiceId: Int
+    ): ApiResponse<Unit>  {
+
+        deletePracticeService.deletePractice(practiceId)
+
+        return ApiResponse.success()
+    }
 
     // 파이널 모드 시작
     @PostMapping("/final")
