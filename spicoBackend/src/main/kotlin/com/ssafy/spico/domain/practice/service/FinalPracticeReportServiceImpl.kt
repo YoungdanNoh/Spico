@@ -16,6 +16,7 @@ class FinalPracticeReportServiceImpl (
     private val finalReportsRepository: FinalReportsRepository,
     private val questionAnswerRepository: QuestionAnswerRepository,
     private val videoFeedbackPointsRepository: VideoFeedbackPointsRepository,
+    private val minioService: MinioService,
 ) : FinalPracticeReportService {
 
     @Transactional
@@ -39,6 +40,15 @@ class FinalPracticeReportServiceImpl (
         val practicesEntity = practicesRepository.findById(
             finalReportsEntity.practicesEntity.practiceId
         ).orElseThrow { PracticeException(PracticeError.PRACTICE_NOT_FOUND) }
+
+        // 4. minio의 video url 받기
+        val fileName = finalReportsEntity.videoUrl
+        val parts = fileName.split("/")
+        val videoUrl = minioService.generatePresignedGetUrl(
+            parts[0],
+            parts[1]
+        )
+        println("videoUrl: $videoUrl")
 
         // 4. video_feedback_points 테이블에서
         // volumeRecords, scoreRecords, pauseRecords
@@ -89,7 +99,7 @@ class FinalPracticeReportServiceImpl (
             projectName = projectEntity.title,
             practiceName = "${finalReportsEntity.finalPracticeCnt}회차",
             date = practicesEntity.createdAt,
-            videoUrl = finalReportsEntity.videoUrl,
+            videoUrl = videoUrl,
             totalScore = finalReportsEntity.totalScore,
             volumeScore = finalReportsEntity.volumeScore,
             speedScore = finalReportsEntity.speedScore,

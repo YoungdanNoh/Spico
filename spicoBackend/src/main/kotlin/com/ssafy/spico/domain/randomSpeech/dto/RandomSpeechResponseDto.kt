@@ -1,6 +1,6 @@
 package com.ssafy.spico.domain.randomSpeech.dto
 
-import com.ssafy.spico.domain.randomSpeech.entity.Topic
+import com.ssafy.spico.domain.randomSpeech.model.Topic
 import com.ssafy.spico.domain.randomSpeech.model.RandomSpeech
 
 data class RandomSpeechResponseDto(
