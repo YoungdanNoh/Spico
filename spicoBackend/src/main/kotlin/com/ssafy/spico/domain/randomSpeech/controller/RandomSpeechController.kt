@@ -4,11 +4,7 @@ import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.randomSpeech.dto.*
 import com.ssafy.spico.domain.randomSpeech.service.RandomSpeechService
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/random-speeches")
@@ -23,11 +19,20 @@ class RandomSpeechController(
     }
 
     @PostMapping
-    fun createRandomSpeech(
+    fun startRandomSpeech(
         @RequestBody request: CreateRandomSpeechRequestDto
     ): ApiResponse<RandomSpeechContentResponseDto> {
         val randomSpeech = request.toRandomSpeech(userId)
         val content = randomSpeechService.startRandomSpeech(randomSpeech)
         return ApiResponse.success(content.toResponse())
+    }
+
+    @PatchMapping("{randomSpeechId}")
+    fun endRandomSpeech(
+        @PathVariable randomSpeechId: Int,
+        @RequestBody request: UpdateRandomSpeechRequestDto
+    ): ApiResponse<Unit> {
+        randomSpeechService.endRandomSpeech(randomSpeechId, request.script)
+        return ApiResponse.success()
     }
 }
