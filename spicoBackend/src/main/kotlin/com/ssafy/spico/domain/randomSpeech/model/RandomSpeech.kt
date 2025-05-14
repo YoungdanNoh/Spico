@@ -1,7 +1,6 @@
 package com.ssafy.spico.domain.randomSpeech.model
 
 import com.ssafy.spico.domain.randomSpeech.entity.RandomSpeechEntity
-import com.ssafy.spico.domain.randomSpeech.entity.Topic
 import com.ssafy.spico.domain.user.entity.UserEntity
 import java.time.LocalDateTime
 

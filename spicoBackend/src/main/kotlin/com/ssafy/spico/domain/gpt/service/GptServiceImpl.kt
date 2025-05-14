@@ -1,8 +1,10 @@
 package com.ssafy.spico.domain.gpt.service
 
 import com.ssafy.spico.domain.gpt.dto.OpenAiResponse
+import com.ssafy.spico.domain.news.model.News
 import com.ssafy.spico.domain.practice.exception.GPTError
 import com.ssafy.spico.domain.practice.exception.GPTException
+import com.ssafy.spico.domain.randomSpeech.model.Topic
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -69,5 +71,44 @@ class GptServiceImpl(
         } catch (e: Exception) {
             throw GPTException(GPTError.GPT_PARSING_ERROR)
         }
+    }
+
+    override fun generateRandomSpeechQuestion(topic: Topic, news: News): String {
+        val prompt = """
+        You are a coach helping users prepare for impromptu speeches and presentation-style interviews based on current events.
+        Given the news article below as background material, generate one thoughtful and natural question in Korean that an audience member might ask after a short speech on the given topic.
+        The question should not be limited to the specific incident in the article, but should instead invite broader thinking and discussion related to the general theme.
+        Aim to help the user prepare for realistic, insightful audience engagement.
+        
+        Topic: ${topic.name}
+        
+        News Title: ${news.title}
+        
+        News Summary: ${news.description}
+        
+        Please output **only one Korean question**, without any explanation or additional text.
+    """.trimIndent()
+
+        val requestBody = mapOf(
+            "model" to "gpt-4",
+            "messages" to listOf(
+                mapOf("role" to "user", "content" to prompt)
+            ),
+            "temperature" to 0.8
+        )
+
+        val response = try {
+            webClient.post()
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(OpenAiResponse::class.java)
+                .block()
+        } catch (e: Exception) {
+            throw GPTException(GPTError.GPT_GENERATION_ERROR)
+        }
+
+        return response?.choices?.firstOrNull()?.message?.content
+            ?.trim()
+            ?: throw GPTException(GPTError.GPT_EMPTY_RESPONSE)
     }
 }
