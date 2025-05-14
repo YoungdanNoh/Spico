@@ -2,6 +2,9 @@ package com.ssafy.spico.domain.randomSpeech.service
 
 import com.ssafy.spico.domain.gpt.service.GptService
 import com.ssafy.spico.domain.news.service.NewsService
+import com.ssafy.spico.domain.randomSpeech.dto.gpt.GptFeedbackRequest
+import com.ssafy.spico.domain.randomSpeech.exception.RandomSpeechError
+import com.ssafy.spico.domain.randomSpeech.exception.RandomSpeechException
 import com.ssafy.spico.domain.randomSpeech.model.*
 import com.ssafy.spico.domain.randomSpeech.repository.RandomSpeechRepository
 import com.ssafy.spico.domain.user.repository.UserRepository
@@ -47,8 +50,29 @@ class RandomSpeechServiceImpl(
         )
     }
 
-    override fun endRandomSpeech() {
-        TODO("Not yet implemented")
+    @Transactional
+    override fun endRandomSpeech(randomSpeechId: Int, script: String) {
+        val randomSpeech = randomSpeechRepository.findById(randomSpeechId)
+            .orElseThrow { RandomSpeechException(RandomSpeechError.SPEECH_NOT_FOUND) }
+
+        randomSpeech.script?.takeIf { it.isNotBlank() }
+            ?.let { throw RandomSpeechException(RandomSpeechError.ALREADY_ENDED_SPEECH) }
+
+        val gptRequest = GptFeedbackRequest(
+            question = randomSpeech.question,
+            newsSummary = randomSpeech.newsSummary,
+            script = script
+        )
+
+        val gptResponse = gptService.generateRandomSpeechFeedback(gptRequest)
+
+        val command = UpdateResultCommand(
+            script = script,
+            feedback = gptResponse.feedback,
+            title = gptResponse.title
+        )
+
+        randomSpeech.updateReport(command)
     }
 
     override fun getRandomSpeechList(userId: Int): List<RandomSpeech> {
@@ -60,6 +84,7 @@ class RandomSpeechServiceImpl(
         TODO("Not yet implemented")
     }
 
+    @Transactional
     override fun deleteRandomSpeech() {
         TODO("Not yet implemented")
     }
