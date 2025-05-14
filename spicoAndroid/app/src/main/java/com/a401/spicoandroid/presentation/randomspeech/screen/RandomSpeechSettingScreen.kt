@@ -5,37 +5,43 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.a401.spicoandroid.R
-import com.a401.spicoandroid.common.ui.component.BackIconButton
-import com.a401.spicoandroid.common.ui.component.ButtonSize
-import com.a401.spicoandroid.common.ui.component.CommonButton
-import com.a401.spicoandroid.common.ui.component.CommonTopBar
-import com.a401.spicoandroid.common.ui.component.TimePicker
+import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.getTopicKor
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.PrepTimePickerDialog
 import com.a401.spicoandroid.presentation.randomspeech.component.SpeakTimePickerDialog
+import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RandomSpeechSettingScreen(
-    topic: String,
     navController: NavController,
-    onNext: (prepMin: Int, speakMin: Int) -> Unit
+    viewModel: RandomSpeechSharedViewModel
 ) {
-    val topicKor = getTopicKor(topic)
+    val uiState by viewModel.uiState.collectAsState()
+    val topic = uiState.topic
 
-    var prepMinute by remember { mutableIntStateOf(1) }
+    if (topic == null) {
+        // topic 설정 전까지 UI 보류
+        Box(modifier = Modifier.fillMaxSize().background(White))
+        return
+    }
+
+    val topicKor = getTopicKor(topic.name)
+
+    var prepMinute by remember { mutableIntStateOf(uiState.prepTime / 60) }
     var prepSecond by remember { mutableIntStateOf(0) }
-    var speakMinute by remember { mutableIntStateOf(3) }
+    var speakMinute by remember { mutableIntStateOf(uiState.speakTime / 60) }
     var speakSecond by remember { mutableIntStateOf(0) }
 
     Scaffold(
@@ -117,6 +123,7 @@ fun RandomSpeechSettingScreen(
                         )
                     }
                 }
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // 발화시간
@@ -153,7 +160,8 @@ fun RandomSpeechSettingScreen(
                 text = "시작하기",
                 size = ButtonSize.LG,
                 onClick = {
-                    onNext(prepMinute, speakMinute)
+                    viewModel.setTime(prepMinute * 60, speakMinute * 60)
+                    navController.navigate(NavRoutes.RandomSpeechReady.route)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,4 +170,3 @@ fun RandomSpeechSettingScreen(
         }
     }
 }
-

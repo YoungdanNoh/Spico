@@ -1,0 +1,13 @@
+package com.a401.spicoandroid.data.report.api
+
+import com.a401.spicoandroid.common.data.dto.ApiResponse
+import com.a401.spicoandroid.data.report.dto.RandomSpeechReportDto
+import retrofit2.http.GET
+import retrofit2.http.Path
+
+interface ReportApi {
+    @GET("random-speeches/{randomSpeechId}")
+    suspend fun getRandomSpeechReport(
+        @Path("randomSpeechId") id: Int
+    ): ApiResponse<RandomSpeechReportDto>
+}

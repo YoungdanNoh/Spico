@@ -1,5 +1,8 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,36 +12,67 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import com.a401.spicoandroid.R
+import com.a401.spicoandroid.common.timer.rememberElapsedSeconds
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.presentation.randomspeech.component.countdownTimer
+import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
+import com.a401.spicoandroid.presentation.navigation.LocalNavController
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechExitAlert
+import com.a401.spicoandroid.presentation.randomspeech.component.countdownTimer
+import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 import kotlinx.coroutines.delay
 import java.util.Locale
 
 @Composable
 fun RandomSpeechScreen(
-    question: String,
-    speakMin: Int,
+    viewModel: RandomSpeechSharedViewModel,
+    navController: NavController = LocalNavController.current,
     onFinish: () -> Unit = {}
 ) {
-    var showExitAlert by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
+    val question = uiState.question
+    val speakMin = uiState.speakTime / 60
 
-    // 뒤로 가기
-    BackHandler {
-        showExitAlert = true
-    }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    var showExitAlert by remember { mutableStateOf(false) }
+    var showExitConfirmDialog by remember { mutableStateOf(false) }
 
     var prepCountdown by remember { mutableIntStateOf(3) }
     var startMainTimer by remember { mutableStateOf(false) }
 
-    // 준비 카운트다운
+    val waveform = remember { mutableStateOf(emptyList<Float>()) }
+    val audioAnalyzer = remember { AudioAnalyzer() }
+
+    // 권한 요청
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                activity ?: return@LaunchedEffect,
+                arrayOf(Manifest.permission.RECORD_AUDIO),
+                1001
+            )
+        }
+    }
+
+    // 준비 타이머
     LaunchedEffect(Unit) {
         while (prepCountdown > 0) {
             delay(1000)
@@ -47,16 +81,33 @@ fun RandomSpeechScreen(
         startMainTimer = true
     }
 
-    // 발표 타이머
+    // 녹음 시작
+    LaunchedEffect(startMainTimer) {
+        if (startMainTimer) {
+            audioAnalyzer.start(scope = coroutineScope) { amps ->
+                waveform.value = amps
+            }
+        }
+    }
+
     val totalSeconds = speakMin * 60
     val remainingSeconds by countdownTimer(
         totalSeconds = totalSeconds,
         onFinish = onFinish,
         isRunning = startMainTimer
     )
+    val elapsedSeconds by rememberElapsedSeconds(isRunning = startMainTimer)
 
-    val minutes = remainingSeconds / 60
-    val seconds = remainingSeconds % 60
+    fun handleExit() {
+        audioAnalyzer.stop()
+        if (elapsedSeconds < 30) {
+            showExitConfirmDialog = true
+        } else {
+            showExitAlert = true
+        }
+    }
+
+    BackHandler { handleExit() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -74,9 +125,8 @@ fun RandomSpeechScreen(
                             disabledBorderColor = Error,
                             disabledTextColor = White,
                             enabled = prepCountdown == 0,
-                            onClick = { showExitAlert = true },
+                            onClick = { handleExit() },
                         )
-
                     }
                 )
             }
@@ -117,21 +167,18 @@ fun RandomSpeechScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Box(
+                // 실시간 음성 파형
+                AudioWaveformView(
+                    waveform = waveform.value,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp)
-                        .background(Action.copy(alpha = 0.1f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("음성 주파수", color = TextSecondary)
-                }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 카운트 다운
                 Text(
-                    text = String.format(Locale.US, "%02d:%02d", minutes, seconds),
+                    text = String.format(Locale.US, "%02d:%02d", remainingSeconds / 60, remainingSeconds % 60),
                     style = TextStyle(
                         fontFamily = Pretendard,
                         fontWeight = FontWeight.SemiBold,
@@ -142,7 +189,6 @@ fun RandomSpeechScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // 마이크 버튼
                 LargeIconCircleButton(
                     icon = {
                         Icon(
@@ -157,26 +203,43 @@ fun RandomSpeechScreen(
                     borderColor = Disabled,
                     backgroundColor = Action,
                     enabled = false,
-                    onClick = { /* disable */ }
+                    onClick = { }
                 )
-
 
                 Spacer(modifier = Modifier.height(48.dp))
             }
-
+            // 30초 이상 종료 다이얼로그
             if (showExitAlert) {
                 RandomSpeechExitAlert(
                     onDismissRequest = { showExitAlert = false },
                     onCancel = { showExitAlert = false },
                     onConfirm = {
                         showExitAlert = false
-                        onFinish()
+                        val id = viewModel.getSpeechIdForReport()
+                        if (id != null) {
+                            navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                        }
+                    }
+                )
+            }
+            // 30초 미만 종료 다이얼로그
+            if (showExitConfirmDialog) {
+                ExitConfirmDialog(
+                    onDismiss = { showExitConfirmDialog = false },
+                    onCancel = { showExitConfirmDialog = false },
+                    onConfirm = {
+                        showExitConfirmDialog = false
+                        navController.navigate(
+                            route = NavRoutes.RandomSpeechLanding.route,
+                            navOptions = navOptions {
+                                popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                            }
+                        )
                     }
                 )
             }
         }
-
-        // 중앙 카운트다운 타이머
+        // 중앙 타이머
         if (prepCountdown > 0) {
             Box(modifier = Modifier.align(Alignment.Center)) {
                 CommonTimer(
