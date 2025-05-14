@@ -32,6 +32,12 @@ class ProjectRepositoryImpl @Inject constructor(
         api.getProjectDetail(projectId).getOrThrow { it.toDomain() }
     }
 
+    override suspend fun deleteProject(
+        projectId: Int
+    ): DataResource<Unit> = safeApiCall {
+        api.deleteProject(projectId).getOrThrow { Unit }
+    }
+
     override suspend fun createProject(
         name: String,
         date: String,
