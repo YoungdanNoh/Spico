@@ -43,4 +43,12 @@ class RandomSpeechController(
         randomSpeechService.endRandomSpeech(randomSpeechId, request.script)
         return ApiResponse.success()
     }
+
+    @DeleteMapping("{randomSpeechId}")
+    fun deleteRandomSpeech(
+        @PathVariable randomSpeechId: Int
+    ): ApiResponse<Unit> {
+        randomSpeechService.deleteRandomSpeech(userId, randomSpeechId)
+        return ApiResponse.success()
+    }
 }

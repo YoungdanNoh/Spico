@@ -91,7 +91,13 @@ class RandomSpeechServiceImpl(
     }
 
     @Transactional
-    override fun deleteRandomSpeech() {
-        TODO("Not yet implemented")
+    override fun deleteRandomSpeech(userId: Int, randomSpeechId: Int) {
+        val randomSpeech = randomSpeechRepository.findById(randomSpeechId)
+            .orElseThrow { RandomSpeechException(RandomSpeechError.SPEECH_NOT_FOUND) }
+
+        randomSpeech.takeIf { it.userEntity.id == userId }
+            ?: throw RandomSpeechException(RandomSpeechError.UNAUTHORIZED_ACCESS)
+
+        randomSpeechRepository.delete(randomSpeech)
     }
 }
