@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.report.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +15,7 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun VoiceScriptScreen(
@@ -37,6 +39,10 @@ fun VoiceScriptScreen(
         """.trimIndent()
     }
 
+    BackHandler {
+        navController.navigate(NavRoutes.FinalModeReport.route)
+    }
+
     Scaffold(
         topBar = {
             CommonTopBar(
@@ -45,7 +51,9 @@ fun VoiceScriptScreen(
                     IconButton(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
-                        onClick = {}
+                        onClick = {
+                            navController.navigate(NavRoutes.FinalModeReport.route)
+                        }
                     )
                 }
             )
@@ -59,7 +67,9 @@ fun VoiceScriptScreen(
             ) {
                 CommonButton(
                     text = "리포트 보기",
-                    onClick = {},
+                    onClick = {
+                        navController.navigate(NavRoutes.FinalModeReport.route)
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
             }

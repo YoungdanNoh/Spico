@@ -28,7 +28,11 @@ fun FinalModeLoadingScreen(
     LaunchedEffect(Unit) {
         when (type) {
             FinalModeLoadingType.QUESTION -> {
-                viewModel.fetchQuestion()
+                viewModel.generateFinalQuestions(
+                    projectId = 1, // TODO: 실제 값으로 교체
+                    practiceId = 1, // TODO: 실제 값으로 교체
+                    speechContent = "Hello everyone, my name is John." // TODO: STT 결과로 교체
+                )
                 delay(1500)
                 navController.navigate(NavRoutes.FinalModeQnA.route)
             }
@@ -52,4 +56,3 @@ fun FinalModeLoadingScreen(
         message = message
     )
 }
-
