@@ -5,7 +5,7 @@ import com.ssafy.spico.domain.landingPage.model.Reports
 
 
 data class LandingPageReportsResponseDto(
-    val reports: List<Reports>
+    val reports: List<Reports>?
 
 )
 
