@@ -80,8 +80,14 @@ class RandomSpeechServiceImpl(
         return entities.map { it.toModel() }
     }
 
-    override fun getRandomSpeechDetail() {
-        TODO("Not yet implemented")
+    override fun getRandomSpeechDetail(userId: Int, randomSpeechId: Int): RandomSpeech {
+        val randomSpeech = randomSpeechRepository.findById(randomSpeechId)
+            .orElseThrow { RandomSpeechException(RandomSpeechError.SPEECH_NOT_FOUND) }
+
+        randomSpeech.takeIf { it.userEntity.id == userId }
+            ?: throw RandomSpeechException(RandomSpeechError.UNAUTHORIZED_ACCESS)
+
+        return randomSpeech.toModel()
     }
 
     @Transactional

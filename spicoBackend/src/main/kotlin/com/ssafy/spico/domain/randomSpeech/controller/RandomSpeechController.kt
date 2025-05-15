@@ -18,6 +18,14 @@ class RandomSpeechController(
         return ApiResponse.success(randomSpeeches.map { it.toResponse() })
     }
 
+    @GetMapping("/{randomSpeechId}")
+    fun getRandomSpeechDetail(
+        @PathVariable randomSpeechId: Int
+    ): ApiResponse<RandomSpeechDetailResponseDto> {
+        val randomSpeech = randomSpeechService.getRandomSpeechDetail(userId, randomSpeechId)
+        return ApiResponse.success(randomSpeech.toDetailResponse())
+    }
+
     @PostMapping
     fun startRandomSpeech(
         @RequestBody request: CreateRandomSpeechRequestDto

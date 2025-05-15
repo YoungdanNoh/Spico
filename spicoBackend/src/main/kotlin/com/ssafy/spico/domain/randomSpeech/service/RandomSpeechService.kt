@@ -7,6 +7,6 @@ interface RandomSpeechService {
     fun startRandomSpeech(randomSpeech: RandomSpeech): Content
     fun endRandomSpeech(randomSpeechId: Int, script: String)
     fun getRandomSpeechList(userId: Int): List<RandomSpeech>
-    fun getRandomSpeechDetail()
+    fun getRandomSpeechDetail(userId: Int, randomSpeechId: Int): RandomSpeech
     fun deleteRandomSpeech()
 }
