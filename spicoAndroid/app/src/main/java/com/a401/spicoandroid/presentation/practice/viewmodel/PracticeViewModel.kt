@@ -78,7 +78,7 @@ class PracticeViewModel @Inject constructor(
         selectedMode = null
         selectedProject = null
         hasAudience = true
-        hasQnA = true
+        hasQnA = false
         questionCount = 1
         answerTimeLimit = 90
         _practiceId.value = null
@@ -104,6 +104,7 @@ class PracticeViewModel @Inject constructor(
                         }
 
                         is DataResource.Error -> {
+                            Log.e("PracticeViewModel", "❌ Final 모드 생성 실패", result.throwable)
                             onFailure(result.throwable)
                         }
 
@@ -184,6 +185,7 @@ class PracticeViewModel @Inject constructor(
 
                 is DataResource.Error -> {
                     onFailure(result.throwable)
+                    Log.e("FinalSettingScreen", "❌ 저장 실패", result.throwable)
                 }
 
                 is DataResource.Loading -> Unit
