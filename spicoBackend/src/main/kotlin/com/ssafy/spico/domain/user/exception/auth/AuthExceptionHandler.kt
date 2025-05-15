@@ -1,7 +1,6 @@
 package com.ssafy.spico.domain.user.exception.auth
 
 import com.ssafy.spico.common.response.ApiResponse
-import com.ssafy.spico.domain.practice.exception.PracticeException
 import org.springframework.core.annotation.Order
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class AuthExceptionHandler {
 
     @ExceptionHandler(AuthException::class)
-    fun handleAuthException(exception: PracticeException): ApiResponse<Any?> {
+    fun handleAuthException(exception: AuthException): ApiResponse<Any?> {
         val error = exception.error
 
         val clientMsg = if (error.httpStatusCode.startsWith("4") || error.httpStatusCode.startsWith("5")) {
