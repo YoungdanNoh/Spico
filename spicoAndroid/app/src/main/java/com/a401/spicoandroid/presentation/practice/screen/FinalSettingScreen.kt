@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
@@ -24,14 +23,24 @@ fun FinalSettingScreen(
     navController: NavController,
     viewModel: PracticeViewModel
 ) {
-    var hasAudience by remember { mutableStateOf(true) }
-    var hasQnA by remember { mutableStateOf(true) }
-    var questionCount by remember { mutableIntStateOf(1) }
-    var answerTimeSec by remember { mutableIntStateOf(90) } // 1분 30초
+    // ViewModel
+    var hasAudience by remember { mutableStateOf(viewModel.hasAudience) }
+    var hasQnA by remember { mutableStateOf(viewModel.hasQnA) }
+    var questionCount by remember { mutableIntStateOf(viewModel.questionCount) }
+    var answerTimeSec by remember { mutableIntStateOf(viewModel.answerTimeLimit) }
 
     // 에러 상태
     var questionError by remember { mutableStateOf(false) }
     var answerTimeError by remember { mutableStateOf(false) }
+
+    // 화면 진입 시 서버에서 설정값 불러오기
+    LaunchedEffect(Unit) {
+        viewModel.fetchFinalSetting()
+        hasAudience = viewModel.hasAudience
+        hasQnA = viewModel.hasQnA
+        questionCount = viewModel.questionCount
+        answerTimeSec = viewModel.answerTimeLimit
+    }
 
     Scaffold(
         topBar = {
@@ -56,7 +65,21 @@ fun FinalSettingScreen(
                 CommonButton(
                     text = "다음",
                     size = ButtonSize.LG,
-                    onClick = { navController.navigate(NavRoutes.FinalScreenCheck.route) }
+                    onClick = {
+                        viewModel.hasAudience = hasAudience
+                        viewModel.hasQnA = hasQnA
+                        viewModel.questionCount = questionCount
+                        viewModel.answerTimeLimit = answerTimeSec
+
+                        viewModel.saveFinalSetting(
+                            onSuccess = {
+                                navController.navigate(NavRoutes.FinalScreenCheck.route)
+                            },
+                            onFailure = {
+                                // TODO: 에러
+                            }
+                        )
+                    }
                 )
             }
         },
@@ -136,11 +159,3 @@ fun FinalSettingScreen(
         }
     }
 }
-
-//@Preview(showBackground = true, backgroundColor = 0xFFF7FAF8, widthDp = 360)
-//@Composable
-//fun PreviewFinalSettingScreen() {
-//    SpeakoAndroidTheme {
-//        FinalSettingScreen(navController = rememberNavController())
-//    }
-//}

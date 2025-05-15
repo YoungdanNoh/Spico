@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.a401.spicoandroid.infrastructure.speech.SpeechTestScreen
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
 import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
@@ -255,7 +256,6 @@ fun NavGraph(
             }
 
 
-
             // 로그인
             composable(NavRoutes.Login.route) {
                 LoginScreen(loginViewModel)
@@ -264,6 +264,11 @@ fun NavGraph(
             // 에러
             composable(NavRoutes.NotFound.route) {
                 NotFoundScreen(navController)
+            }
+
+            // stt 테스트 스크린
+            composable(NavRoutes.SpeechTest.route) {
+                SpeechTestScreen(navController)
             }
 
         }
