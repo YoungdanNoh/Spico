@@ -1,9 +1,9 @@
 package com.ssafy.spico.domain.practice.controller
 
+import com.ssafy.spico.common.annotaion.UserId
 import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.practice.dto.*
 import com.ssafy.spico.domain.practice.service.*
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -13,8 +13,7 @@ class PracticeController(
     private val finalPracticeService: FinalPracticeService,
     private val finalPracticeReportService: FinalPracticeReportService,
     private val coachingPracticeReportService: CoachingPracticeReportService,
-    private val deletePracticeService: DeletePracticeService,
-    @Value("\${user-id}") private val userId: Int
+    private val deletePracticeService: DeletePracticeService
 ) {
 
     // 연습 삭제
@@ -31,6 +30,7 @@ class PracticeController(
     // 파이널 모드 시작
     @PostMapping("/final")
     fun startFinalPractice(
+        @UserId userId: Int,
         @PathVariable projectId: Int,
         @RequestBody request: StartFinalPracticeRequestDto
     ): ApiResponse<StartFinalPracticeResponseDto> {
@@ -44,6 +44,7 @@ class PracticeController(
     // 파이널 모드 종료 -> GPT 질문 생성
     @PostMapping("/final/{practiceId}/qa")
     fun generateGPTQuestion(
+        @UserId userId: Int,
         @PathVariable projectId: Int,
         @PathVariable practiceId: Int,
         @RequestBody request: GenerateGPTQuestionRequestDto
@@ -70,6 +71,7 @@ class PracticeController(
     // 코칭 모드 시작
     @PostMapping("/coaching")
     fun startCoachingPractice(
+        @UserId userId: Int,
         @PathVariable projectId: Int
     ): ApiResponse<StartCoachingPracticeResponseDto> {
 
@@ -79,6 +81,7 @@ class PracticeController(
     // 코칭모드 종료
     @PostMapping("/coaching/{practiceId}/result")
     fun endCoachingPractice(
+        @UserId userId: Int,
         @PathVariable projectId: Int,
         @PathVariable practiceId: Int,
         @RequestBody request: EndCoachingPracticeRequestDto
@@ -92,6 +95,7 @@ class PracticeController(
     // 파이널 모드 리포트 조회
     @GetMapping("/final/{practiceId}")
     fun finalPracticeReport(
+        @UserId userId: Int,
         @PathVariable projectId: Int,
         @PathVariable practiceId: Int
     ): ApiResponse<FinalPracticeReportResponseDto> {
