@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.di
 
+import com.a401.spicoandroid.data.auth.api.AuthApi
 import com.a401.spicoandroid.data.finalmode.api.FinalModeApi
 import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.project.api.ProjectApi
@@ -48,5 +49,11 @@ object ApiModule {
         return retrofit.create(FinalModeApi::class.java)
     }
 
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(@NetworkModule.MainRetrofit retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
 
 }
