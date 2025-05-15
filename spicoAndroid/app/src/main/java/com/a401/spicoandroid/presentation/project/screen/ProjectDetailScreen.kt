@@ -82,6 +82,17 @@ fun ProjectDetailScreen(
         }
     }
 
+    LaunchedEffect(project) {
+        project?.let {
+            title = it.name                          // 프로젝트 제목 설정
+            selectedDate = LocalDate.parse(it.date)  // 날짜 파싱
+            hour = it.time / 60                      // 제한 시간 (시)
+            minute = it.time % 60                    // 제한 시간 (분)
+            second = 0                               // 초는 기본 0으로
+        }
+    }
+
+
     val dropdownItems = listOf(
         DropdownMenuItemData(
             text = "수정하기",
@@ -226,8 +237,8 @@ fun ProjectDetailScreen(
 
     if (isEditDialogVisible) {
         ProjectEditDialog(
-            projectTitle = title,
-            onTitleChange = { title = it },
+            projectTitle = title,                         // [변경] project?.name -> title 상태 사용
+            onTitleChange = { title = it },               // [유지] 유저 입력 시 title 갱신
             selectedDate = selectedDate,
             onDateSelected = { selectedDate = it },
             hour = hour,
@@ -241,6 +252,7 @@ fun ProjectDetailScreen(
             onDismiss = { isEditDialogVisible = false },
             onConfirm = {
                 isEditDialogVisible = false
+                // TODO: 여기서 수정 API 호출 시 위 상태값들 사용
             }
         )
     }

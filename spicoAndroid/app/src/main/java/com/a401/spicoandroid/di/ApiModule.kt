@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.di
 
+import com.a401.spicoandroid.data.finalmode.api.FinalModeApi
 import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import com.a401.spicoandroid.data.randomspeech.api.RandomSpeechApi
@@ -39,6 +40,12 @@ object ApiModule {
     @Singleton
     fun provideReportApi(@NetworkModule.MainRetrofit retrofit: Retrofit): ReportApi {
         return retrofit.create(ReportApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFinalModeApi(@NetworkModule.MainRetrofit retrofit: Retrofit): FinalModeApi {
+        return retrofit.create(FinalModeApi::class.java)
     }
 
 
