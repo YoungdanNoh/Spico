@@ -61,17 +61,6 @@ fun MyPageScreen(
                     .padding(16.dp)
             )
 
-            Text(text = "이메일", style = Typography.headlineLarge, color = TextPrimary)
-            Text(
-                text = state.email,
-                style = Typography.bodyLarge,
-                color = TextTertiary,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Placeholder, RoundedCornerShape(8.dp))
-                    .padding(16.dp)
-            )
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -85,14 +74,6 @@ fun MyPageScreen(
                     borderColor = White,
                     textColor = White,
                     onClick = viewModel::onLogoutClicked
-                )
-                CommonButton(
-                    text = "계정탈퇴",
-                    size = ButtonSize.MD,
-                    backgroundColor = Error,
-                    borderColor = White,
-                    textColor = White,
-                    onClick = { isAlertVisible = true }
                 )
             }
         }
