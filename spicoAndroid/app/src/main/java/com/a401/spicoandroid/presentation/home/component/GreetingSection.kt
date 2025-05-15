@@ -199,6 +199,17 @@ fun GreetingSection(
                                 navController.navigate(NavRoutes.CoachingMode.route)
                             }
                         )
+                        CommonButton(
+                            text = "시작 전 체크",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.FinalScreenCheck.route)
+                            }
+                        )
+
 
 
                     }

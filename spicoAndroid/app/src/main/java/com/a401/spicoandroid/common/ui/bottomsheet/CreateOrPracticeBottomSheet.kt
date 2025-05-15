@@ -1,7 +1,9 @@
 package com.a401.spicoandroid.common.ui.bottomsheet
 
+import com.a401.spicoandroid.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -12,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
 import com.a401.spicoandroid.common.ui.theme.*
 
 @Composable
@@ -39,11 +42,19 @@ fun CreateOrPracticeBottomSheet(
                     .clickable { onCreateProjectClick() },
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "프로젝트 생성",
-                    style = Typography.displayMedium,
-                    color = TextPrimary
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_create_project),
+                        contentDescription = "프로젝트 생성",
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "프로젝트 생성",
+                        style = Typography.displayMedium,
+                        color = TextPrimary
+                    )
+                }
             }
 
             // 연습하기 버튼
@@ -56,11 +67,19 @@ fun CreateOrPracticeBottomSheet(
                     .clickable { onPracticeClick() },
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "연습하기",
-                    style = Typography.displayMedium,
-                    color = TextPrimary
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_create_practice),
+                        contentDescription = "연습하기",
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "연습하기",
+                        style = Typography.displayMedium,
+                        color = TextPrimary
+                    )
+                }
             }
         }
 
@@ -70,7 +89,7 @@ fun CreateOrPracticeBottomSheet(
 
 @Preview(showBackground = true, backgroundColor = 0xFFF8F8F8)
 @Composable
-fun CreateOrPracticeBottomSheetPreview_DesignOnly() {
+fun CreateOrPracticeBottomSheetPreview() {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,13 +119,14 @@ fun CreateOrPracticeBottomSheetPreview_DesignOnly() {
                 )
             }
 
-            // 버튼 2개
+            // 버튼 2개 (이미지 포함)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(156.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // 프로젝트 생성
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -115,13 +135,22 @@ fun CreateOrPracticeBottomSheetPreview_DesignOnly() {
                         .background(BackgroundPrimary),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "프로젝트 생성",
-                        style = Typography.displayMedium,
-                        color = TextPrimary
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            painter = painterResource(id = R.drawable.img_create_project),
+                            contentDescription = "프로젝트 생성",
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "프로젝트 생성",
+                            style = Typography.displayMedium,
+                            color = TextPrimary
+                        )
+                    }
                 }
 
+                // 연습하기
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -130,11 +159,19 @@ fun CreateOrPracticeBottomSheetPreview_DesignOnly() {
                         .background(BackgroundPrimary),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "연습하기",
-                        style = Typography.displayMedium,
-                        color = TextPrimary
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            painter = painterResource(id = R.drawable.img_create_practice),
+                            contentDescription = "연습하기",
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "연습하기",
+                            style = Typography.displayMedium,
+                            color = TextPrimary
+                        )
+                    }
                 }
             }
 
@@ -142,3 +179,4 @@ fun CreateOrPracticeBottomSheetPreview_DesignOnly() {
         }
     }
 }
+
