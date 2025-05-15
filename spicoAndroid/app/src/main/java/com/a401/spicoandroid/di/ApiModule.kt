@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.di
 
+import com.a401.spicoandroid.data.auth.api.AuthApi
 import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import dagger.Module
@@ -25,6 +26,12 @@ object ApiModule {
     @Singleton
     fun providePracticeApi(@NetworkModule.MainRetrofit retrofit: Retrofit): PracticeApi {
         return retrofit.create(PracticeApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(@NetworkModule.MainRetrofit retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
     }
 
 }

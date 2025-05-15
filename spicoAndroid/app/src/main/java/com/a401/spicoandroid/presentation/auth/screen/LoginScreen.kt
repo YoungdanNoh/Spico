@@ -9,12 +9,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.Hover
 import com.a401.spicoandroid.common.ui.theme.TextPrimary
 import com.a401.spicoandroid.presentation.auth.component.*
 import com.a401.spicoandroid.presentation.auth.viewmodel.LoginViewModel
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -41,6 +45,7 @@ fun LoginScreen(
 
     val pagerState = rememberPagerState(initialPage = 0) { imageList.size }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     // 자동 슬라이딩
     LaunchedEffect(Unit) {
@@ -81,7 +86,31 @@ fun LoginScreen(
             currentPage = pagerState.currentPage,
             totalCount = imageList.size,
             onSelect = { scope.launch { pagerState.scrollToPage(it) } },
-            onKakaoLoginClick = { loginViewModel.onLoginClicked() }
+            onKakaoLoginClick = {
+
+                val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+                    if (token != null) {
+                        loginViewModel.onLoginClicked(token.accessToken)
+                    }
+                }
+
+                if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+                    UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+                        if (error != null) {
+
+                            if (error is ClientError && error.reason.name == "Cancelled") {
+                                return@loginWithKakaoTalk
+                            }
+
+                            UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
+                        } else if (token != null) {
+                            loginViewModel.onLoginClicked(token.accessToken)
+                        }
+                    }
+                } else {
+                    UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
+                }
+            }
         )
     }
 }
