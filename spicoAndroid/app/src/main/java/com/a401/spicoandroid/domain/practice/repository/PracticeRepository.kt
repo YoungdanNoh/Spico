@@ -2,6 +2,7 @@ package com.a401.spicoandroid.domain.practice.repository
 
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
+import com.a401.spicoandroid.domain.practice.model.FinalSetting
 import com.a401.spicoandroid.domain.practice.model.Practice
 
 interface PracticeRepository {
@@ -11,6 +12,13 @@ interface PracticeRepository {
         cursor: Int?,
         size: Int
     ): DataResource<List<Practice>>
+
+    suspend fun getFinalSetting(
+    ): DataResource<FinalSetting>
+
+    suspend fun saveFinalSetting(
+        request: FinalPracticeRequest
+    ): DataResource<FinalSetting>
 
     suspend fun createCoachingPractice(
         projectId: Int): DataResource<Int>

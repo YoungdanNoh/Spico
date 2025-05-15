@@ -6,6 +6,8 @@ import com.a401.spicoandroid.common.utils.safeApiCall
 import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
 import com.a401.spicoandroid.data.practice.dto.toDomain
+import com.a401.spicoandroid.data.practice.dto.toModel
+import com.a401.spicoandroid.domain.practice.model.FinalSetting
 import com.a401.spicoandroid.domain.practice.model.Practice
 import com.a401.spicoandroid.domain.practice.repository.PracticeRepository
 import javax.inject.Inject
@@ -36,6 +38,32 @@ class PracticeRepositoryImpl @Inject constructor(
             DataResource.Error(e)
         }
     }
+    override suspend fun getFinalSetting(): DataResource<FinalSetting> {
+        return try {
+            val response = api.getFinalSetting()
+            if (response.success && response.data != null) {
+                DataResource.Success(response.data.toModel())
+            } else {
+                DataResource.Error(Exception(response.errorMsg ?: "Unknown error"))
+            }
+        } catch (e: Exception) {
+            DataResource.Error(e)
+        }
+    }
+
+    override suspend fun saveFinalSetting(request: FinalPracticeRequest): DataResource<FinalSetting> {
+        return try {
+            val response = api.saveFinalSetting(request)
+            if (response.success && response.data != null) {
+                DataResource.Success(response.data.toModel())
+            } else {
+                DataResource.Error(Exception(response.errorMsg ?: "Unknown error"))
+            }
+        } catch (e: Exception) {
+            DataResource.Error(e)
+        }
+    }
+
 
     override suspend fun createFinalPractice(
         projectId: Int,

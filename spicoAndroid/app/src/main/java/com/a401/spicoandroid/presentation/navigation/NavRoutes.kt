@@ -1,7 +1,5 @@
 package com.a401.spicoandroid.presentation.navigation
 
-import android.net.Uri
-
 sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
     object Profile : NavRoutes("profile")
@@ -53,5 +51,8 @@ sealed class NavRoutes(val route: String) {
 
     //에러
     object NotFound : NavRoutes("not_found")
+
+    // stt 테스트
+    object SpeechTest : NavRoutes("speech_test")
 
 }
