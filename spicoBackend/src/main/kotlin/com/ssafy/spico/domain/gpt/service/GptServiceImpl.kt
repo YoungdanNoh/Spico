@@ -130,12 +130,12 @@ class GptServiceImpl(
         
         Your task is to provide the following information **in Korean**, with the title and feedback **separated by '|||'** as follows:
         
-        - title: Write a single-line Korean title that summarizes the speech, like a news headline. It should capture the core message of the speech.
+        - title: Write a single-line Korean title that summarizes the question and speech.
         - feedback: Provide warm and supportive feedback in Korean. Include 3 to 5 sentences that point out what was done well and what can be improved.
         
         Please return **only the title and feedback** separated by '|||' and in the following format:
             title ||| feedback
-        Do NOT include any JSON or extra explanations. Just return the result with the separator.
+        Do NOT include any JSON or extra explanations like quotation marks, parenthesis. Just return the result with the separator.
         """.trimIndent()
 
         val requestBody = mapOf(
