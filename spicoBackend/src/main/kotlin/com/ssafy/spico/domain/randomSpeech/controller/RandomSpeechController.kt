@@ -18,6 +18,14 @@ class RandomSpeechController(
         return ApiResponse.success(randomSpeeches.map { it.toResponse() })
     }
 
+    @GetMapping("/{randomSpeechId}")
+    fun getRandomSpeechDetail(
+        @PathVariable randomSpeechId: Int
+    ): ApiResponse<RandomSpeechDetailResponseDto> {
+        val randomSpeech = randomSpeechService.getRandomSpeechDetail(userId, randomSpeechId)
+        return ApiResponse.success(randomSpeech.toDetailResponse())
+    }
+
     @PostMapping
     fun startRandomSpeech(
         @RequestBody request: CreateRandomSpeechRequestDto
@@ -33,6 +41,14 @@ class RandomSpeechController(
         @RequestBody request: UpdateRandomSpeechRequestDto
     ): ApiResponse<Unit> {
         randomSpeechService.endRandomSpeech(randomSpeechId, request.script)
+        return ApiResponse.success()
+    }
+
+    @DeleteMapping("{randomSpeechId}")
+    fun deleteRandomSpeech(
+        @PathVariable randomSpeechId: Int
+    ): ApiResponse<Unit> {
+        randomSpeechService.deleteRandomSpeech(userId, randomSpeechId)
         return ApiResponse.success()
     }
 }
