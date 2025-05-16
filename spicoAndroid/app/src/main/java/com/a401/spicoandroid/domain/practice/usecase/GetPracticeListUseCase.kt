@@ -10,7 +10,7 @@ class GetPracticeListUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         projectId: Int,
-        filter: String,
+        filter: String?,
         cursor: Int?,
         size: Int
     ): DataResource<List<Practice>> {

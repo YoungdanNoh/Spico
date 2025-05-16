@@ -2,7 +2,7 @@ package com.a401.spicoandroid.presentation.mypage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.a401.spicoandroid.infrastructure.datastore.UserPreferences
+import com.a401.spicoandroid.domain.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val userPreferences: UserPreferences
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MyPageState())
@@ -20,11 +20,8 @@ class MyPageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userPreferences.userInfoFlow.collect { userInfo ->
-                _state.value = MyPageState(
-                    name = userInfo.name,
-                    email = userInfo.email
-                )
+            authRepository.observeNickname().collect { nickname  ->
+                _state.value = MyPageState(name = nickname?: "")
             }
         }
     }

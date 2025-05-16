@@ -40,7 +40,10 @@ sealed class NavRoutes(val route: String) {
     object FinalModeLoading : NavRoutes("final_mode_loading")
     object FinalReportLoading : NavRoutes("final_report_loading")
     object FinalModeQnA : NavRoutes("final_mode_qna")
-    object FinalModeReport : NavRoutes("final_mode_report")
+    object FinalReport : NavRoutes("final_mode_report/{projectId}/{practiceId}") {
+        fun createRoute(projectId: Int, practiceId: Int): String =
+            "final_mode_report/$projectId/$practiceId"
+    }
 
     // 영상 다시 보기
     object VoiceScript : NavRoutes("voice_script")
