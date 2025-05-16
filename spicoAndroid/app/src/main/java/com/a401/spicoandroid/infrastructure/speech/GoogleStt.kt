@@ -281,4 +281,7 @@ class GoogleStt(
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    fun getVolumeRecordList(): List<VolumeRecord> {
+        return volumeRecords.toList()
+    }
 }

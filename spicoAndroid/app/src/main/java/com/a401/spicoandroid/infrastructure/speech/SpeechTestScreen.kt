@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.a401.spicoandroid.BuildConfig
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.infrastructure.speech.model.VolumeLevel
+import com.a401.spicoandroid.infrastructure.speech.model.VolumeRecord
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -94,11 +96,16 @@ fun SpeechTestScreen(navController: NavController) {
                     volumeJson = googleStt.getVolumeRecordsJson()
                     Log.d("VolumeRecords", googleStt.getVolumeRecordsJson())
 
+                    val records = googleStt.getVolumeRecordList()
+                    val score = calculateVolumeScore(records)
+                    azureResult = "성량 점수: $score / 100"
+
                     googleStt.clearVolumeRecords()
                 })
 
                 if (volumeJson.isNotEmpty()) {
                     Text("볼륨 기록: $volumeJson")
+                    Text("성량 점수: $azureResult")
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -264,3 +271,31 @@ fun ReturnHomeButton(
         )
     }
 }
+
+fun calculateVolumeScore(records: List<VolumeRecord>): Int {
+    // 기록이 비어있으면 기본점수 100점
+    if (records.isEmpty()) return 100
+
+    // 첫 번째 기록은 제외
+    val filtered = records.drop(1)
+
+    // 제외 후도 비어있으면 100점
+    if (filtered.isEmpty()) return 100
+
+    val total = filtered.size.toFloat()
+    val loud = filtered.count { it.volumeLevel == VolumeLevel.LOUD }
+    val quiet = filtered.count { it.volumeLevel == VolumeLevel.QUIET }
+    val middle = filtered.count { it.volumeLevel == VolumeLevel.MIDDLE }
+
+    val loudRatio = loud / total
+    val quietRatio = quiet / total
+    val middleRatio = middle / total
+
+    var score = 100
+    score += ((middleRatio - 0.5f) * 40).toInt() // MIDDLE 기준 ±20점
+    score -= (loudRatio * 30).toInt()            // LOUD는 최대 -30
+    score -= (quietRatio * 20).toInt()           // QUIET는 최대 -20
+
+    return score.coerceIn(0, 100)
+}
+
