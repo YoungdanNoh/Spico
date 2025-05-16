@@ -49,6 +49,10 @@ class RandomSpeechServiceImpl(
             throw RandomSpeechException(RandomSpeechError.GPT_QUESTION_FAILED)
         }
 
+        savedRandomSpeech.updateQuestion(UpdateQuestionCommand(
+            question = question
+        ))
+
         return Content(
             id = savedRandomSpeech.randomSpeechId,
             newsTitle = selectedNews.title,
