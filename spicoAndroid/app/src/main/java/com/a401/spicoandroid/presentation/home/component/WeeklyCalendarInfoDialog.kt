@@ -23,7 +23,7 @@ import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.common.utils.formatTimeOnly
+import com.a401.spicoandroid.common.utils.formatDateWithDay
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -80,7 +80,7 @@ fun ProjectInfoDialog(
                             CommonList(
                                 imagePainter = painterResource(id = R.drawable.img_list_practice),
                                 title = project.projectName,
-                                description = formatTimeOnly(project.projectDate),
+                                description = formatDateWithDay(project.projectDate),
                                 onClick = {
                                     onDismiss()
                                     navController.navigate(NavRoutes.ProjectDetail.withId(project.projectId))

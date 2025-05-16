@@ -2,6 +2,7 @@ package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.auth.api.AuthApi
 import com.a401.spicoandroid.data.finalmode.api.FinalModeApi
+import com.a401.spicoandroid.data.home.api.HomeApi
 import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import com.a401.spicoandroid.data.randomspeech.api.RandomSpeechApi
@@ -18,6 +19,12 @@ import kotlin.jvm.java
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
+
+    @Provides
+    @Singleton
+    fun provideHomeApi(@NetworkModule.MainRetrofit retrofit: Retrofit): HomeApi {
+        return retrofit.create(HomeApi::class.java)
+    }
 
     @Provides
     @Singleton

@@ -2,12 +2,14 @@ package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.auth.repository.AuthRepositoryImpl
 import com.a401.spicoandroid.data.finalmode.repository.FinalModeRepositoryImpl
+import com.a401.spicoandroid.data.home.repository.HomeRepositoryImpl
 import com.a401.spicoandroid.data.practice.repository.PracticeRepositoryImpl
 import com.a401.spicoandroid.data.project.repository.ProjectRepositoryImpl
 import com.a401.spicoandroid.data.randomspeech.repository.RandomSpeechRepositoryImpl
 import com.a401.spicoandroid.data.report.repository.ReportRepositoryImpl
 import com.a401.spicoandroid.domain.auth.AuthRepository
 import com.a401.spicoandroid.domain.finalmode.repository.FinalModeRepository
+import com.a401.spicoandroid.domain.home.repository.HomeRepository
 import com.a401.spicoandroid.domain.practice.repository.PracticeRepository
 import com.a401.spicoandroid.domain.project.repository.ProjectRepository
 import com.a401.spicoandroid.domain.randomspeech.repository.RandomSpeechRepository
@@ -21,6 +23,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeRepository(
+        homeRepositoryImpl: HomeRepositoryImpl
+    ): HomeRepository
 
     @Binds
     @Singleton
