@@ -20,7 +20,7 @@ fun RandomReportCard(
     CommonList(
         imagePainter = painterResource(id = getTopicIconRes(topic)),
         title = title,
-        description = formatDateWithDay(dateTime),
+        description = dateTime,
         onClick = { onClick(id) },
         onLongClick = { onLongClick(id) }
     )
