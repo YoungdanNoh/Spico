@@ -80,8 +80,8 @@ fun CommonButton(
 ) {
     val widthModifier = size.width?.let { Modifier.width(it) } ?: Modifier.fillMaxWidth()
 
-    val bgColor = if (enabled) backgroundColor else disabledBackgroundColor ?: Disabled
-    val bdColor = if (enabled) borderColor else disabledBorderColor ?: Disabled
+    val bgColor = if (enabled) backgroundColor else disabledBackgroundColor ?: White
+    val bdColor = if (enabled) borderColor else disabledBorderColor ?: White
     val txtColor = if (enabled) textColor else disabledTextColor ?: TextTertiary
 
     Box(

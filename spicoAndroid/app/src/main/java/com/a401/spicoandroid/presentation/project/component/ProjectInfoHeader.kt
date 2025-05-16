@@ -44,9 +44,9 @@ fun ProjectInfoHeader(
             CommonButton(
                 text = time,
                 size = ButtonSize.MD,
-                backgroundColor = BackgroundSecondary,
+                backgroundColor = White,
                 textColor = TextPrimary,
-                borderColor = BackgroundSecondary,
+                borderColor = White,
                 modifier = Modifier.weight(1f),
                 enabled = false,
                 onClick = {}

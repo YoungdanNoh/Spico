@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.domain.project.usecase.GetProjectDetailUseCase
+import com.a401.spicoandroid.domain.project.usecase.UpdateProjectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProjectDetailViewModel @Inject constructor(
-    private val getProjectDetailUseCase: GetProjectDetailUseCase
+    private val getProjectDetailUseCase: GetProjectDetailUseCase,
+    private val updateProjectUseCase: UpdateProjectUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProjectDetailState())
@@ -26,7 +28,7 @@ class ProjectDetailViewModel @Inject constructor(
 
             when (val result = getProjectDetailUseCase(projectId)) {
                 is DataResource.Success -> {
-                    _state.update { it.copy(project = result.data, isLoading = false) }
+                    _state.update { it.copy(id = projectId, project = result.data, isLoading = false) }
                 }
                 is DataResource.Error -> {
                     _state.update { it.copy(error = result.throwable, isLoading = false) }

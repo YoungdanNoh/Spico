@@ -14,27 +14,18 @@ open class ProjectScriptViewModel @Inject constructor() : ViewModel() {
     private val _scriptState = MutableStateFlow(ProjectScriptState())
     val scriptState: StateFlow<ProjectScriptState> = _scriptState.asStateFlow()
 
-    init {
-        loadMockData()
-    }
+    fun initializeScript(projectId: Long, title: String, rawScript: String) {
+        val current = _scriptState.value
+        val incoming = rawScript.split("\n\n")
 
-    private fun loadMockData() {
-        _scriptState.value = ProjectScriptState(
-            scriptId = 1L,
-            title = "자기소개 예시 대본",
-            paragraphs = listOf(
-                ParagraphItem(text = "안녕하세요. 저는 소프트웨어 개발자를 꿈꾸는 김도영입니다."),
-                ParagraphItem(text = "항상 사용자 경험을 먼저 생각하며, 문제 해결에 집중하는 개발자가 되기 위해 노력하고 있습니다."),
-                ParagraphItem(text = "감사합니다.")
-            )
-        )
-    }
+        val isSame = current.title == title && current.paragraphs.map { it.text } == incoming
 
-    fun loadScript(id: Long, title: String, body: String) {
+        if (isSame) return
+
         _scriptState.value = ProjectScriptState(
-            scriptId = id,
+            scriptId = projectId,
             title = title,
-            paragraphs = body.split("\n\n").map { ParagraphItem(text = it) }
+            paragraphs = incoming.map { ParagraphItem(text = it) }
         )
     }
 

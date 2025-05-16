@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.project.screen
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -22,16 +23,21 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewModel
 import org.burnoutcrew.reorderable.*
 import com.a401.spicoandroid.R
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 
 @Composable
 fun ProjectScriptEditScreen(
     navController : NavController,
-    viewModel: ProjectScriptViewModel = hiltViewModel(),
-    onComplete: (String) -> Unit
+    detailViewModel: ProjectDetailViewModel = hiltViewModel(),
+    scriptViewModel: ProjectScriptViewModel = hiltViewModel(),
+    projectViewModel: ProjectViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.scriptState.collectAsState()
+    val scriptState by scriptViewModel.scriptState.collectAsState()
+    val detailState by detailViewModel.state.collectAsState()
+
     val reorderState = rememberReorderableLazyListState(
-        onMove = { from, to -> viewModel.moveParagraph(from.index, to.index) },
+        onMove = { from, to -> scriptViewModel.moveParagraph(from.index, to.index) },
         onDragEnd = { _, _ -> }
     )
 
@@ -56,10 +62,21 @@ fun ProjectScriptEditScreen(
                         backgroundColor = Action,
                         borderColor = Action,
                         textColor = White,
-                        size = ButtonSize.XS
-                    ) {
-                        onComplete(viewModel.getMergedScript())
-                    }
+                        size = ButtonSize.XS,
+                        onClick = {
+                            val scriptText = scriptViewModel.getMergedScript()
+                            Log.d("SCRIPT_TEXT", scriptText)
+                            projectViewModel.updateProject(
+                                projectId = detailState.id,
+                                script = scriptText,
+                                onSuccess = {
+                                    detailViewModel.fetchProjectDetail(detailState.id)
+                                    navController.navigateUp()
+                                },
+                                onError = { }
+                            )
+                        }
+                    )
                 }
             )
         },
@@ -71,7 +88,7 @@ fun ProjectScriptEditScreen(
                 .pointerInput(Unit) {
                     detectTapGestures {
                         focusManager.clearFocus()
-                        viewModel.setEditing(false)
+                        scriptViewModel.setEditing(false)
                     }
                 }
                 .padding(innerPadding)
@@ -85,7 +102,7 @@ fun ProjectScriptEditScreen(
                     .detectReorderAfterLongPress(reorderState),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(uiState.paragraphs, key = { it.id }) { item ->
+                items(scriptState.paragraphs, key = { it.id }) { item ->
                     ReorderableItem(reorderState, key = item.id) { dragging ->
                         val isSwiped = swipedItemId.value == item.id
                         val offsetX by animateFloatAsState(if (isSwiped) -160f else 0f)
@@ -105,7 +122,7 @@ fun ProjectScriptEditScreen(
                                         textColor = Error,
                                         size = ButtonSize.XS,
                                         onClick = {
-                                            viewModel.deleteParagraph(item.id)
+                                            scriptViewModel.deleteParagraph(item.id)
                                             swipedItemId.value = null
                                         }
                                     )
@@ -138,7 +155,7 @@ fun ProjectScriptEditScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        "문단 ${uiState.paragraphs.indexOf(item) + 1}",
+                                        "문단 ${scriptState.paragraphs.indexOf(item) + 1}",
                                         style = Typography.displaySmall.copy(TextPrimary)
                                     )
                                     Icon(
@@ -150,19 +167,19 @@ fun ProjectScriptEditScreen(
                                 Spacer(Modifier.height(8.dp))
                                 CommonTextField(
                                     value = item.text,
-                                    onValueChange = { viewModel.updateText(item.id, it) },
+                                    onValueChange = { scriptViewModel.updateText(item.id, it) },
                                     placeholder = "내용을 입력하세요",
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .heightIn(min = 120.dp)
-                                        .onFocusChanged { viewModel.setEditing(it.isFocused) }
+                                        .onFocusChanged { scriptViewModel.setEditing(it.isFocused) }
                                 )
                             }
                         }
                     }
 
                 }
-                if (uiState.paragraphs.isEmpty()) {
+                if (scriptState.paragraphs.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -180,7 +197,7 @@ fun ProjectScriptEditScreen(
                 }
             }
 
-            if (!uiState.isEditing) {
+            if (!scriptState.isEditing) {
                 IconCircleButton(
                     modifier = Modifier.align(Alignment.BottomEnd),
                     icon = {
@@ -192,7 +209,7 @@ fun ProjectScriptEditScreen(
                     },
                     backgroundColor = Action
                 ) {
-                    viewModel.addParagraph()
+                    scriptViewModel.addParagraph()
                 }
             }
         }
