@@ -33,6 +33,7 @@ class LandingPageReportServiceImpl(
                     final?.let {
                         Reports(
                             type = PracticeType.FINAL,
+                            projectId = project.projectId,
                             practiceId = practice.practiceId,
                             projectName = project.title,
                             practiceName = "${it.finalPracticeCnt}회차",
@@ -46,6 +47,7 @@ class LandingPageReportServiceImpl(
                     coaching?.let {
                         Reports(
                             type = PracticeType.COACHING,
+                            projectId = project.projectId,
                             practiceId = practice.practiceId,
                             projectName = project.title,
                             practiceName = "${it.coachingPracticeCnt}회차",
