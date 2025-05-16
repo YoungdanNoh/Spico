@@ -1,12 +1,13 @@
 package com.ssafy.spico.domain.practice.entity
 
-enum class PracticeType(val value: String) {
-    COACHING("코칭"),
-    FINAL("파이널");
+enum class PracticeType {
+    COACHING,
+    FINAL;
 
-    companion object {
-        fun fromValue(name: String): PracticeType? {
-            return entries.find { it.value == name }
+    fun toKorean(): String {
+        return when (this) {
+            COACHING -> "코칭"
+            FINAL -> "파이널"
         }
     }
 }
