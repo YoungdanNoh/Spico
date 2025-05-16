@@ -1,5 +1,6 @@
 package com.ssafy.spico.domain.user.model
 
+import com.ssafy.spico.domain.user.dto.FinalSettingsRequest
 import com.ssafy.spico.domain.user.entity.UserEntity
 
 data class User(
@@ -26,6 +27,7 @@ fun UserEntity.toModel(): User {
 
 fun User.toEntity(): UserEntity {
     return UserEntity(
+        this.id,
         this.kakaoId,
         this.nickname,
         this.hasAudience,
@@ -33,4 +35,22 @@ fun User.toEntity(): UserEntity {
         this.questionCount,
         this.answerTimeLimit
     )
+}
+
+fun User.updateSettings(request: FinalSettingsRequest): User {
+    if(request.hasAudience != null){
+        this.hasAudience = request.hasAudience
+    }
+    if(request.hasQnA != null) {
+        this.hasQna = request.hasQnA
+        if(this.hasQna == true){
+            this.questionCount = request.questionCount?: 1
+            this.answerTimeLimit = request.answerTimeLimit?: 60
+        }else{
+            this.questionCount = 0
+            this.answerTimeLimit = 0
+        }
+    }
+
+    return this
 }
