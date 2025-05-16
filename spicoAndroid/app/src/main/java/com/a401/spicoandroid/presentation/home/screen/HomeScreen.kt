@@ -39,6 +39,9 @@ fun HomeScreen(
     // 클릭된 날짜를 저장
     val selectedDate = remember { mutableStateOf<LocalDate?>(null) }
 
+    // 최근 리포트
+    val recentReports by homeViewModel.recentReports.collectAsState()
+
     LaunchedEffect(Unit) {
         calendarViewModel.updateProjectList(DummyProjectList)
     }
@@ -88,9 +91,9 @@ fun HomeScreen(
 
         // 최근 리포트
         RecentReportSection(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
+            reportList = recentReports
         )
-
         // 하단 푸터
         HomeFooterSection(
             modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
