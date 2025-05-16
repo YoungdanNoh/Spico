@@ -1,6 +1,5 @@
 package com.a401.spicoandroid.data.randomspeech.repository
 
-import android.util.Log
 import com.a401.spicoandroid.common.data.dto.getOrThrow
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.common.utils.safeApiCall

@@ -16,11 +16,3 @@ fun RandomReportScriptButton(
         onClick = onClick
     )
 }
-
-@Preview(showBackground = true)
-@Composable
-fun RandomReportScriptButtonPreview() {
-    SpeakoAndroidTheme {
-        RandomReportScriptButton(onClick = { println("스크립트 보기") })
-    }
-}

@@ -12,6 +12,7 @@ import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.ui.theme.dropShadow1
 import com.a401.spicoandroid.domain.home.model.HomeReport
+import com.a401.spicoandroid.domain.home.model.PracticeType
 
 @Composable
 fun RecentReportSection(
@@ -46,11 +47,18 @@ fun RecentReportSection(
             }
         } else {
             reportList.forEachIndexed { index, report ->
+                val modeLabel = when (report.type) {
+                    PracticeType.COACHING -> "코칭모드"
+                    PracticeType.FINAL -> "파이널모드"
+                }
+                val description = "$modeLabel | ${report.projectName}"
+
                 CommonList(
                     modifier = Modifier.dropShadow1(),
                     title = report.practiceName,
-                    description = report.projectName
+                    description = description
                 )
+
                 if (index < reportList.lastIndex) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
