@@ -14,9 +14,13 @@ class RandomSpeechRepositoryCustomImpl(
         val randomSpeech = QRandomSpeechEntity.randomSpeechEntity
 
         return queryFactory.selectFrom(randomSpeech)
-            .where(randomSpeech.userEntity.id.eq(userId))
+            .where(
+                randomSpeech.userEntity.id.eq(userId),
+                randomSpeech.script.isNotNull,
+                randomSpeech.aiFeedback.isNotNull,
+                randomSpeech.aiTitle.isNotNull
+            )
             .orderBy(randomSpeech.createdAt.desc())
             .fetch()
-
     }
 }

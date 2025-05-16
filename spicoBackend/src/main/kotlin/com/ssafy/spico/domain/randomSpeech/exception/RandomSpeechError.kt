@@ -13,4 +13,9 @@ enum class RandomSpeechError(
 
     REPORT_NOT_FOUND("404", "S201", "리포트를 찾을 수 없습니다."),
     CONTENT_NOT_FOUND("404", "S202", "질문/뉴스를 찾을 수 없습니다."),
+
+    GPT_QUESTION_FAILED("500", "S301", "GPT 질문 생성에 실패했습니다."),
+    GPT_FEEDBACK_FAILED("500", "S301", "GPT 피드백 생성에 실패했습니다."),
+
+    NEWS_API_FAILED("502", "S401", "뉴스 API 호출에 실패했습니다."),
 }
