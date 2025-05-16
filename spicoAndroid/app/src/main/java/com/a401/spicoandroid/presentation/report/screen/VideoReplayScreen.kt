@@ -25,16 +25,15 @@ import kotlinx.coroutines.delay
 @Composable
 fun VideoReplayScreen(
     navController: NavController,
+    videoUrl: String,
     viewModel: VideoReplayViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val player = viewModel.player
     var isPlaying by remember { mutableStateOf(false) }
 
     // 갱신: ExoPlayer 상태 감지해서 sync 하고 싶다면 추후 `player.isPlaying` StateFlow로도 가능
 
     val feedbackText = "첫 부분에서 너무 빨랐어요.\n다시 확인해보세요."
-    val timeRangeText = "1:00 ~ 1:30"
 
     val totalStartMillis = 60_000L
     val totalEndMillis = 90_000L
@@ -58,12 +57,11 @@ fun VideoReplayScreen(
     }
 
     BackHandler {
-        navController.navigate(NavRoutes.FinalReport.route)
+        navController.popBackStack()
     }
 
-    LaunchedEffect(Unit) {
-        val uri = Uri.parse("https://your-bucket.s3.ap-northeast-2.amazonaws.com/videos/project123_final.mp4")
-        viewModel.setMedia(uri)
+    LaunchedEffect(videoUrl) {
+        viewModel.setMedia(Uri.parse(videoUrl))
     }
 
     Scaffold(
@@ -75,7 +73,7 @@ fun VideoReplayScreen(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
                         onClick = {
-                            navController.navigate(NavRoutes.FinalReport.route)
+                            navController.popBackStack()
                         }
                     )
                 }
@@ -91,7 +89,7 @@ fun VideoReplayScreen(
                 CommonButton(
                     text = "리포트 보기",
                     onClick = {
-                        navController.navigate(NavRoutes.FinalReport.route)
+                        navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

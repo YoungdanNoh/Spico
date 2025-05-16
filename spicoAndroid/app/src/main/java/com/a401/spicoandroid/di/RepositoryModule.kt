@@ -1,11 +1,13 @@
 package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.auth.repository.AuthRepositoryImpl
+import com.a401.spicoandroid.data.finalmode.repository.FinalModeRepositoryImpl
 import com.a401.spicoandroid.data.practice.repository.PracticeRepositoryImpl
 import com.a401.spicoandroid.data.project.repository.ProjectRepositoryImpl
 import com.a401.spicoandroid.data.randomspeech.repository.RandomSpeechRepositoryImpl
 import com.a401.spicoandroid.data.report.repository.ReportRepositoryImpl
 import com.a401.spicoandroid.domain.auth.AuthRepository
+import com.a401.spicoandroid.domain.finalmode.repository.FinalModeRepository
 import com.a401.spicoandroid.domain.practice.repository.PracticeRepository
 import com.a401.spicoandroid.domain.project.repository.ProjectRepository
 import com.a401.spicoandroid.domain.randomspeech.repository.RandomSpeechRepository
@@ -49,4 +51,10 @@ internal abstract class RepositoryModule {
     abstract fun bindRandomSpeechRepository(
         impl: RandomSpeechRepositoryImpl
     ): RandomSpeechRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFinalModeRepository(
+        impl: FinalModeRepositoryImpl
+    ): FinalModeRepository
 }

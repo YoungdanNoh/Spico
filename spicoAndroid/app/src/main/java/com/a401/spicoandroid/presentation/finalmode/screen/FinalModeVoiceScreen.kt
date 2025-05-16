@@ -129,7 +129,7 @@ fun FinalModeVoiceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        navController.navigate(NavRoutes.FinalModeLoading.route)
+                        navController.navigate(NavRoutes.FinalModeLoading.withType(FinalModeLoadingType.QUESTION))
                     }
                 },
                 onCancel = { viewModel.hideAllDialogs() },
