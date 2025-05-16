@@ -95,7 +95,8 @@ fun FinalModeAudienceScreen(
                 size = ButtonSize.SM,
                 onClick = {
                     viewModel.checkElapsedAndShowDialog(elapsedSeconds.value)
-                }
+                },
+                enabled = countdown < 0
             )
         }
 
@@ -109,7 +110,7 @@ fun FinalModeAudienceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        navController.navigate(NavRoutes.FinalModeLoading.route)
+                        navController.navigate(NavRoutes.FinalModeLoading.withType(FinalModeLoadingType.QUESTION))
                     }
                 },
                 onCancel = { viewModel.hideAllDialogs() },

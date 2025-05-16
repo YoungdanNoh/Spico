@@ -1,5 +1,8 @@
 package com.a401.spicoandroid.presentation.navigation
 
+import android.net.Uri
+import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
+
 sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
     object Profile : NavRoutes("profile")
@@ -37,8 +40,10 @@ sealed class NavRoutes(val route: String) {
     // 파이널 모드
     object FinalModeVoice : NavRoutes("final_mode_voice")
     object FinalModeAudience : NavRoutes("final_mode_audience")
-    object FinalModeLoading : NavRoutes("final_mode_loading")
-    object FinalReportLoading : NavRoutes("final_report_loading")
+    object FinalModeLoading : NavRoutes("final_mode_loading/{type}") {
+        fun withType(type: FinalModeLoadingType) = "final_mode_loading/${type.name}"
+    }
+
     object FinalModeQnA : NavRoutes("final_mode_qna")
     object FinalReport : NavRoutes("final_mode_report/{projectId}/{practiceId}") {
         fun createRoute(projectId: Int, practiceId: Int): String =
@@ -46,8 +51,14 @@ sealed class NavRoutes(val route: String) {
     }
 
     // 영상 다시 보기
-    object VoiceScript : NavRoutes("voice_script")
-    object VideoReplay : NavRoutes("video_replay")
+    object VoiceScript : NavRoutes("voice_script/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "voice_script/$projectId/$practiceId"
+    }
+
+    object VideoReplay : NavRoutes("video_replay/{encodedUrl}") {
+        fun withEncodedUrl(presignedUrl: String): String =
+            "video_replay/${Uri.encode(presignedUrl)}"
+    }
 
     // 로그인
     object Login : NavRoutes("login")

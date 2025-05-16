@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -244,16 +245,16 @@ fun NavGraph(
             composable("final_mode_audience") {
                 FinalModeAudienceScreen(navController)
             }
-            composable("final_mode_loading") {
+            composable(
+                route = NavRoutes.FinalModeLoading.route,
+                arguments = listOf(navArgument("type") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val typeArg = backStackEntry.arguments?.getString("type") ?: "QUESTION"
+                val type = FinalModeLoadingType.valueOf(typeArg)
+
                 FinalModeLoadingScreen(
                     navController = navController,
-                    type = FinalModeLoadingType.QUESTION
-                )
-            }
-            composable("final_report_loading") {
-                FinalModeLoadingScreen(
-                    navController = navController,
-                    type = FinalModeLoadingType.REPORT
+                    type = type
                 )
             }
             composable(
@@ -278,12 +279,28 @@ fun NavGraph(
                 )
             }
 
-            composable(NavRoutes.VoiceScript.route) {
-                VoiceScriptScreen(navController = navController)
+            composable(
+                route = NavRoutes.VoiceScript.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+                VoiceScriptScreen(navController, projectId, practiceId)
             }
-            composable(NavRoutes.VideoReplay.route) {
-                VideoReplayScreen(navController = navController)
+
+            composable(
+                route = NavRoutes.VideoReplay.route,
+                arguments = listOf(navArgument("encodedUrl") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val encodedUrl = backStackEntry.arguments?.getString("encodedUrl") ?: return@composable
+                val decodedUrl = Uri.decode(encodedUrl)
+                VideoReplayScreen(navController = navController, videoUrl = decodedUrl)
             }
+
+
 
 
             // 로그인

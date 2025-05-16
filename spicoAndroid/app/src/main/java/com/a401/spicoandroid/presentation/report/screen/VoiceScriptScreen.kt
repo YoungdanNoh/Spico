@@ -19,8 +19,11 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun VoiceScriptScreen(
-    navController: NavController
-) {
+    navController: NavController,
+    projectId: Int,
+    practiceId: Int
+)
+ {
     val scrollState = rememberScrollState()
 
     // 임시 스크립트
@@ -39,11 +42,11 @@ fun VoiceScriptScreen(
         """.trimIndent()
     }
 
-    BackHandler {
-        navController.navigate(NavRoutes.FinalReport.route)
-    }
+     BackHandler {
+         navController.navigate(NavRoutes.FinalReport.createRoute(projectId, practiceId))
+     }
 
-    Scaffold(
+     Scaffold(
         topBar = {
             CommonTopBar(
                 centerText = "음성 스크립트",
@@ -52,7 +55,7 @@ fun VoiceScriptScreen(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
                         onClick = {
-                            navController.navigate(NavRoutes.FinalReport.route)
+                            navController.navigate(NavRoutes.FinalReport.createRoute(projectId, practiceId))
                         }
                     )
                 }
@@ -68,7 +71,7 @@ fun VoiceScriptScreen(
                 CommonButton(
                     text = "리포트 보기",
                     onClick = {
-                        navController.navigate(NavRoutes.FinalReport.route)
+                        navController.navigate(NavRoutes.FinalReport.createRoute(projectId, practiceId))
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

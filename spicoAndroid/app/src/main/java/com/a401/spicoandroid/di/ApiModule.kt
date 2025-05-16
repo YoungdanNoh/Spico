@@ -56,8 +56,6 @@ object ApiModule {
         return retrofit.create(FinalReportApi::class.java)
     }
 
-
-
     @Provides
     @Singleton
     fun provideAuthApi(@NetworkModule.MainRetrofit retrofit: Retrofit): AuthApi {
