@@ -44,7 +44,8 @@ class ProjectController(
 
     @DeleteMapping("/{projectId}")
     fun deleteProject(
-        @PathVariable projectId: Int
+        @PathVariable projectId: Int,
+        @UserId userId: Int
     ): ApiResponse<Unit> {
         projectService.deleteProject(userId, projectId)
         return ApiResponse.success()
