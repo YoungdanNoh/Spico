@@ -88,11 +88,19 @@ fun NavGraph(
                 MyPageScreen(navController, modifier)
             }
 
-            composable(NavRoutes.ProjectCreate.route) {
+            composable(
+                route = NavRoutes.ProjectCreate.routeWithReset,
+                arguments = listOf(
+                    navArgument("reset") { defaultValue = "false" }
+                )
+            ) { backStackEntry ->
+                val reset = backStackEntry.arguments?.getString("reset")?.toBooleanStrictOrNull() ?: false
+
                 ProjectCreateScreen(
                     navController = navController,
                     modifier = modifier,
-                    viewModel = projectFormViewModel
+                    viewModel = projectFormViewModel,
+                    reset = reset
                 )
             }
 
@@ -233,8 +241,17 @@ fun NavGraph(
             composable(NavRoutes.CoachingMode.route) {
                 CoachingModeScreen(navController)
             }
-            composable(NavRoutes.CoachingReport.route) {
-                CoachingReportScreen(navController)
+            composable(
+                NavRoutes.CoachingReport.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ){
+                    backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+                CoachingReportScreen(navController, projectId, practiceId)
             }
 
             // 파이널 모드

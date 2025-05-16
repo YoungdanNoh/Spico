@@ -107,7 +107,7 @@ class MainActivity : ComponentActivity() {
                         CreateOrPracticeBottomSheet(
                             onCreateProjectClick = {
                                 showBottomSheet.value = false
-                                navController.navigate(NavRoutes.ProjectCreate.route)
+                                navController.navigate(NavRoutes.ProjectCreate.withReset(true))
                             },
                             onPracticeClick = {
                                 showBottomSheet.value = false

@@ -33,8 +33,10 @@ import com.a401.spicoandroid.common.ui.component.CommonButton
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
+import com.a401.spicoandroid.common.ui.component.LoadingInProgressView
 import com.a401.spicoandroid.common.ui.theme.*
-import com.a401.spicoandroid.presentation.report.component.AudioPlayerCard
+import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.report.component.ReportInfoHeader
 import com.a401.spicoandroid.presentation.report.viewmodel.CoachingReportViewModel
 import kotlinx.coroutines.delay
@@ -49,6 +51,8 @@ fun millisToTimestamp(millis: Long): String {
 @Composable
 fun CoachingReportScreen(
     navController : NavController,
+    projectId: Int,
+    practiceId: Int,
     modifier: Modifier = Modifier,
     viewModel: CoachingReportViewModel = hiltViewModel()
 ) {
@@ -71,6 +75,10 @@ fun CoachingReportScreen(
     var progress by remember { mutableFloatStateOf(0f) }
     var currentTimeText by remember { mutableStateOf("00:00") }
     var durationText by remember { mutableStateOf("00:00") }
+
+    LaunchedEffect(projectId, practiceId) {
+        viewModel.fetchCoachingReport(projectId, practiceId)
+    }
 
     LaunchedEffect(Unit) {
         while (exoPlayer.duration == C.TIME_UNSET) delay(100)
@@ -107,98 +115,116 @@ fun CoachingReportScreen(
                         backgroundColor = White,
                         textColor = Error,
                         borderColor = Error,
-                        onClick = {
-                            isAlertVisible = true
-                        }
+                        onClick = { isAlertVisible = true }
                     )
                 }
             )
         },
         containerColor = BrokenWhite
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-                .background(BrokenWhite)
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ReportInfoHeader(
-                imagePainter = painterResource(id = R.drawable.img_coaching_practice),
-                projectTitle = reportState.projectName,
-                roundCount = reportState.roundCount,
-                chipText = "코칭모드",
-                chipType = ChipType.REPORT_ACTION
-            )
+        when {
+            reportState.isLoading -> {
+                LoadingInProgressView(
+                    imageRes = R.drawable.character_home_5,
+                    message = "리포트를 불러오고 있어요\n잠시만 기다려주세요!"
+                )
+            }
 
-            AudioPlayerCard(
-                title = reportState.projectName + " - " + reportState.roundCount + "회차",
-                currentPositionText = currentTimeText,
-                durationText = durationText,
-                isPlaying = isPlaying,
-                progress = progress,
-                onPlayPauseClick = {
-                    if (isPlaying) exoPlayer.pause() else exoPlayer.play()
-                    isPlaying = !isPlaying
-                },
-                onSeek = { newProgress ->
-                    progress = newProgress
-                    val total = exoPlayer.duration.takeIf { it > 0 } ?: 1L
-                    val newPosition = (progress * total).toLong()
-                    exoPlayer.seekTo(newPosition)
+            reportState.error != null -> {
+                NotFoundScreen(navController = navController)
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp)
+                        .background(BrokenWhite)
+                        .verticalScroll(scrollState),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    ReportInfoHeader(
+                        imagePainter = painterResource(id = R.drawable.img_coaching_practice),
+                        projectTitle = reportState.projectName,
+                        roundCount = reportState.roundCount,
+                        chipText = "코칭모드",
+                        chipType = ChipType.REPORT_ACTION
+                    )
+
+//                    AudioPlayerCard(
+//                        title = reportState.projectName + " - " + reportState.roundCount + "회차",
+//                        currentPositionText = currentTimeText,
+//                        durationText = durationText,
+//                        isPlaying = isPlaying,
+//                        progress = progress,
+//                        onPlayPauseClick = {
+//                            if (isPlaying) exoPlayer.pause() else exoPlayer.play()
+//                            isPlaying = !isPlaying
+//                        },
+//                        onSeek = { newProgress ->
+//                            progress = newProgress
+//                            val total = exoPlayer.duration.takeIf { it > 0 } ?: 1L
+//                            val newPosition = (progress * total).toLong()
+//                            exoPlayer.seekTo(newPosition)
+//                        }
+//                    )
+
+                    CommonList(
+                        imagePainter = painterResource(id = R.drawable.img_feedback_volume),
+                        title = "성량",
+                        titleStyle = Typography.headlineLarge.copy(color = Action),
+                        description = reportState.volumeStatus,
+                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+                        height = 88.dp
+                    )
+                    CommonList(
+                        imagePainter = painterResource(id = R.drawable.img_feedback_speed),
+                        title = "속도",
+                        titleStyle = Typography.headlineLarge.copy(color = Action),
+                        description = reportState.speedStatus,
+                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+                        height = 88.dp
+                    )
+                    CommonList(
+                        imagePainter = painterResource(id = R.drawable.img_feedback_silence),
+                        title = "휴지",
+                        titleStyle = Typography.headlineLarge.copy(color = Action),
+                        description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요",
+                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+                        height = 88.dp
+                    )
+//                    CommonList(
+//                        imagePainter = painterResource(id = R.drawable.img_feedback_pronunciation),
+//                        title = "발음",
+//                        titleStyle = Typography.headlineLarge.copy(color = Action),
+//                        description = reportState.pronunciationStatus,
+//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+//                        height = 88.dp
+//                    )
+                    CommonList(
+                        imagePainter = painterResource(id = R.drawable.img_feedback_script_match),
+                        title = "대본일치도",
+                        titleStyle = Typography.headlineLarge.copy(color = Action),
+                        description = reportState.pronunciationStatus,
+                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+                        height = 88.dp
+                    )
                 }
-            )
-
-            CommonList(
-                imagePainter = painterResource(id = R.drawable.img_feedback_volume),
-                title = "성량",
-                titleStyle = Typography.headlineLarge.copy(color = Action),
-                description = reportState.volumeStatus,
-                descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                height = 88.dp
-            )
-            CommonList(
-                imagePainter = painterResource(id = R.drawable.img_feedback_speed),
-                title = "속도",
-                titleStyle = Typography.headlineLarge.copy(color = Action),
-                description = reportState.speedStatus,
-                descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                height = 88.dp
-            )
-            CommonList(
-                imagePainter = painterResource(id = R.drawable.img_feedback_silence),
-                title = "휴지",
-                titleStyle = Typography.headlineLarge.copy(color = Action),
-                description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요",
-                descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                height = 88.dp
-            )
-            CommonList(
-                imagePainter = painterResource(id = R.drawable.img_feedback_pronunciation),
-                title = "발음",
-                titleStyle = Typography.headlineLarge.copy(color = Action),
-                description = reportState.pronunciationStatus,
-                descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                height = 88.dp
-            )
-            CommonList(
-                imagePainter = painterResource(id = R.drawable.img_feedback_script_match),
-                title = "대본일치도",
-                titleStyle = Typography.headlineLarge.copy(color = Action),
-                description = reportState.pronunciationStatus,
-                descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                height = 88.dp
-            )
+            }
         }
         if (isAlertVisible) {
             CommonAlert(
                 title = "리포트를 삭제하시겠습니까?",
                 confirmText = "삭제",
                 onConfirm = {
-                    viewModel.deleteReport()
                     isAlertVisible = false
+                    viewModel.deleteReport(
+                        projectId = projectId,
+                        practiceId = practiceId,
+                        onSuccess = { navController.popBackStack(NavRoutes.ProjectList.route, false)},
+                        onError = {}
+                    )
                 },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,
