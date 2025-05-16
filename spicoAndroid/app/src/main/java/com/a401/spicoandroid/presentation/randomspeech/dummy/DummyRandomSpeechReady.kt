@@ -1,8 +1,8 @@
 package com.a401.spicoandroid.presentation.randomspeech.dummy
 
-import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechContent
+import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechInitInfo
 
-val DummyRandomSpeechReady = RandomSpeechContent(
+val DummyRandomSpeechReady = RandomSpeechInitInfo(
     id = 1,
     question = "AI 기술의 발전이 인간의 일자리에 미치는 영향에 대해 설명해주세요.",
     newsTitle = "AI로 대체되는 일자리, 우리는 어떻게 준비해야 할까?",

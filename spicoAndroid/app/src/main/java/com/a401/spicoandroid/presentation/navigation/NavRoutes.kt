@@ -25,7 +25,7 @@ sealed class NavRoutes(val route: String) {
     object RandomSpeechSetting : NavRoutes("randomspeech_setting")
     object RandomSpeechReady : NavRoutes("randomspeech_ready")
     object RandomSpeech : NavRoutes("randomspeech")
-    object RandomSpeechProjectList : NavRoutes("randomspeech_project_list")
+    object RandomSpeechList : NavRoutes("randomspeech_list")
     object RandomSpeechReport : NavRoutes("randomspeech_report/{randomSpeechId}") {
         fun withId(randomSpeechId: Int) = "randomspeech_report/$randomSpeechId"
     }

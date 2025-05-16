@@ -11,6 +11,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -39,7 +40,7 @@ interface PracticeApi {
     suspend fun getFinalSetting(
     ): ApiResponse<FinalSettingResponseDto>
 
-    @POST("/api/users/me/final-settings")
+    @PATCH("/api/users/me/final-settings")
     suspend fun saveFinalSetting(
         @Body request: FinalPracticeRequest
     ): ApiResponse<FinalSettingResponseDto>

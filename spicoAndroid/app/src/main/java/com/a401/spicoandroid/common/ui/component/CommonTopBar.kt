@@ -63,16 +63,20 @@ fun CommonTopBar(
 }
 
 @Composable
-fun BackIconButton(navController: NavController) {
+fun BackIconButton(onClick: () -> Unit) {
     IconButton(
         iconResId = R.drawable.ic_arrow_left_black,
         contentDescription = "뒤로가기",
-        onClick = {
-            navController.popBackStack()
-        }
+        onClick = onClick
     )
 }
 
+@Composable
+fun BackIconButton(navController: NavController) {
+    BackIconButton {
+        navController.popBackStack()
+    }
+}
 
 @Preview(showBackground = true)
 @Composable

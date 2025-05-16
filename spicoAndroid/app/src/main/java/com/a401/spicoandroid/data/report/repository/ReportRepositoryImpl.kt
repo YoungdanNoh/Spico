@@ -16,4 +16,8 @@ class ReportRepositoryImpl @Inject constructor(
         reportApi.getRandomSpeechReport(randomSpeechId).getOrThrow { it.toDomain() }
     }
 
+    override suspend fun deleteRandomSpeech(id: Int): DataResource<Unit> = safeApiCall {
+        reportApi.deleteRandomSpeech(id)
+        Unit
+    }
 }

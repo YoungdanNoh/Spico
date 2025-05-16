@@ -49,12 +49,12 @@ class MainActivity : ComponentActivity() {
                 NavRoutes.Home.route,
                 NavRoutes.ProjectList.route,
                 NavRoutes.RandomSpeechLanding.route,
-                NavRoutes.RandomSpeechProjectList.route,
+                NavRoutes.RandomSpeechList.route,
                 NavRoutes.Profile.route,
                 "project_detail",
                 "coaching_report",
                 "final_mode_report",
-                "randomspeech_project_list",
+                "randomspeech_list",
                 "not_found"
             )
 

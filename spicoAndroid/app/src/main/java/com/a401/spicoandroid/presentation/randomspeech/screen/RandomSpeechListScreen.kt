@@ -13,21 +13,27 @@ import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportCard
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteBottomSheet
-import com.a401.spicoandroid.presentation.randomspeech.dummy.DummyRandomSpeechList
-import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeech
+import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechListViewModel
 
 @Composable
-fun RandomSpeechProjectListScreen(
+fun RandomSpeechListScreen(
+    viewModel: RandomSpeechListViewModel,
     onProjectClick: (randomSpeechId: Int) -> Unit = {},
     onStartClick: () -> Unit = {}
 ) {
-    val projectList: List<RandomSpeech> = DummyRandomSpeechList
-//    val projectList = emptyList<RandomSpeech>()
     val navController = LocalNavController.current
+
+    val speechList = viewModel.speechList
+    val isLoading = viewModel.isLoading
+    val errorMessage = viewModel.errorMessage
 
     var selectedId by remember { mutableStateOf<Int?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showAlert by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchList()
+    }
 
     // 바텀시트
     if (showBottomSheet) {
@@ -40,11 +46,11 @@ fun RandomSpeechProjectListScreen(
         )
     }
 
-    // 알림창
+    // 삭제 알림창
     if (showAlert) {
         RandomReportDeleteAlert(
             onConfirm = {
-                // TODO: 삭제 로직
+                selectedId?.let { viewModel.deleteItem(it) }
                 showAlert = false
             },
             onCancel = { showAlert = false },
@@ -72,32 +78,45 @@ fun RandomSpeechProjectListScreen(
         },
         containerColor = BrokenWhite
     ) { innerPadding ->
-        if (projectList.isEmpty()) {
-            EmptyStateView(
-                imageRes = com.a401.spicoandroid.R.drawable.character_home_1,
-                message = "리포트가 없어요.\n랜덤스피치를 시작해보세요!",
-                modifier = Modifier.padding(innerPadding)
-            )
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                items(projectList) { item ->
-                    RandomReportCard(
-                        id = item.id,
-                        topic = item.topic,
-                        title = item.title,
-                        dateTime = item.dateTime,
-                        onClick = onProjectClick,
-                        onLongClick = {
-                            selectedId = item.id
-                            showBottomSheet = true
-                        }
-                    )
+
+        when {
+            isLoading -> {
+                LoadingInProgressView(
+                    imageRes = com.a401.spicoandroid.R.drawable.character_home_5,
+                    message = "로딩 중입니다...",
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            speechList.isEmpty() -> {
+                EmptyStateView(
+                    imageRes = com.a401.spicoandroid.R.drawable.character_home_1,
+                    message = "리포트가 없어요.\n랜덤스피치를 시작해보세요!",
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            else -> {
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    items(speechList) { item ->
+                        RandomReportCard(
+                            id = item.id,
+                            topic = item.topic,
+                            title = item.title,
+                            dateTime = item.dateTime,
+                            onClick = onProjectClick,
+                            onLongClick = {
+                                selectedId = item.id
+                                showBottomSheet = true
+                            }
+                        )
+                    }
                 }
             }
         }

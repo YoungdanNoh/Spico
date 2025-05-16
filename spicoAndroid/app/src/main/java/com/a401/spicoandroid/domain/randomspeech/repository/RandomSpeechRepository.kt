@@ -2,6 +2,7 @@ package com.a401.spicoandroid.domain.randomspeech.repository
 
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechInitInfo
+import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechSummary
 
 interface RandomSpeechRepository {
 
@@ -15,4 +16,8 @@ interface RandomSpeechRepository {
         speechId: Int,
         script: String
     ): DataResource<Unit>
+
+    suspend fun getRandomSpeechList(
+    ): DataResource<List<RandomSpeechSummary>>
+
 }

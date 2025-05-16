@@ -24,19 +24,20 @@ fun CreateOrPracticeBottomSheet(
     onDismissRequest: () -> Unit
 ) {
     BaseModalBottomSheet(onDismissRequest = onDismissRequest) {
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(156.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // 프로젝트 생성 버튼
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .dropShadow1()
                     .clip(RoundedCornerShape(12.dp))
                     .background(BackgroundPrimary)
                     .clickable { onCreateProjectClick() },
@@ -48,7 +49,7 @@ fun CreateOrPracticeBottomSheet(
                         contentDescription = "프로젝트 생성",
                         modifier = Modifier.size(64.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "프로젝트 생성",
                         style = Typography.displayMedium,
@@ -62,6 +63,7 @@ fun CreateOrPracticeBottomSheet(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .dropShadow1()
                     .clip(RoundedCornerShape(12.dp))
                     .background(BackgroundPrimary)
                     .clickable { onPracticeClick() },
@@ -73,7 +75,7 @@ fun CreateOrPracticeBottomSheet(
                         contentDescription = "연습하기",
                         modifier = Modifier.size(64.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "연습하기",
                         style = Typography.displayMedium,
@@ -83,7 +85,7 @@ fun CreateOrPracticeBottomSheet(
             }
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
