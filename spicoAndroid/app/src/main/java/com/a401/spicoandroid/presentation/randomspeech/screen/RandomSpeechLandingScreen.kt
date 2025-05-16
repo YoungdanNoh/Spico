@@ -24,7 +24,7 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 fun RandomSpeechLandingScreen(
     navController: NavController = LocalNavController.current,
     onStartClick: () -> Unit = { navController.navigate(NavRoutes.RandomSpeechTopicSelect.route) },
-    onProjectClick: () -> Unit = { navController.navigate(NavRoutes.RandomSpeechProjectList.route) }
+    onProjectClick: () -> Unit = { navController.navigate(NavRoutes.RandomSpeechList.route) }
 ) {
     Column(
         modifier = Modifier

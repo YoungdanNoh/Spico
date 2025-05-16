@@ -31,8 +31,17 @@ fun RandomSpeechSettingScreen(
     val uiState by viewModel.uiState.collectAsState()
     val topic = uiState.topic
 
+    // 로딩 상태면 바로 리턴
+    if (uiState.isLoading) {
+        LoadingInProgressView(
+            imageRes = R.drawable.character_home_5,
+            message = "질문을 생성 중이에요.\n잠시만 기다려주세요!"
+        )
+        return
+    }
+
+    // topic 설정 전에는 아무것도 그리지 않음
     if (topic == null) {
-        // topic 설정 전까지 UI 보류
         Box(modifier = Modifier.fillMaxSize().background(White))
         return
     }
@@ -161,7 +170,15 @@ fun RandomSpeechSettingScreen(
                 size = ButtonSize.LG,
                 onClick = {
                     viewModel.setTime(prepMinute * 60, speakMinute * 60)
-                    navController.navigate(NavRoutes.RandomSpeechReady.route)
+
+                    viewModel.createSpeech(
+                        onSuccess = {
+                            navController.navigate(NavRoutes.RandomSpeechReady.route)
+                        },
+                        onError = {
+                            // TODO: 에러 메시지
+                        }
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

@@ -51,7 +51,7 @@ fun CommonBottomBar(
             route = NavRoutes.RandomSpeechLanding.route,
             matchingRoutes = listOf(
                 NavRoutes.RandomSpeechLanding.route,
-                NavRoutes.RandomSpeechProjectList.route
+                NavRoutes.RandomSpeechList.route
             ),
             iconRes = R.drawable.ic_random_line,
             selectedIconRes = R.drawable.ic_random_filled,

@@ -37,17 +37,19 @@ import com.a401.spicoandroid.presentation.project.viewmodel.ProjectFormViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
-import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechProjectListScreen
+import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechListScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechReadyScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechSettingScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
+import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechListViewModel
 import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
 import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
+import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 import kotlin.math.log
 
 @Composable
@@ -62,9 +64,10 @@ fun NavGraph(
         val loginViewModel: LoginViewModel = hiltViewModel()
         val randomSpeechViewModel: RandomSpeechSharedViewModel = hiltViewModel()
         val projectFormViewModel: ProjectFormViewModel = hiltViewModel()
+        val randomSpeechListViewModel: RandomSpeechListViewModel = hiltViewModel()
         val projectDetailViewModel: ProjectDetailViewModel = hiltViewModel()
         val projectScriptViewModel: ProjectScriptViewModel = hiltViewModel()
-
+        
         NavHost(
             navController = navController,
             startDestination = NavRoutes.Home.route,
@@ -205,15 +208,23 @@ fun NavGraph(
                 )
             }
 
+            composable(NavRoutes.RandomSpeechList.route) {
+                RandomSpeechListScreen(
+                    viewModel = randomSpeechListViewModel
+                )
+            }
+
             // 랜덤 스피치 리포트
             composable(
                 route = NavRoutes.RandomSpeechReport.route,
                 arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
             ) { backStackEntry ->
+                val reportViewModel: RandomReportViewModel = hiltViewModel()
                 val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: -1
                 RandomSpeechReportScreen(
                     navController = navController,
-                    randomSpeechId = randomSpeechId
+                    randomSpeechId = randomSpeechId,
+                    viewModel = reportViewModel
                 )
             }
 

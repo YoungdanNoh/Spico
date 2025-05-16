@@ -2,6 +2,7 @@ package com.a401.spicoandroid.presentation.randomspeech.screen
 
 import android.Manifest
 import android.app.Activity
+import android.util.Log
 import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import com.a401.spicoandroid.R
@@ -178,7 +178,12 @@ fun RandomSpeechScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = String.format(Locale.US, "%02d:%02d", remainingSeconds / 60, remainingSeconds % 60),
+                    text = String.format(
+                        Locale.US,
+                        "%02d:%02d",
+                        remainingSeconds / 60,
+                        remainingSeconds % 60
+                    ),
                     style = TextStyle(
                         fontFamily = Pretendard,
                         fontWeight = FontWeight.SemiBold,
@@ -215,10 +220,23 @@ fun RandomSpeechScreen(
                     onCancel = { showExitAlert = false },
                     onConfirm = {
                         showExitAlert = false
-                        val id = viewModel.getSpeechIdForReport()
-                        if (id != null) {
-                            navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
-                        }
+                        audioAnalyzer.stop()
+
+                        val script = "임시 STT 결과 텍스트" // TODO: 음성 인식 결과
+                        viewModel.submitScript(
+                            script = script,
+                            onSuccess = {
+                                val id = viewModel.getSpeechIdForReport()
+                                if (id != null) {
+                                    navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                                }
+                            },
+                            onError = {
+                                val errorMessage = viewModel.uiState.value.errorMessage
+                                Log.d("RandomSpeech", "❌ 종료 실패: $errorMessage")
+                                // TODO: 실패 처리
+                            }
+                        )
                     }
                 )
             }
@@ -247,6 +265,22 @@ fun RandomSpeechScreen(
                     type = TimerType.CIRCLE
                 )
             }
+        }
+
+        if (uiState.isLoading) {
+            LoadingInProgressView(
+                imageRes = R.drawable.character_home_5,
+                message = "리포트를 생성중이에요.\n잠시만 기다려주세요!",
+                homeLinkText = "리포트 목록으로 이동",
+                onHomeClick = {
+                    navController.navigate(
+                        route = NavRoutes.RandomSpeechList.route,
+                        navOptions = navOptions {
+                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                        }
+                    )
+                }
+            )
         }
     }
 }
