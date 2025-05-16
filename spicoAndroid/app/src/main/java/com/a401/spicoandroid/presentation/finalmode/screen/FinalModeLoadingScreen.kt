@@ -11,6 +11,7 @@ import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
 enum class FinalModeLoadingType {
     QUESTION,
@@ -21,16 +22,21 @@ enum class FinalModeLoadingType {
 fun FinalModeLoadingScreen(
     navController: NavController,
     viewModel: FinalModeViewModel = hiltViewModel(),
+    practiceViewModel: PracticeViewModel = hiltViewModel(),
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
+    val practiceIdState = practiceViewModel.practiceId.collectAsState()
+    val practiceId = practiceIdState.value
 
-    LaunchedEffect(Unit) {
+    val projectId = practiceViewModel.selectedProject?.id
+
+    LaunchedEffect(practiceId) {
         when (type) {
             FinalModeLoadingType.QUESTION -> {
                 viewModel.generateFinalQuestions(
-                    projectId = 1, // TODO: 실제 값으로 교체
-                    practiceId = 1, // TODO: 실제 값으로 교체
+                    projectId = projectId ?: -1,
+                    practiceId = practiceId ?: -1,
                     speechContent = "Hello everyone, my name is John." // TODO: STT 결과로 교체
                 )
                 delay(1500)
@@ -39,7 +45,16 @@ fun FinalModeLoadingScreen(
 
             FinalModeLoadingType.REPORT -> {
                 delay(2000)
-                navController.navigate(NavRoutes.FinalModeReport.route)
+                if (projectId != null && practiceId != null) {
+                    navController.navigate(
+                        NavRoutes.FinalReport.createRoute(
+                            projectId = projectId,
+                            practiceId = practiceId
+                        )
+                    )
+                } else {
+                    navController.navigate(NavRoutes.ProjectList.route)
+                }
             }
         }
     }

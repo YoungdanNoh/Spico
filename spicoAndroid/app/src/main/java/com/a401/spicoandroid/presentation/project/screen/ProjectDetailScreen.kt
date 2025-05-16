@@ -62,7 +62,11 @@ fun ProjectDetailScreen(
     }
 
     LaunchedEffect(selectedTab) {
-        val filter = if (selectedTab == 0) "coaching" else "final"
+        val filter = when (selectedTab) {
+            1 -> "final"
+            2 -> "coaching"
+            else -> null // 0번: 전체
+        }
         practiceViewModel.fetchPracticeList(
             projectId = projectId,
             filter = filter,
@@ -70,6 +74,7 @@ fun ProjectDetailScreen(
             size = 10
         )
     }
+
 
     LaunchedEffect(practiceDeleteState.isSuccess) {
         if (practiceDeleteState.isSuccess) {
@@ -219,6 +224,16 @@ fun ProjectDetailScreen(
                                 CommonList(
                                     title = "${practice.name} ${practice.count}회차",
                                     description = practice.createdAt,
+                                    onClick = {
+                                        if (selectedTab == 1) { // 파이널 모드 리포트
+                                            navController.navigate(
+                                                NavRoutes.FinalReport.createRoute(
+                                                    projectId = projectId,
+                                                    practiceId = practice.id
+                                                )
+                                            )
+                                        }
+                                    },
                                     onLongClick = {
                                         selectedPracticeId = practice.id
                                         isBottomSheetVisible = true

@@ -26,7 +26,7 @@ class PracticeViewModel @Inject constructor(
     val practiceDeleteState: StateFlow<PracticeDeleteState> = _practiceDeleteState.asStateFlow()
 
     // 연습 목록 조회
-    fun fetchPracticeList(projectId: Int, filter: String, cursor: Int?, size: Int) {
+    fun fetchPracticeList(projectId: Int, filter: String?, cursor: Int?, size: Int) {
         viewModelScope.launch {
             _practiceListState.update { it.copy(isLoading = true, error = null) }
 
