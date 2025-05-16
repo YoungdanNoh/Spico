@@ -1,5 +1,6 @@
 package com.ssafy.spico.domain.project.service
 
+import com.ssafy.spico.domain.practice.service.DeletePracticeService
 import com.ssafy.spico.domain.practice.entity.PracticeType
 import com.ssafy.spico.domain.practice.model.Practice
 import com.ssafy.spico.domain.practice.model.toModel
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class ProjectServiceImpl(
     private val projectRepository: ProjectRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val deletePracticeService: DeletePracticeService
 ): ProjectService {
     override fun getProjects(userId: Int, cursor: Int?, size: Int, type: ProjectViewType): List<Project> {
 
@@ -54,17 +56,15 @@ class ProjectServiceImpl(
         }
     }
 
-    override fun deleteProject(projectId: Int) {
+    @Transactional
+    override fun deleteProject(userId: Int, projectId: Int) {
         val projectEntity = projectRepository.findById(projectId)
             .orElseThrow { ProjectException(ProjectError.PROJECT_NOT_FOUND) }
         try {
-            /**
-            TODO: 하위 연습 삭제 로직 구현 必
-            List<Int> practices = getPractices(projectId)
-             practices.forEach{ practiceId ->
-                practiceService.delete(practiceId)
+            val practiceIds: List<Int> = projectRepository.findPracticeIdsByProjectId(userId, projectId)
+            practiceIds.forEach { practiceId ->
+                deletePracticeService.deletePractice(practiceId)
             }
-            **/
             projectRepository.delete(projectEntity)
         } catch (e: Exception) {
             throw ProjectException(ProjectError.DELETE_FAILED)

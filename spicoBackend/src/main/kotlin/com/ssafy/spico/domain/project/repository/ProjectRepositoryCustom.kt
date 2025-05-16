@@ -20,4 +20,9 @@ interface ProjectRepositoryCustom {
         cursor: Int?,
         size: Int
     ): List<PracticesEntity>
+
+    fun findPracticeIdsByProjectId(
+        userId: Int,
+        projectId: Int
+    ): List<Int>
 }
