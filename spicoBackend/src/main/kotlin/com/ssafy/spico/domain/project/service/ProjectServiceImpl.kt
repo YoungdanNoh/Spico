@@ -54,17 +54,14 @@ class ProjectServiceImpl(
     }
 
     @Transactional
-    override fun deleteProject(projectId: Int) {
+    override fun deleteProject(userId: Int, projectId: Int) {
         val projectEntity = projectRepository.findById(projectId)
             .orElseThrow { ProjectException(ProjectError.PROJECT_NOT_FOUND) }
         try {
-            /**
-            TODO: 하위 연습 삭제 로직 구현 必
-            List<Int> practices = getPractices(projectId)
-             practices.forEach{ practiceId ->
-                practiceService.delete(practiceId)
+            val practiceIds: List<Int> = projectRepository.findPracticeIdsByProjectId(userId, projectId)
+            practiceIds.forEach { practiceId ->
+                deletePracticeService.deletePractice(practiceId)
             }
-            **/
             projectRepository.delete(projectEntity)
         } catch (e: Exception) {
             throw ProjectException(ProjectError.DELETE_FAILED)

@@ -79,4 +79,17 @@ class ProjectRepositoryCustomImpl(
             .limit(size.toLong())
             .fetch()
     }
+
+    override fun findPracticeIdsByProjectId(userId: Int, projectId: Int): List<Int> {
+        val practice = QPracticesEntity.practicesEntity
+
+        return queryFactory
+            .select(practice.practiceId)
+            .from(practice)
+            .where(
+                practice.projectEntity.projectId.eq(projectId),
+                practice.projectEntity.userEntity.id.eq(userId)
+            )
+            .fetch()
+    }
 }
