@@ -18,7 +18,6 @@ class PracticeController(
     private val coachingPracticeReportService: CoachingPracticeReportService,
     private val deletePracticeService: DeletePracticeService,
     private val projectService: ProjectService,
-    @Value("\${user-id}") private val userId: Int
 ) {
     // 연습 삭제
     @DeleteMapping("/{practiceId}")
@@ -120,6 +119,7 @@ class PracticeController(
 
     @GetMapping
     fun getPractices(
+        @UserId userId: Int,
         @PathVariable projectId: Int,
         @RequestParam(name = "practice-filter", required = false) practiceFilter: PracticeType?,
         @RequestParam(required = false) cursor: Int?,
