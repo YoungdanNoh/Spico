@@ -2,6 +2,8 @@ package com.a401.spicoandroid.di
 
 import android.content.Context
 import com.a401.spicoandroid.BuildConfig
+import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
+import com.a401.spicoandroid.infrastructure.network.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,16 +27,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        @ApplicationContext context: Context
+        authInterceptor: AuthInterceptor
     ): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
         return OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .addInterceptor(loggingInterceptor)
-//          .addInterceptor(AuthInterceptor(context))
+            .addInterceptor(authInterceptor)
             .build()
     }
 
