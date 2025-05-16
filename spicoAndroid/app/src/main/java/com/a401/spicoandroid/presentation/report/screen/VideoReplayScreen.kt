@@ -58,7 +58,7 @@ fun VideoReplayScreen(
     }
 
     BackHandler {
-        navController.navigate(NavRoutes.FinalModeReport.route)
+        navController.navigate(NavRoutes.FinalReport.route)
     }
 
     LaunchedEffect(Unit) {
@@ -75,7 +75,7 @@ fun VideoReplayScreen(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
                         onClick = {
-                            navController.navigate(NavRoutes.FinalModeReport.route)
+                            navController.navigate(NavRoutes.FinalReport.route)
                         }
                     )
                 }
@@ -91,7 +91,7 @@ fun VideoReplayScreen(
                 CommonButton(
                     text = "리포트 보기",
                     onClick = {
-                        navController.navigate(NavRoutes.FinalModeReport.route)
+                        navController.navigate(NavRoutes.FinalReport.route)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

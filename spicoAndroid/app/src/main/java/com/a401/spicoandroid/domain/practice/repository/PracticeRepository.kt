@@ -8,7 +8,7 @@ import com.a401.spicoandroid.domain.practice.model.Practice
 interface PracticeRepository {
     suspend fun getPracticeList(
         projectId: Int,
-        filter: String,
+        filter: String?,
         cursor: Int?,
         size: Int
     ): DataResource<List<Practice>>

@@ -41,7 +41,7 @@ fun CommonBottomBar(
                 NavRoutes.ProjectList.route,
                 "project_detail",
                 NavRoutes.CoachingReport.route,
-                NavRoutes.FinalModeReport.route
+                NavRoutes.FinalReport.route
             ),
             iconRes = R.drawable.ic_presention_line,
             selectedIconRes = R.drawable.ic_presention_filled,
