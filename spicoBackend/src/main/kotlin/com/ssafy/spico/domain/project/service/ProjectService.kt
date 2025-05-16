@@ -10,7 +10,7 @@ interface ProjectService {
     fun getProjects(userId: Int, cursor: Int?, size: Int, type: ProjectViewType): List<Project>
     fun createProject(project: Project): Int
     fun updateProject(projectId: Int, request: UpdateProjectRequestDto)
-    fun deleteProject(projectId: Int)
+    fun deleteProject(userId: Int, projectId: Int)
     fun getProjectDetail(projectId: Int): Project
     fun getPractices(userId: Int, projectId: Int, practiceFilter: PracticeType?, cursor: Int?, size: Int): List<Practice>
 }

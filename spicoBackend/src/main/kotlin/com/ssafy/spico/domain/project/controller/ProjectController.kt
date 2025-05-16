@@ -44,7 +44,7 @@ class ProjectController(
     fun deleteProject(
         @PathVariable projectId: Int
     ): ApiResponse<Unit> {
-        projectService.deleteProject(projectId)
+        projectService.deleteProject(userId, projectId)
         return ApiResponse.success()
     }
 
