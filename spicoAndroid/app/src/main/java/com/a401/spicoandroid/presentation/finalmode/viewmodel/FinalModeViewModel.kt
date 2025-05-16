@@ -1,9 +1,7 @@
 package com.a401.spicoandroid.presentation.finalmode.viewmodel
 
 import android.Manifest
-import android.app.Application
 import androidx.annotation.RequiresPermission
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,16 +11,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.a401.spicoandroid.common.domain.DataResource
+import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
+import com.a401.spicoandroid.domain.finalmode.usecase.FinishFinalPracticeUseCase
 import com.a401.spicoandroid.domain.finalmode.usecase.GenerateFinalQuestionsUseCase
 import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
+import com.a401.spicoandroid.infrastructure.camera.UploadManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.io.File
 
 @HiltViewModel
 class FinalModeViewModel @Inject constructor(
-    private val generateFinalQuestionsUseCase: GenerateFinalQuestionsUseCase
+    private val generateFinalQuestionsUseCase: GenerateFinalQuestionsUseCase,
+    private val finishFinalPracticeUseCase: FinishFinalPracticeUseCase,
+    private val uploadManager: UploadManager
 ) : ViewModel() {
 
     // 1. 오디오 관련
@@ -168,6 +172,41 @@ class FinalModeViewModel @Inject constructor(
                     _finalQuestionState.update { it.copy(isLoading = true) }
                 }
             }
+        }
+    }
+
+    private val _finalResultState = MutableStateFlow(FinalModeResultState())
+    val finalResultState: StateFlow<FinalModeResultState> = _finalResultState.asStateFlow()
+
+    fun submitFinalModeResult(
+        projectId: Int,
+        practiceId: Int,
+        request: FinalModeResultRequestDto
+    ) {
+        viewModelScope.launch {
+            _finalResultState.update { it.copy(isLoading = true, error = null) }
+
+            when (val result = finishFinalPracticeUseCase(projectId, practiceId, request)) {
+                is DataResource.Success -> {
+                    _finalResultState.update {
+                        it.copy(presignedUrl = result.data.presignedUrl, isLoading = false)
+                    }
+                }
+                is DataResource.Error -> {
+                    _finalResultState.update {
+                        it.copy(error = result.throwable, isLoading = false)
+                    }
+                }
+                is DataResource.Loading -> {
+                    _finalResultState.update { it.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+    fun uploadFinalVideo(presignedUrl: String, file: File, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = uploadManager.uploadVideoToPresignedUrl(presignedUrl, file)
+            onResult(result)
         }
     }
 }

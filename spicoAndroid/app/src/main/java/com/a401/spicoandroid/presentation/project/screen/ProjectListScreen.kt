@@ -1,7 +1,8 @@
 package com.a401.spicoandroid.presentation.project.screen
 
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import com.a401.spicoandroid.common.utils.formatDateWithDay
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -76,7 +77,7 @@ fun ProjectListScreen(
                     CommonList(
                         imagePainter = painterResource(R.drawable.img_create_project),
                         title = project.title,
-                        description = project.date.toString(),
+                        description = formatDateWithDay(project.date),
                         rightIcon = painterResource(R.drawable.ic_arrow_right_balck),
                         onClick = {
                             navController.navigate(NavRoutes.ProjectDetail.withId(project.id))
