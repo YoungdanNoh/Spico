@@ -32,6 +32,8 @@ fun SpeechTestScreen(navController: NavController) {
     var azureResult by remember { mutableStateOf("") }
     var isProcessing by remember { mutableStateOf(false) }
 
+    var volumeJson by remember { mutableStateOf("") }
+
     // 권한 요청 런처
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -88,7 +90,16 @@ fun SpeechTestScreen(navController: NavController) {
 
                 StopSttButton(onClick = {
                     googleStt.stop()
+
+                    volumeJson = googleStt.getVolumeRecordsJson()
+                    Log.d("VolumeRecords", googleStt.getVolumeRecordsJson())
+
+                    googleStt.clearVolumeRecords()
                 })
+
+                if (volumeJson.isNotEmpty()) {
+                    Text("볼륨 기록: $volumeJson")
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 

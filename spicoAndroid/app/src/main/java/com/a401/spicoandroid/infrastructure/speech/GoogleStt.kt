@@ -7,7 +7,8 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
-import android.widget.Toast
+import com.a401.spicoandroid.infrastructure.speech.model.VolumeLevel
+import com.a401.spicoandroid.infrastructure.speech.model.VolumeRecord
 
 class GoogleStt(
     private val context: Context,
@@ -18,30 +19,42 @@ class GoogleStt(
     private var speechRecognizer: SpeechRecognizer? = null
     private var isListening: Boolean = false
 
+    private var speechStartTimestamp: Long = 0L
+    private var lastRecordTime: Long = 0L
+    private val volumeBuffer = mutableListOf<Float>()
+    private val volumeRecords = mutableListOf<VolumeRecord>()
+    private var currentVolumeLevel: VolumeLevel? = null
+    private var currentStartTime: String? = null
+
+    private val recentAvgList = mutableListOf<Float>()
+    private val maxAvgWindowSize = 5  // 최근 5초 정도 관찰
+
     fun start() {
         if (isListening) return // 중복 방지
         isListening = true
+        clearVolumeRecords()
+        speechStartTimestamp = System.currentTimeMillis() // 시작 기준점
         listen()
     }
 
     fun stop() {
         isListening = false
+        finalizeVolumeRecord()
         stopListening()
     }
 
     private fun listen(){
 
         // 이전 인식기 정리
-        stop()
-
+        stopListening()
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
             onError("이 기기에서 음성 인식을 사용할 수 없습니다.")
             return
         }
 
        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context).apply {
-
            setRecognitionListener(object : RecognitionListener{
+
                override fun onReadyForSpeech(params: Bundle?) {
                    Log.d("SpeechRecognizer", "음성 인식 준비됨")
                }
@@ -49,9 +62,57 @@ class GoogleStt(
                override fun onBeginningOfSpeech() {
                    Log.d("SpeechRecognizer", "사용자가 말하기 시작")
                }
+
                override fun onRmsChanged(rmsdB: Float) {
-                   
-                   // 데시벨 측정
+                   // 성량 피드백
+                   val currentTime = System.currentTimeMillis()
+                   volumeBuffer.add(rmsdB)
+
+                   // 1초 주기 측정
+                   if (currentTime - lastRecordTime >= 1000) {
+                       
+                       lastRecordTime = currentTime
+                       val avg = volumeBuffer.average().toFloat()
+                       volumeBuffer.clear()
+                       
+                       Log.d("SpeechRecognizer", "avg: ${avg}")
+
+
+                       recentAvgList.add(avg)
+                       if (recentAvgList.size > maxAvgWindowSize) {
+                           recentAvgList.removeAt(0)
+                       }
+
+                       if (recentAvgList.size >= 2) {
+                           val firstHalf = recentAvgList.take(recentAvgList.size / 2).average().toFloat()
+                           val secondHalf = recentAvgList.takeLast(recentAvgList.size / 2).average().toFloat()
+                           val trend = secondHalf - firstHalf
+                           val trendLevel = classifyVolume(trend)
+
+                           val timeOffset = currentTime - speechStartTimestamp
+                           val timeStr = formatElapsedTime(timeOffset)
+
+                           if (currentVolumeLevel == null || currentVolumeLevel != trendLevel) {
+                               currentStartTime?.let { start ->
+                                   currentVolumeLevel?.let { level ->
+                                       volumeRecords.add(
+                                           VolumeRecord(
+                                               startTime = start,
+                                               endTime = timeStr,
+                                               volumeLevel = level
+                                           )
+                                       )
+                                   }
+                               }
+                               currentVolumeLevel = trendLevel
+                               currentStartTime = timeStr
+
+                               recentAvgList.clear()
+                           } else {
+                               volumeRecords.lastOrNull()?.endTime = timeStr
+                           }
+                       }
+                   }
                    
                }
                override fun onBufferReceived(buffer: ByteArray?) {
@@ -66,6 +127,9 @@ class GoogleStt(
                    val message = getErrorMessage(error)
                    Log.e("SpeechRecognizer", "에러 발생: $message")
                    onError(message)
+
+                   finalizeVolumeRecord()
+
                    if (isListening) listen()
                }
 
@@ -110,6 +174,15 @@ class GoogleStt(
         speechRecognizer = null
     }
 
+    fun clearVolumeRecords() {
+        volumeRecords.clear()
+        volumeBuffer.clear()
+        recentAvgList.clear()
+        currentVolumeLevel = null
+        currentStartTime = null
+        lastRecordTime = 0L
+    }
+
     private fun getErrorMessage(errorCode: Int): String {
         return when (errorCode) {
             SpeechRecognizer.ERROR_AUDIO -> "오디오 녹음 에러"
@@ -123,6 +196,89 @@ class GoogleStt(
             SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "말을 안 해서 시간 초과"
             else -> "알 수 없는 오류 ($errorCode)"
         }
+    }
+
+    private fun classifyVolume(trend: Float): VolumeLevel {
+        return when {
+            trend > 6.0f -> VolumeLevel.LOUD
+            trend < -2.0f -> VolumeLevel.QUIET
+            else -> VolumeLevel.MIDDLE
+        }
+    }
+
+    fun getVolumeRecordsJson(): String {
+        val jsonArray = org.json.JSONArray()
+        for (record in volumeRecords) {
+            val obj = org.json.JSONObject()
+            obj.put("startTime", record.startTime)
+            obj.put("endTime", record.endTime)
+            obj.put("volumeLevel", record.volumeLevel.name)
+            jsonArray.put(obj)
+        }
+        return jsonArray.toString()
+    }
+
+    fun finalizeVolumeRecord() {
+        if (volumeBuffer.isNotEmpty()) {
+            val avg = volumeBuffer.average().toFloat()
+            volumeBuffer.clear()
+
+            // 평균값 기록
+            recentAvgList.add(avg)
+            if (recentAvgList.size > maxAvgWindowSize) {
+                recentAvgList.removeAt(0)
+            }
+
+            // 추세 기반 레벨 분류
+            val level = if (recentAvgList.size >= 2) {
+                val firstHalf = recentAvgList.take(recentAvgList.size / 2).average().toFloat()
+                val secondHalf = recentAvgList.takeLast(recentAvgList.size / 2).average().toFloat()
+                val trend = secondHalf - firstHalf
+                classifyVolume(trend)
+            } else {
+                VolumeLevel.MIDDLE
+            }
+
+            val timeOffset = System.currentTimeMillis() - speechStartTimestamp
+            val timeStr = formatElapsedTime(timeOffset)
+
+            if (currentVolumeLevel == null || currentVolumeLevel != level) {
+                // 이전 기록 종료 및 새 레코드 추가
+                currentStartTime?.let { start ->
+                    currentVolumeLevel?.let { prevLevel ->
+                        volumeRecords.add(
+                            VolumeRecord(
+                                startTime = start,
+                                endTime = timeStr,
+                                volumeLevel = prevLevel
+                            )
+                        )
+                    }
+                }
+
+                // 상태 갱신
+                currentVolumeLevel = level
+                currentStartTime = timeStr
+
+                recentAvgList.clear()
+            } else {
+                // 동일한 레벨 → 마지막 레코드 endTime만 갱신
+                volumeRecords.lastOrNull()?.endTime = timeStr
+            }
+
+            // 종료 시 상태 초기화
+            currentStartTime = null
+            currentVolumeLevel = null
+        }
+    }
+
+    private fun formatElapsedTime(elapsedMillis: Long): String {
+        val totalSeconds = elapsedMillis / 1000
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
 }
