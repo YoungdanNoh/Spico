@@ -29,6 +29,7 @@ import java.time.LocalDate
 @Composable
 fun ProjectDetailScreen(
     navController: NavController,
+    viewModel: ProjectDetailViewModel = hiltViewModel(),
     projectId: Int
 ) {
     var selectedTab by remember { mutableStateOf(0) }
@@ -36,13 +37,19 @@ fun ProjectDetailScreen(
     var isBottomSheetVisible by remember { mutableStateOf(false) }
     var showDeleteAlert by remember { mutableStateOf(false) }
     var isEditDialogVisible by remember { mutableStateOf(false) }
-    var title by remember { mutableStateOf("프로젝트 제목") }
+
+    var title by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var hour by remember { mutableIntStateOf(0) }
     var minute by remember { mutableIntStateOf(0) }
     var second by remember { mutableIntStateOf(0) }
 
-    val viewModel: ProjectDetailViewModel = hiltViewModel()
+
+    var tempTitle by remember { mutableStateOf("") }
+    var tempDate by remember { mutableStateOf<LocalDate?>(null) }
+    var tempMinute by remember { mutableIntStateOf(0) }
+    var tempSecond by remember { mutableIntStateOf(0) }
+
     val state by viewModel.state.collectAsState()
     val isLoading = state.isLoading
     val error = state.error
@@ -75,7 +82,6 @@ fun ProjectDetailScreen(
         )
     }
 
-
     LaunchedEffect(practiceDeleteState.isSuccess) {
         if (practiceDeleteState.isSuccess) {
             practiceViewModel.fetchPracticeList(
@@ -89,11 +95,11 @@ fun ProjectDetailScreen(
 
     LaunchedEffect(project) {
         project?.let {
-            title = it.name                          // 프로젝트 제목 설정
-            selectedDate = LocalDate.parse(it.date)  // 날짜 파싱
-            hour = it.time / 60                      // 제한 시간 (시)
-            minute = it.time % 60                    // 제한 시간 (분)
-            second = 0                               // 초는 기본 0으로
+            title = it.name
+            selectedDate = LocalDate.parse(it.date)
+            hour = it.time / 3600
+            minute = (it.time % 3600) / 60
+            second = it.time % 60
         }
     }
 
@@ -109,6 +115,10 @@ fun ProjectDetailScreen(
                 )
             }, onClick = {
                 isDropdownExpanded = false
+                tempTitle = title
+                tempDate = selectedDate
+                tempMinute = hour * 60 + minute
+                tempSecond = second
                 isEditDialogVisible = true
             }
         ),
@@ -145,9 +155,6 @@ fun ProjectDetailScreen(
     }
 
     Scaffold(
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
         topBar = {
             CommonTopBar(
                 centerText = "프로젝트 상세",
@@ -205,7 +212,8 @@ fun ProjectDetailScreen(
                     ) {
                         ProjectInfoHeader(
                             title = project.name,
-                            time = formatTimeFromMinutes(project.time)
+                            time = formatTimeFromSeconds(project.time),
+                            onScriptClick = { navController.navigate("script_detail") }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         CommonReportTabBar(
@@ -252,22 +260,33 @@ fun ProjectDetailScreen(
 
     if (isEditDialogVisible) {
         ProjectEditDialog(
-            projectTitle = title,                         // [변경] project?.name -> title 상태 사용
-            onTitleChange = { title = it },               // [유지] 유저 입력 시 title 갱신
-            selectedDate = selectedDate,
-            onDateSelected = { selectedDate = it },
-            hour = hour,
-            minute = minute,
-            second = second,
-            onTimeSelected = { h, m, s ->
-                hour = h
-                minute = m
-                second = s
+            projectTitle = tempTitle,
+            onTitleChange = { tempTitle = it },
+            selectedDate = tempDate,
+            onDateSelected = { tempDate = it },
+            minute = tempMinute,
+            second = tempSecond,
+            onTimeSelected = { _, m, s ->
+                tempMinute = m
+                tempSecond = s
             },
             onDismiss = { isEditDialogVisible = false },
             onConfirm = {
                 isEditDialogVisible = false
-                // TODO: 여기서 수정 API 호출 시 위 상태값들 사용
+
+                val totalTime = tempMinute * 60 + tempSecond
+                val dateStr = tempDate?.toString()
+
+                projectViewModel.updateProject(
+                    projectId = projectId,
+                    name = title,
+                    date = dateStr,
+                    time = totalTime,
+                    onSuccess = {
+                        viewModel.fetchProjectDetail(projectId)
+                    },
+                    onError = { /* TODO */ }
+                )
             }
         )
     }
@@ -292,8 +311,8 @@ fun ProjectDetailScreen(
     }
 }
 
-fun formatTimeFromMinutes(totalMinutes: Int): String {
-    val hours = totalMinutes / 60
-    val minutes = totalMinutes % 60
-    return String.format("%d:%02d", hours, minutes)
+fun formatTimeFromSeconds(totalSeconds: Int): String {
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d", minutes, seconds)
 }

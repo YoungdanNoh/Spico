@@ -26,7 +26,7 @@ class ProjectDetailViewModel @Inject constructor(
 
             when (val result = getProjectDetailUseCase(projectId)) {
                 is DataResource.Success -> {
-                    _state.update { it.copy(project = result.data, isLoading = false) }
+                    _state.update { it.copy(id = projectId, project = result.data, isLoading = false) }
                 }
                 is DataResource.Error -> {
                     _state.update { it.copy(error = result.throwable, isLoading = false) }

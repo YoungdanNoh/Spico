@@ -178,6 +178,7 @@ class PracticeViewModel @Inject constructor(
                 questionCount = questionCount,
                 answerTimeLimit = answerTimeLimit
             )
+            Log.d("FinalSettingRequest", "hasAudience: $hasAudience, hasQnA: $hasQnA, questionCount: $questionCount, answerTimeLimit: $answerTimeLimit")
             when (val result = saveFinalSettingUseCase(request)) {
                 is DataResource.Success -> {
                     onSuccess()

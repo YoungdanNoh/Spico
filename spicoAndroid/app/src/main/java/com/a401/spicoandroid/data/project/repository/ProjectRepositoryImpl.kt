@@ -1,10 +1,12 @@
 package com.a401.spicoandroid.data.project.repository
 
 import com.a401.spicoandroid.common.data.dto.getOrThrow
+import com.a401.spicoandroid.common.data.dto.getOrThrowNull
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.common.utils.safeApiCall
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import com.a401.spicoandroid.data.project.dto.ProjectCreateRequestDto
+import com.a401.spicoandroid.data.project.dto.ProjectUpdateRequestDto
 import com.a401.spicoandroid.data.project.dto.toDomain
 import com.a401.spicoandroid.domain.project.model.Project
 import com.a401.spicoandroid.domain.project.model.ProjectDetail
@@ -55,4 +57,19 @@ class ProjectRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateProject(
+        projectId: Int,
+        name: String?,
+        date: String?,
+        time: Int?,
+        script: String?
+    ): DataResource<Unit> = safeApiCall {
+        val request = ProjectUpdateRequestDto(
+            projectName = name,
+            projectDate = date,
+            projectTime = time,
+            script = script
+        )
+        api.updateProject(requireNotNull(projectId), request).getOrThrowNull { Unit }
+    }
 }

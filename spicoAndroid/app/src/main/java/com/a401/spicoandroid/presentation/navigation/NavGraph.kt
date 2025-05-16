@@ -32,7 +32,9 @@ import com.a401.spicoandroid.presentation.project.screen.ProjectScriptInputScree
 import com.a401.spicoandroid.presentation.project.screen.ProjectCreateScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptDetailScreen
 import com.a401.spicoandroid.presentation.project.screen.ProjectScriptEditScreen
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectFormViewModel
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewModel
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechLandingScreen
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechListScreen
@@ -63,7 +65,9 @@ fun NavGraph(
         val randomSpeechViewModel: RandomSpeechSharedViewModel = hiltViewModel()
         val projectFormViewModel: ProjectFormViewModel = hiltViewModel()
         val randomSpeechListViewModel: RandomSpeechListViewModel = hiltViewModel()
-
+        val projectDetailViewModel: ProjectDetailViewModel = hiltViewModel()
+        val projectScriptViewModel: ProjectScriptViewModel = hiltViewModel()
+        
         NavHost(
             navController = navController,
             startDestination = NavRoutes.Home.route,
@@ -106,6 +110,8 @@ fun NavGraph(
             composable(NavRoutes.ProjectScriptDetail.route) {
                 ProjectScriptDetailScreen(
                     navController,
+                    projectDetailViewModel,
+                    projectScriptViewModel,
                     onEdit = {
                         navController.navigate(NavRoutes.ProjectScriptEdit.route)
                     }
@@ -115,9 +121,8 @@ fun NavGraph(
             composable(NavRoutes.ProjectScriptEdit.route) {
                 ProjectScriptEditScreen(
                     navController,
-                    onComplete = {
-                        navController.popBackStack(NavRoutes.ProjectScriptDetail.route, inclusive = false)
-                    }
+                    projectDetailViewModel,
+                    projectScriptViewModel
                 )
             }
 
@@ -128,6 +133,7 @@ fun NavGraph(
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: -1
                 ProjectDetailScreen(
                     navController = navController,
+                    viewModel = projectDetailViewModel,
                     projectId = projectId
                 )
             }

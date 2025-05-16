@@ -43,7 +43,7 @@ fun RandomSpeechReportScreen(
     if (report == null) {
         LoadingInProgressView(
             imageRes = R.drawable.character_home_5,
-            message = "리포트를 생성 중이에요.\n잠시만 기다려주세요!",
+            message = "리포트를 불러오고 있어요.\n잠시만 기다려주세요!",
             onHomeClick = { navController.navigate(NavRoutes.Home.route) }
         )
         return
