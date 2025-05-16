@@ -28,6 +28,16 @@ android {
             "\"${properties["kakao.native.app.key"]}\""
         )
         manifestPlaceholders["KAKAO_APP_KEY"] = properties.getProperty("kakao.native.app.key")
+
+        buildConfigField("String", "AZURE_KEY",
+            "\"${properties["azure.key"]}\""
+        )
+        manifestPlaceholders["AZURE_KEY"] = properties.getProperty("azure.key")
+
+        buildConfigField("String", "AZURE_REGION",
+            "\"${properties["azure.region"]}\""
+        )
+        manifestPlaceholders["AZURE_REGION"] = properties.getProperty("azure.region")
     }
 
     buildTypes {
@@ -143,4 +153,7 @@ dependencies {
     // kakao
     implementation(libs.v2.user)
 
+    // Azure
+    implementation("com.microsoft.cognitiveservices.speech:client-sdk:1.34.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // 비동기 처리
 }
