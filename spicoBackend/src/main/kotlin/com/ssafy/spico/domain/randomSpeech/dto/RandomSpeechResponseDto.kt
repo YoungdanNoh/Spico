@@ -15,10 +15,11 @@ fun RandomSpeech.toResponse(): RandomSpeechResponseDto {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
     this.id ?: throw IllegalArgumentException("RandomSpeech id cannot be null")
     this.content ?: throw IllegalArgumentException("RandomSpeech content cannot be null")
+    this.report ?: throw IllegalArgumentException("RandomSpeech report cannot be null")
     return RandomSpeechResponseDto(
         id = this.id,
         topic = this.topic,
-        title = this.content.newsTitle,
+        title = this.report.title,
         dateTime = this.createdAt.format(formatter)
     )
 }
