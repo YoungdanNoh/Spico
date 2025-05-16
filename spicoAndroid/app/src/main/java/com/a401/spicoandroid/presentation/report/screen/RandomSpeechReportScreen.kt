@@ -20,12 +20,21 @@ import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 @Composable
 fun RandomSpeechReportScreen(
     navController: NavController,
-    randomSpeechId: Int
+    randomSpeechId: Int,
+    viewModel: RandomReportViewModel
 ) {
-    val viewModel: RandomReportViewModel = viewModel()
     val report = viewModel.report
     val showDeleteAlert = remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    // 삭제 성공 시 화면 이동
+    LaunchedEffect(viewModel.deleteSuccess) {
+        if (viewModel.deleteSuccess) {
+            navController.navigate(NavRoutes.RandomSpeechList.route) {
+                popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = false }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchReport(randomSpeechId)
@@ -35,7 +44,7 @@ fun RandomSpeechReportScreen(
         LoadingInProgressView(
             imageRes = R.drawable.character_home_5,
             message = "리포트를 생성 중이에요.\n잠시만 기다려주세요!",
-            onHomeClick = { navController.navigate("Home") }
+            onHomeClick = { navController.navigate(NavRoutes.Home.route) }
         )
         return
     }
@@ -44,7 +53,13 @@ fun RandomSpeechReportScreen(
         topBar = {
             CommonTopBar(
                 centerText = "리포트",
-                leftContent = { BackIconButton(navController) },
+                leftContent = {
+                    BackIconButton {
+                        navController.navigate(NavRoutes.RandomSpeechList.route) {
+                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = false }
+                        }
+                    }
+                },
                 rightContent = {
                     CommonButton(
                         text = "삭제",
@@ -67,18 +82,14 @@ fun RandomSpeechReportScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             RandomReportHeader(title = report.title, topic = report.topic)
-
             RandomReportQuestionSection(question = report.question)
-
             RandomReportNewsSection(
                 title = report.newsTitle,
                 summary = report.newsSummary,
                 url = report.newsUrl,
                 context = context
             )
-
             RandomReportFeedbackSection(feedback = report.feedback)
-
             RandomReportScriptButton(
                 onClick = { navController.navigate(NavRoutes.VoiceScript.route) }
             )
@@ -88,7 +99,7 @@ fun RandomSpeechReportScreen(
             RandomReportDeleteAlert(
                 onConfirm = {
                     showDeleteAlert.value = false
-                    println("리포트 삭제됨")
+                    viewModel.deleteReport(randomSpeechId)
                 },
                 onCancel = { showDeleteAlert.value = false },
                 onDismiss = { showDeleteAlert.value = false }
@@ -96,3 +107,4 @@ fun RandomSpeechReportScreen(
         }
     }
 }
+

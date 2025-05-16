@@ -24,7 +24,8 @@ fun LoadingInProgressView(
     @DrawableRes imageRes: Int,
     message: String,
     modifier: Modifier = Modifier,
-    onHomeClick: (() -> Unit)? = null
+    onHomeClick: (() -> Unit)? = null,
+    homeLinkText: String = "홈으로 가기"
 ) {
     Column(
         modifier = modifier
@@ -55,7 +56,7 @@ fun LoadingInProgressView(
         if (onHomeClick != null) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "홈으로 가기",
+                text = homeLinkText,
                 style = Typography.titleMedium,
                 color = TextTertiary,
                 modifier = Modifier.clickable(
