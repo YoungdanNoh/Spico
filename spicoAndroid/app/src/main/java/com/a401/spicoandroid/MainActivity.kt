@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
         val keyHash = getKeyHash(this)
         Log.d("HASH", keyHash)
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 

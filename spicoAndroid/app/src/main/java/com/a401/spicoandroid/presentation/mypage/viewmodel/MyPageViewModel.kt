@@ -3,6 +3,7 @@ package com.a401.spicoandroid.presentation.mypage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.domain.auth.AuthRepository
+import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,11 +13,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userDataStore: UserDataStore
 ) : ViewModel() {
 
+    // 유저 정보
     private val _state = MutableStateFlow(MyPageState())
     val state: StateFlow<MyPageState> = _state.asStateFlow()
+
+    // 로그아웃
+    private val _navigateToLogin = MutableStateFlow(false)
+    val navigateToLogin: StateFlow<Boolean> = _navigateToLogin.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -27,7 +34,10 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun onLogoutClicked() {
-        // TODO: 로그아웃 처리
+        viewModelScope.launch {
+            userDataStore.clear()
+            _navigateToLogin.value = true
+        }
     }
 
     fun confirmWithdraw() {
