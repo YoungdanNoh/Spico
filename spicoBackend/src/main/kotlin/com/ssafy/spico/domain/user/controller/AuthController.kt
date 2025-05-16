@@ -1,6 +1,5 @@
 package com.ssafy.spico.domain.user.controller
 
-import com.ssafy.spico.common.annotaion.UserId
 import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.user.dto.KakaoTokenRequest
 import com.ssafy.spico.domain.user.dto.TokenResponse
