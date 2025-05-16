@@ -32,7 +32,7 @@ class GoogleStt(
     private fun listen(){
 
         // 이전 인식기 정리
-        stopListening()
+        stop()
 
         if (!SpeechRecognizer.isRecognitionAvailable(context)) {
             onError("이 기기에서 음성 인식을 사용할 수 없습니다.")
@@ -47,10 +47,17 @@ class GoogleStt(
                }
 
                override fun onBeginningOfSpeech() {
+                   Log.d("SpeechRecognizer", "사용자가 말하기 시작")
                }
                override fun onRmsChanged(rmsdB: Float) {
+                   
+                   // 데시벨 측정
+                   
                }
                override fun onBufferReceived(buffer: ByteArray?) {
+                   
+                   // 녹음하기
+
                }
                override fun onEndOfSpeech() {
                }
@@ -63,13 +70,13 @@ class GoogleStt(
                }
 
                override fun onResults(results: Bundle?) {
-                   Log.d("GoogleStt", "onResults 호출됨")
+                   Log.d("SpeechRecognizer", "onResults 호출됨")
 
                    val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                    if (!matches.isNullOrEmpty()) {
                        val resultText = matches[0]
 
-                       Log.d("GoogleStt", "결과: $resultText")
+                       Log.d("SpeechRecognizer", "결과: $resultText")
                        onResult(resultText)
                    } else {
                        onError("결과 없음")
