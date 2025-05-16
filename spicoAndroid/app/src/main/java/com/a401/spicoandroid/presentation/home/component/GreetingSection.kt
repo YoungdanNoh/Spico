@@ -30,7 +30,7 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 fun GreetingSection(
     modifier: Modifier = Modifier,
     username: String = "사용자",
-    navController: NavHostController,
+    navController: NavHostController
 ) {
     Box(
         modifier = Modifier
@@ -113,7 +113,7 @@ fun GreetingSection(
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                navController.navigate(NavRoutes.ProjectCreate.route)
+                                navController.navigate(NavRoutes.ProjectCreate.withReset(true))
                             }
                         )
 
@@ -128,16 +128,6 @@ fun GreetingSection(
                             }
                         )
                         CommonButton(
-                            text = "대본",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.ProjectScriptDetail.route)
-                            }
-                        )
-                        CommonButton(
                             text = "로그인",
                             size = ButtonSize.MD,
                             backgroundColor = Action,
@@ -145,16 +135,6 @@ fun GreetingSection(
                             textColor = White,
                             onClick = {
                                 navController.navigate(NavRoutes.Login.route)
-                            }
-                        )
-                        CommonButton(
-                            text = "코칭 리포트",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.CoachingReport.route)
                             }
                         )
                     }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.pointerInput
@@ -43,7 +44,8 @@ import java.time.LocalDate
 fun ProjectCreateScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: ProjectFormViewModel = hiltViewModel()
+    viewModel: ProjectFormViewModel = hiltViewModel(),
+    reset: Boolean = false
 ){
     val focusManager = LocalFocusManager.current
     val isFocused = remember { mutableStateOf(false) }
@@ -55,6 +57,12 @@ fun ProjectCreateScreen(
         state.projectName.isNotBlank() &&
         state.projectDate?.let { !it.isBefore(today) } == true &&
         state.projectTime in 30..1800
+    }
+
+    LaunchedEffect(reset) {
+        if (reset) {
+            viewModel.resetForm()
+        }
     }
 
     Scaffold (

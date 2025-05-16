@@ -53,8 +53,14 @@ fun ProjectScriptInputScreen (
                 textColor = White,
                 onClick = {
                     viewModel.createProject(
-                        onSuccess = { navController.navigate("project_list") },
-                        onError = { navController.navigate("project_list") }
+                        onSuccess = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                        },
+                        onError = {
+                            navController.popBackStack()
+                            navController.popBackStack()
+                        }
                     )
                 },
                 modifier = modifier.padding(16.dp)

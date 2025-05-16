@@ -6,14 +6,14 @@ import com.a401.spicoandroid.data.home.repository.HomeRepositoryImpl
 import com.a401.spicoandroid.data.practice.repository.PracticeRepositoryImpl
 import com.a401.spicoandroid.data.project.repository.ProjectRepositoryImpl
 import com.a401.spicoandroid.data.randomspeech.repository.RandomSpeechRepositoryImpl
-import com.a401.spicoandroid.data.report.repository.RandomRamdomReportRepositoryImpl
+import com.a401.spicoandroid.data.report.repository.ReportRepositoryImpl
 import com.a401.spicoandroid.domain.auth.AuthRepository
 import com.a401.spicoandroid.domain.finalmode.repository.FinalModeRepository
 import com.a401.spicoandroid.domain.home.repository.HomeRepository
 import com.a401.spicoandroid.domain.practice.repository.PracticeRepository
 import com.a401.spicoandroid.domain.project.repository.ProjectRepository
 import com.a401.spicoandroid.domain.randomspeech.repository.RandomSpeechRepository
-import com.a401.spicoandroid.domain.report.repository.RamdomReportRepository
+import com.a401.spicoandroid.domain.report.repository.ReportRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -51,8 +51,8 @@ internal abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindReportRepository(
-        randomReportRepositoryImpl: RandomRamdomReportRepositoryImpl
-    ): RamdomReportRepository
+        reportRepositoryImpl: ReportRepositoryImpl
+    ): ReportRepository
 
     @Binds
     @Singleton
