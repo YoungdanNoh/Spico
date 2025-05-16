@@ -49,6 +49,7 @@ import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import com.a401.spicoandroid.presentation.report.screen.VoiceScriptRandomScreen
 import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
 import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 import kotlin.math.log
@@ -219,7 +220,10 @@ fun NavGraph(
 
             composable(NavRoutes.RandomSpeechList.route) {
                 RandomSpeechListScreen(
-                    viewModel = randomSpeechListViewModel
+                    viewModel = randomSpeechListViewModel,
+                    onProjectClick = { id ->
+                        navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                    }
                 )
             }
 
@@ -235,6 +239,14 @@ fun NavGraph(
                     randomSpeechId = randomSpeechId,
                     viewModel = reportViewModel
                 )
+            }
+
+            composable(
+                route = NavRoutes.VoiceScriptRandom.route,
+                arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: return@composable
+                VoiceScriptRandomScreen(navController = navController, randomSpeechId = randomSpeechId)
             }
 
             // 코칭 모드

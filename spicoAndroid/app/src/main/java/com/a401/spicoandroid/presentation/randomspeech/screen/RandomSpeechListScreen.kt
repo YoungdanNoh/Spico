@@ -9,7 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.common.utils.formatDateTimeWithDay
+import com.a401.spicoandroid.common.utils.formatDateWithDay
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportCard
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportDeleteBottomSheet
@@ -70,7 +73,9 @@ fun RandomSpeechListScreen(
                         backgroundColor = Action,
                         borderColor = Action,
                         textColor = White,
-                        onClick = onStartClick,
+                        onClick = {
+                            navController.navigate(NavRoutes.RandomSpeechTopicSelect.route)
+                        },
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
@@ -109,7 +114,7 @@ fun RandomSpeechListScreen(
                             id = item.id,
                             topic = item.topic,
                             title = item.title,
-                            dateTime = item.dateTime,
+                            dateTime = formatDateWithDay(item.dateTime),
                             onClick = onProjectClick,
                             onLongClick = {
                                 selectedId = item.id

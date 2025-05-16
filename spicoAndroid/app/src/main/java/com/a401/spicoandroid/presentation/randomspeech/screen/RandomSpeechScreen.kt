@@ -247,10 +247,17 @@ fun RandomSpeechScreen(
                     onCancel = { showExitConfirmDialog = false },
                     onConfirm = {
                         showExitConfirmDialog = false
-                        navController.navigate(
-                            route = NavRoutes.RandomSpeechLanding.route,
-                            navOptions = navOptions {
-                                popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                        viewModel.deleteSpeech(
+                            onSuccess = {
+                                navController.navigate(
+                                    route = NavRoutes.RandomSpeechLanding.route,
+                                    navOptions = navOptions {
+                                        popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                                    }
+                                )
+                            },
+                            onError = {
+                                Log.d("RandomSpeech", "❌ 삭제 실패: ${viewModel.uiState.value.errorMessage}")
                             }
                         )
                     }

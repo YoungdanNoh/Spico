@@ -8,6 +8,7 @@ import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechInitInfo
 import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechTopic
 import com.a401.spicoandroid.domain.randomspeech.usecase.CreateRandomSpeechUseCase
 import com.a401.spicoandroid.domain.randomspeech.usecase.SubmitRandomSpeechScriptUseCase
+import com.a401.spicoandroid.domain.report.usecase.DeleteRandomSpeechUseCase
 import com.kakao.sdk.auth.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RandomSpeechSharedViewModel @Inject constructor(
     private val createRandomSpeechUseCase: CreateRandomSpeechUseCase,
-    private val submitRandomSpeechScriptUseCase: SubmitRandomSpeechScriptUseCase
+    private val submitRandomSpeechScriptUseCase: SubmitRandomSpeechScriptUseCase,
+    private val deleteRandomSpeechUseCase: DeleteRandomSpeechUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RandomSpeechState())
@@ -59,18 +61,62 @@ class RandomSpeechSharedViewModel @Inject constructor(
     }
 
     fun submitScript(script: String, onSuccess: () -> Unit, onError: () -> Unit) {
-        val speechId = _uiState.value.speechId ?: return onError()
+        val speechId = _uiState.value.speechId
+        if (speechId == null) {
+            Log.e("SubmitScript", "❌ speechId is null")
+            onError()
+            return
+        }
+
+        Log.d("SubmitScript", "🚀 speechId: $speechId")
+        Log.d("SubmitScript", "📝 script: $script")
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
             when (val result = submitRandomSpeechScriptUseCase(speechId, script)) {
                 is DataResource.Success -> {
+                    Log.d("SubmitScript", "✅ 성공: 리포트 저장 완료")
                     _uiState.update { it.copy(isLoading = false) }
                     onSuccess()
                 }
 
                 is DataResource.Error -> {
+                    Log.e("SubmitScript", "❌ 실패: ${result.throwable.message}")
+                    _uiState.update { it.copy(isLoading = false, errorMessage = result.throwable.message) }
+                    onError()
+                }
+
+                is DataResource.Loading -> {
+                    Log.d("SubmitScript", "⏳ 로딩 중")
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+
+    fun deleteSpeech(onSuccess: () -> Unit, onError: () -> Unit) {
+        val speechId = _uiState.value.speechId
+        if (speechId == null) {
+            Log.e("DeleteSpeech", "❌ speechId is null")
+            onError()
+            return
+        }
+
+        Log.d("DeleteSpeech", "🗑️ delete speechId = $speechId")
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            when (val result = deleteRandomSpeechUseCase(speechId)) {
+                is DataResource.Success -> {
+                    Log.d("DeleteSpeech", "✅ 삭제 성공")
+                    _uiState.update { it.copy(isLoading = false) }
+                    onSuccess()
+                }
+
+                is DataResource.Error -> {
+                    Log.e("DeleteSpeech", "❌ 삭제 실패: ${result.throwable.message}")
                     _uiState.update { it.copy(isLoading = false, errorMessage = result.throwable.message) }
                     onError()
                 }
@@ -81,6 +127,7 @@ class RandomSpeechSharedViewModel @Inject constructor(
             }
         }
     }
+
 
     fun reset() {
         _uiState.value = RandomSpeechState()
