@@ -34,6 +34,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         val keyHash = getKeyHash(this)
         Log.d("HASH", keyHash)
 

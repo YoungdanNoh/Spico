@@ -14,6 +14,7 @@ data class FinalReportState(
     val scores: List<Float> = emptyList(),
     val qnaList: List<Pair<String, String>> = emptyList(),
     val reportItems: List<ReportCategoryData> = emptyList(),
+    val videoUrl: String? = null,
     val isLoading: Boolean = false,
     val error: Throwable? = null
 )
@@ -106,7 +107,8 @@ fun FinalReport.toUiState(): FinalReportState {
             scriptMatchRate.toFloat()
         ),
         qnaList = qaRecord.map { it.question to it.answer },
-        reportItems = reportItems
+        reportItems = reportItems,
+        videoUrl = videoUrl
     )
 }
 

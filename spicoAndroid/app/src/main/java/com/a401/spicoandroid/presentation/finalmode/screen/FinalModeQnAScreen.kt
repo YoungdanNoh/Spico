@@ -128,7 +128,8 @@ fun FinalModeQnAScreen(
                 borderColor = Error,
                 textColor = White,
                 size = ButtonSize.SM,
-                onClick = { viewModel.showConfirmDialog() }
+                onClick = { viewModel.showConfirmDialog() },
+                enabled = countdown < 0
             )
         }
 
@@ -140,7 +141,7 @@ fun FinalModeQnAScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     viewModel.hideConfirmDialog()
-                    navController.navigate(NavRoutes.FinalReportLoading.route)
+                    navController.navigate(NavRoutes.FinalModeLoading.withType(FinalModeLoadingType.REPORT))
                 },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,
