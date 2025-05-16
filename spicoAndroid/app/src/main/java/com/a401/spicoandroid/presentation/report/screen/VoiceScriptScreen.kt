@@ -40,7 +40,7 @@ fun VoiceScriptScreen(
     }
 
     BackHandler {
-        navController.navigate(NavRoutes.FinalModeReport.route)
+        navController.navigate(NavRoutes.FinalReport.route)
     }
 
     Scaffold(
@@ -52,7 +52,7 @@ fun VoiceScriptScreen(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
                         onClick = {
-                            navController.navigate(NavRoutes.FinalModeReport.route)
+                            navController.navigate(NavRoutes.FinalReport.route)
                         }
                     )
                 }
@@ -68,7 +68,7 @@ fun VoiceScriptScreen(
                 CommonButton(
                     text = "리포트 보기",
                     onClick = {
-                        navController.navigate(NavRoutes.FinalModeReport.route)
+                        navController.navigate(NavRoutes.FinalReport.route)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

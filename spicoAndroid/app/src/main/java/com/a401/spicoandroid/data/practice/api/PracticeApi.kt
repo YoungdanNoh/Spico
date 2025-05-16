@@ -29,7 +29,7 @@ interface PracticeApi {
     @GET("projects/{projectId}/practices")
     suspend fun getPracticeList(
         @Path("projectId") projectId: Int,
-        @Query("practice-filter") filter: String,
+        @Query("practice-filter") filter: String? = null,
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int
     ): ApiResponse<PracticeListResponseDto>

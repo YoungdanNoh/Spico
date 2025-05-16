@@ -16,7 +16,7 @@ class PracticeRepositoryImpl @Inject constructor(
 
     override suspend fun getPracticeList(
         projectId: Int,
-        filter: String,
+        filter: String?,
         cursor: Int?,
         size: Int
     ): DataResource<List<Practice>> = safeApiCall {

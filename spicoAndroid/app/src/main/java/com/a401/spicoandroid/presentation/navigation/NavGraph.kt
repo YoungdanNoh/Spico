@@ -244,16 +244,29 @@ fun NavGraph(
             ) {
                 FinalModeQnAScreen(navController = navController)
             }
-            composable("final_mode_report") {
-                FinalReportScreen(navController = navController)
+            composable(
+                route = NavRoutes.FinalReport.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                FinalReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
             }
+
             composable(NavRoutes.VoiceScript.route) {
                 VoiceScriptScreen(navController = navController)
             }
             composable(NavRoutes.VideoReplay.route) {
                 VideoReplayScreen(navController = navController)
             }
-
 
 
             // 로그인

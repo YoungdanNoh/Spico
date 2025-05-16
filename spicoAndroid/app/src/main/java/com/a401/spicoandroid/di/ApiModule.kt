@@ -4,6 +4,7 @@ import com.a401.spicoandroid.data.finalmode.api.FinalModeApi
 import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import com.a401.spicoandroid.data.randomspeech.api.RandomSpeechApi
+import com.a401.spicoandroid.data.report.api.FinalReportApi
 import com.a401.spicoandroid.data.report.api.ReportApi
 import dagger.Module
 import dagger.Provides
@@ -47,6 +48,13 @@ object ApiModule {
     fun provideFinalModeApi(@NetworkModule.MainRetrofit retrofit: Retrofit): FinalModeApi {
         return retrofit.create(FinalModeApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideFinalReportApi(@NetworkModule.MainRetrofit retrofit: Retrofit): FinalReportApi {
+        return retrofit.create(FinalReportApi::class.java)
+    }
+
 
 
 }
