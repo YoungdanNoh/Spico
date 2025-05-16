@@ -16,7 +16,7 @@ inline fun <T, R> ApiResponse<T>.getOrThrow(mapper: (T) -> R): R {
 }
 
 inline fun <T, R> ApiResponse<T>.getOrThrowNull(mapper: (T?) -> R): R {
-    if (success && data != null) {
+    if (success) {
         return mapper(data)
     } else {
         throw Exception(errorMsg ?: "Unknown error (code=$errorCode)")
