@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.infrastructure.network
 import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

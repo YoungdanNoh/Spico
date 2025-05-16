@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.randomspeech.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
@@ -7,6 +8,7 @@ import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechInitInfo
 import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechTopic
 import com.a401.spicoandroid.domain.randomspeech.usecase.CreateRandomSpeechUseCase
 import com.a401.spicoandroid.domain.randomspeech.usecase.SubmitRandomSpeechScriptUseCase
+import com.kakao.sdk.auth.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
