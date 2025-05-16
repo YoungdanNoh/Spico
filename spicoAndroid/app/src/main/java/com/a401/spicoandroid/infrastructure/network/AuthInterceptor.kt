@@ -10,7 +10,7 @@ class AuthInterceptor @Inject constructor (
     private val userDataStore: UserDataStore
 ): Interceptor {
 
-    private val whiteList = listOf("/auth/login")
+    private val whiteList = listOf("/api/auth/login")
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
