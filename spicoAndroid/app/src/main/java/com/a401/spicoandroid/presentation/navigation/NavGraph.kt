@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.a401.spicoandroid.infrastructure.speech.SpeechTestScreen
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
 import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
@@ -46,6 +47,7 @@ import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
 import kotlin.math.log
 
 @Composable
@@ -119,10 +121,6 @@ fun NavGraph(
                     projectDetailViewModel,
                     projectScriptViewModel
                 )
-            }
-
-            composable(NavRoutes.VideoReplay.route) {
-                VideoReplayScreen()
             }
 
             composable(
@@ -252,8 +250,28 @@ fun NavGraph(
             ) {
                 FinalModeQnAScreen(navController = navController)
             }
-            composable("final_mode_report") {
-                FinalReportScreen()
+            composable(
+                route = NavRoutes.FinalReport.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                FinalReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
+            }
+
+            composable(NavRoutes.VoiceScript.route) {
+                VoiceScriptScreen(navController = navController)
+            }
+            composable(NavRoutes.VideoReplay.route) {
+                VideoReplayScreen(navController = navController)
             }
 
 
@@ -265,6 +283,11 @@ fun NavGraph(
             // 에러
             composable(NavRoutes.NotFound.route) {
                 NotFoundScreen(navController)
+            }
+
+            // stt 테스트 스크린
+            composable(NavRoutes.SpeechTest.route) {
+                SpeechTestScreen(navController)
             }
 
         }

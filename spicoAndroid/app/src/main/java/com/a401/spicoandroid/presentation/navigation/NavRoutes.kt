@@ -1,7 +1,5 @@
 package com.a401.spicoandroid.presentation.navigation
 
-import android.net.Uri
-
 sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
     object Profile : NavRoutes("profile")
@@ -20,8 +18,6 @@ sealed class NavRoutes(val route: String) {
     object ProjectSelect : NavRoutes("project_select")
     object FinalSetting : NavRoutes("final_setting")
     object FinalScreenCheck : NavRoutes("final_check")
-    // 영상 다시 보기
-    object VideoReplay : NavRoutes("video_replay")
 
     // 랜덤 스피치
     object RandomSpeechLanding : NavRoutes("randomspeech_landing")
@@ -44,14 +40,22 @@ sealed class NavRoutes(val route: String) {
     object FinalModeLoading : NavRoutes("final_mode_loading")
     object FinalReportLoading : NavRoutes("final_report_loading")
     object FinalModeQnA : NavRoutes("final_mode_qna")
-    object FinalModeReport : NavRoutes("final_mode_report")
+    object FinalReport : NavRoutes("final_mode_report/{projectId}/{practiceId}") {
+        fun createRoute(projectId: Int, practiceId: Int): String =
+            "final_mode_report/$projectId/$practiceId"
+    }
 
-
+    // 영상 다시 보기
+    object VoiceScript : NavRoutes("voice_script")
+    object VideoReplay : NavRoutes("video_replay")
 
     // 로그인
     object Login : NavRoutes("login")
 
     //에러
     object NotFound : NavRoutes("not_found")
+
+    // stt 테스트
+    object SpeechTest : NavRoutes("speech_test")
 
 }

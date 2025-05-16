@@ -1,7 +1,9 @@
 package com.a401.spicoandroid.data.practice.api
 
 import com.a401.spicoandroid.common.data.dto.ApiResponse
+import com.a401.spicoandroid.data.practice.dto.CoachingPracticeResponseDto
 import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
+import com.a401.spicoandroid.data.practice.dto.FinalSettingResponseDto
 import com.a401.spicoandroid.data.practice.dto.PracticeDto
 import com.a401.spicoandroid.data.practice.dto.PracticeIdResponse
 import com.a401.spicoandroid.data.project.dto.PracticeListResponseDto
@@ -17,21 +19,30 @@ interface PracticeApi {
     @POST("projects/{projectId}/practices/coaching")
     suspend fun createCoachingPractice(
         @Path("projectId") projectId: Int
-    ): Response<ApiResponse<PracticeIdResponse>>
+    ): ApiResponse<CoachingPracticeResponseDto>
 
     @POST("projects/{projectId}/practices/final")
     suspend fun createFinalPractice(
         @Path("projectId") projectId: Int,
         @Body request: FinalPracticeRequest
-    ): Response<ApiResponse<PracticeIdResponse>>
+    ): ApiResponse<PracticeIdResponse>
 
     @GET("projects/{projectId}/practices")
     suspend fun getPracticeList(
         @Path("projectId") projectId: Int,
-        @Query("practice-filter") filter: String,
+        @Query("practice-filter") filter: String? = null,
         @Query("cursor") cursor: Int?,
         @Query("size") size: Int
     ): ApiResponse<PracticeListResponseDto>
+
+    @GET("/api/users/me/final-settings")
+    suspend fun getFinalSetting(
+    ): ApiResponse<FinalSettingResponseDto>
+
+    @POST("/api/users/me/final-settings")
+    suspend fun saveFinalSetting(
+        @Body request: FinalPracticeRequest
+    ): ApiResponse<FinalSettingResponseDto>
 
     @DELETE("projects/{projectId}/practices/{practiceId}")
     suspend fun deletePractice(

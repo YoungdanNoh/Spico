@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.a401.spicoandroid.presentation.navigation.NavGraph
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.a401.spicoandroid.common.ui.bottomsheet.CreateOrPracticeBottomSheet
 import com.a401.spicoandroid.common.ui.component.CommonBottomBar
 
 @AndroidEntryPoint
@@ -59,40 +60,59 @@ class MainActivity : ComponentActivity() {
 
             val shouldShowBottomBar = bottomBarRoutes.any { currentRoute?.startsWith(it) == true }
 
+            val showBottomSheet = remember { mutableStateOf(false) }
+
             SpeakoAndroidTheme {
-                if (shouldShowBottomBar) {
-                    Scaffold(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .windowInsetsPadding(WindowInsets.safeDrawing),
-                        bottomBar = {
-                            CommonBottomBar(
+                Box(Modifier.fillMaxSize()) {
+                    if (shouldShowBottomBar) {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .windowInsetsPadding(WindowInsets.safeDrawing),
+                            bottomBar = {
+                                CommonBottomBar(
+                                    navController = navController,
+                                    onFabClick = {
+                                        showBottomSheet.value = true
+                                    }
+                                )
+                            }
+                        ) { innerPadding ->
+                            NavGraph(
                                 navController = navController,
-                                onFabClick = {
-                                    navController.navigate(NavRoutes.ProjectCreate.route)
-                                }
+                                modifier = Modifier.padding(innerPadding)
                             )
                         }
-                    ) { innerPadding ->
-                        NavGraph(
-                            navController = navController,
-                            modifier = Modifier.padding(innerPadding)
-                        )
+                    } else {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .windowInsetsPadding(WindowInsets.safeDrawing)
+                        ) { innerPadding ->
+                            NavGraph(
+                                navController = navController,
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
                     }
-                } else {
-                    Scaffold(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .windowInsetsPadding(WindowInsets.safeDrawing)
-                    ) { innerPadding ->
-                        NavGraph(
-                            navController = navController,
-                            modifier = Modifier.padding(innerPadding)
+
+                    if (showBottomSheet.value) {
+                        CreateOrPracticeBottomSheet(
+                            onCreateProjectClick = {
+                                showBottomSheet.value = false
+                                navController.navigate(NavRoutes.ProjectCreate.route)
+                            },
+                            onPracticeClick = {
+                                showBottomSheet.value = false
+                                navController.navigate(NavRoutes.ModeSelect.route)
+                            },
+                            onDismissRequest = { showBottomSheet.value = false }
                         )
                     }
                 }
             }
         }
+
     }
     private fun hasCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(

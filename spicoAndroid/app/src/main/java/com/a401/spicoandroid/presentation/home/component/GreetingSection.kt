@@ -118,13 +118,13 @@ fun GreetingSection(
                         )
 
                         CommonButton(
-                            text = "프로젝트 목록",
+                            text = "STT 테스트",
                             size = ButtonSize.MD,
                             backgroundColor = Action,
                             borderColor = Action,
                             textColor = White,
                             onClick = {
-                                navController.navigate(NavRoutes.ProjectList.route)
+                                navController.navigate(NavRoutes.SpeechTest.route)
                             }
                         )
                         CommonButton(
@@ -135,26 +135,6 @@ fun GreetingSection(
                             textColor = White,
                             onClick = {
                                 navController.navigate(NavRoutes.ProjectScriptDetail.route)
-                            }
-                        )
-                        CommonButton(
-                            text = "연습하기",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.ModeSelect.route)
-                            }
-                        )
-                        CommonButton(
-                            text = "마이페이지",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.Profile.route)
                             }
                         )
                         CommonButton(
@@ -199,8 +179,6 @@ fun GreetingSection(
                                 navController.navigate(NavRoutes.CoachingMode.route)
                             }
                         )
-
-
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))

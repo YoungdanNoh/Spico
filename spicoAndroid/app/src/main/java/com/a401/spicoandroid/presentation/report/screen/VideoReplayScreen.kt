@@ -9,12 +9,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.report.viewmodel.VideoReplayViewModel
 import com.a401.spicoandroid.ui.component.CommonLinearProgressBar
 import com.a401.spicoandroid.ui.component.TimeSegment
@@ -22,14 +24,14 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun VideoReplayScreen(
+    navController: NavController,
     viewModel: VideoReplayViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val player = viewModel.player
     var isPlaying by remember { mutableStateOf(false) }
 
-// 갱신: ExoPlayer 상태 감지해서 sync 하고 싶다면 추후 `player.isPlaying` StateFlow로도 가능
-
+    // 갱신: ExoPlayer 상태 감지해서 sync 하고 싶다면 추후 `player.isPlaying` StateFlow로도 가능
 
     val feedbackText = "첫 부분에서 너무 빨랐어요.\n다시 확인해보세요."
     val timeRangeText = "1:00 ~ 1:30"
@@ -55,8 +57,12 @@ fun VideoReplayScreen(
         player.seekTo(seekTo)
     }
 
+    BackHandler {
+        navController.navigate(NavRoutes.FinalReport.route)
+    }
+
     LaunchedEffect(Unit) {
-        val uri = Uri.parse("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4")
+        val uri = Uri.parse("https://your-bucket.s3.ap-northeast-2.amazonaws.com/videos/project123_final.mp4")
         viewModel.setMedia(uri)
     }
 
@@ -68,7 +74,9 @@ fun VideoReplayScreen(
                     IconButton(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
-                        onClick = {}
+                        onClick = {
+                            navController.navigate(NavRoutes.FinalReport.route)
+                        }
                     )
                 }
             )
@@ -82,7 +90,9 @@ fun VideoReplayScreen(
             ) {
                 CommonButton(
                     text = "리포트 보기",
-                    onClick = {},
+                    onClick = {
+                        navController.navigate(NavRoutes.FinalReport.route)
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
             }

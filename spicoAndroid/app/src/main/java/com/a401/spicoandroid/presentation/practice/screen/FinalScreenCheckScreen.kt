@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.practice.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -57,7 +58,7 @@ fun FinalScreenCheckScreen(
                                 }
                             },
                             onFailure = {
-                                // TODO: 실패 시 처리
+                                Log.e("FinalScreenCheck", "연습 생성 실패", it)
                             }
                         )
                     }
