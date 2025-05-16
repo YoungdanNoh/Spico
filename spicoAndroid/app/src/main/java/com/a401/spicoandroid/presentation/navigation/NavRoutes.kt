@@ -8,7 +8,10 @@ sealed class NavRoutes(val route: String) {
     object Profile : NavRoutes("profile")
 
     // 발표 목록
-    object ProjectCreate: NavRoutes("project_create")
+    object ProjectCreate : NavRoutes("project_create") {
+        const val routeWithReset = "project_create?reset={reset}"
+        fun withReset(reset: Boolean): String = "project_create?reset=$reset"
+    }
     object ProjectScriptInput : NavRoutes("project_script_input")
     object ProjectList: NavRoutes("project_list")
     object ProjectDetail: NavRoutes("project_detail/{projectId}") {
