@@ -1,9 +1,6 @@
 package com.a401.spicoandroid.presentation.project.component
 
-import android.icu.text.CaseMap.Title
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,9 +41,9 @@ fun ProjectInfoHeader(
             CommonButton(
                 text = time,
                 size = ButtonSize.MD,
-                backgroundColor = BackgroundSecondary,
+                backgroundColor = White,
                 textColor = TextPrimary,
-                borderColor = BackgroundSecondary,
+                borderColor = White,
                 modifier = Modifier.weight(1f),
                 enabled = false,
                 onClick = {}
