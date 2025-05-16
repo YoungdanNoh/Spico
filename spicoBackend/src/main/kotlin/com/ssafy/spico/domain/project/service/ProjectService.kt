@@ -1,5 +1,7 @@
 package com.ssafy.spico.domain.project.service
 
+import com.ssafy.spico.domain.practice.entity.PracticeType
+import com.ssafy.spico.domain.practice.model.Practice
 import com.ssafy.spico.domain.project.dto.ProjectViewType
 import com.ssafy.spico.domain.project.dto.UpdateProjectRequestDto
 import com.ssafy.spico.domain.project.model.Project
@@ -10,4 +12,5 @@ interface ProjectService {
     fun updateProject(projectId: Int, request: UpdateProjectRequestDto)
     fun deleteProject(projectId: Int)
     fun getProjectDetail(projectId: Int): Project
+    fun getPractices(userId: Int, projectId: Int, practiceFilter: PracticeType?, cursor: Int?, size: Int): List<Practice>
 }

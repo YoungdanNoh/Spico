@@ -1,6 +1,9 @@
 package com.ssafy.spico.domain.project.service
 
 import com.ssafy.spico.domain.practice.service.DeletePracticeService
+import com.ssafy.spico.domain.practice.entity.PracticeType
+import com.ssafy.spico.domain.practice.model.Practice
+import com.ssafy.spico.domain.practice.model.toModel
 import com.ssafy.spico.domain.project.dto.ProjectViewType
 import com.ssafy.spico.domain.project.dto.UpdateProjectRequestDto
 import com.ssafy.spico.domain.project.dto.toCommand
@@ -75,5 +78,18 @@ class ProjectServiceImpl(
         val projectEntity = projectRepository.findById(projectId)
             .orElseThrow { ProjectException(ProjectError.PROJECT_NOT_FOUND) }
         return projectEntity.toModel()
+    }
+
+    override fun getPractices(
+        userId: Int,
+        projectId: Int,
+        practiceFilter: PracticeType?,
+        cursor: Int?,
+        size: Int
+    ): List<Practice> {
+        require(size >= 1) { throw ProjectException(ProjectError.INVALID_PAGE_SIZE) }
+
+        val entities = projectRepository.findPracticesByProjectIdWithPaging(userId, projectId, practiceFilter, cursor, size)
+        return entities.map { it.toModel() }
     }
 }
