@@ -24,7 +24,12 @@ class RandomSpeechServiceImpl(
         val userEntity = userRepository.getReferenceById(randomSpeech.userId)
         val savedRandomSpeech = randomSpeechRepository.save(randomSpeech.toEntity(userEntity))
 
-        val newsList = newsService.searchNewsByTopic(randomSpeech.topic)
+        val newsList = try {
+            newsService.searchNewsByTopic(randomSpeech.topic)
+        } catch (e: Exception) {
+            throw RandomSpeechException(RandomSpeechError.NEWS_API_FAILED)
+        }
+
         val selectedNews = newsList
             .filter { it.description.length >= 50 }
             .shuffled()
@@ -38,8 +43,11 @@ class RandomSpeechServiceImpl(
             ))
         }
 
-        val question = gptService.generateRandomSpeechQuestion(randomSpeech.topic, selectedNews)
-        savedRandomSpeech.updateQuestion(UpdateQuestionCommand(question))
+        val question = try {
+            gptService.generateRandomSpeechQuestion(randomSpeech.topic, selectedNews)
+        } catch (e: Exception) {
+            throw RandomSpeechException(RandomSpeechError.GPT_QUESTION_FAILED)
+        }
 
         return Content(
             id = savedRandomSpeech.randomSpeechId,
@@ -64,7 +72,11 @@ class RandomSpeechServiceImpl(
             script = script
         )
 
-        val gptResponse = gptService.generateRandomSpeechFeedback(gptRequest)
+        val gptResponse = try {
+            gptService.generateRandomSpeechFeedback(gptRequest)
+        } catch (e: Exception) {
+            throw RandomSpeechException(RandomSpeechError.GPT_FEEDBACK_FAILED)
+        }
 
         val command = UpdateResultCommand(
             script = script,

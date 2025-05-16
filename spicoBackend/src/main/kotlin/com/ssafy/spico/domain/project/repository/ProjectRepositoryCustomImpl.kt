@@ -1,6 +1,10 @@
 package com.ssafy.spico.domain.project.repository
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.ssafy.spico.domain.practice.entity.PracticeType
+import com.ssafy.spico.domain.practice.entity.PracticesEntity
+import com.ssafy.spico.domain.practice.entity.QPracticesEntity
 import com.ssafy.spico.domain.project.dto.ProjectViewType
 import com.ssafy.spico.domain.project.entity.ProjectEntity
 import com.ssafy.spico.domain.project.entity.QProjectEntity
@@ -49,5 +53,43 @@ class ProjectRepositoryCustomImpl(
                 }
             )
         return baseQuery.fetch()
+    }
+
+    override fun findPracticesByProjectIdWithPaging(
+        userId: Int,
+        projectId: Int,
+        filter: PracticeType?,
+        cursor: Int?,
+        size: Int
+    ): List<PracticesEntity> {
+        val practice = QPracticesEntity.practicesEntity
+
+        val conditions = mutableListOf<BooleanExpression>(
+            practice.projectEntity.projectId.eq(projectId),
+            practice.projectEntity.userEntity.id.eq(userId)
+        )
+
+        filter?.let { conditions.add(practice.type.eq(it)) }
+        cursor?.let { conditions.add(practice.practiceId.lt(it)) }
+
+        return queryFactory
+            .selectFrom(practice)
+            .where(*conditions.toTypedArray())
+            .orderBy(practice.practiceId.desc())
+            .limit(size.toLong())
+            .fetch()
+    }
+
+    override fun findPracticeIdsByProjectId(userId: Int, projectId: Int): List<Int> {
+        val practice = QPracticesEntity.practicesEntity
+
+        return queryFactory
+            .select(practice.practiceId)
+            .from(practice)
+            .where(
+                practice.projectEntity.projectId.eq(projectId),
+                practice.projectEntity.userEntity.id.eq(userId)
+            )
+            .fetch()
     }
 }

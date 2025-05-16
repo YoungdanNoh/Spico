@@ -30,10 +30,11 @@ public class UserEntity {
         this.hasAudience = true;
         this.hasQna = true;
         this.questionCount = 1;
-        this.answerTimeLimit = 1;
+        this.answerTimeLimit = 60;
     }
 
-    public UserEntity(Long kakaoId, String nickname, boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
+    public UserEntity(Integer id, Long kakaoId, String nickname, boolean hasAudience, boolean hasQna, int questionCount, int answerTimeLimit) {
+        this.id = id;
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.hasAudience = hasAudience;

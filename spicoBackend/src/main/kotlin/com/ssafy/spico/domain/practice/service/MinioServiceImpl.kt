@@ -32,12 +32,19 @@ class MinioServiceImpl(
     }
 
     override fun generatePresignedGetUrl(bucketName: String, objectName: String, expiryMinutes: Int): String {
+        val contentType = when {
+            objectName.endsWith(".wav", ignoreCase = true) -> "audio/wav"
+            objectName.endsWith(".mp4", ignoreCase = true) -> "video/mp4"
+            else -> "application/octet-stream"
+        }
+
         return minioClient.getPresignedObjectUrl(
             io.minio.GetPresignedObjectUrlArgs.builder()
-                .method(Method.GET)  // 🔹 PUT → GET
+                .method(Method.GET)  // PUT → GET
                 .bucket(bucketName)
                 .`object`(objectName)
                 .expiry(expiryMinutes, TimeUnit.MINUTES)
+                .extraQueryParams(mapOf("response-content-type" to contentType))
                 .build()
         )
     }

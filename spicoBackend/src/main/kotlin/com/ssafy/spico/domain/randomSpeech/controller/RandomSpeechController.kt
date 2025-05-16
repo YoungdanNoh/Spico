@@ -1,26 +1,29 @@
 package com.ssafy.spico.domain.randomSpeech.controller
 
+import com.ssafy.spico.common.annotaion.UserId
 import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.randomSpeech.dto.*
+import com.ssafy.spico.domain.randomSpeech.dto.gpt.RandomSpeechListResponseDto
 import com.ssafy.spico.domain.randomSpeech.service.RandomSpeechService
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/random-speeches")
 class RandomSpeechController(
-    private val randomSpeechService: RandomSpeechService,
-    @Value("\${user-id}") private val userId: Int
+    private val randomSpeechService: RandomSpeechService
 ) {
     @GetMapping
-    fun getRandomSpeeches(): ApiResponse<List<RandomSpeechResponseDto>> {
+    fun getRandomSpeeches(
+        @UserId userId: Int
+    ): ApiResponse<RandomSpeechListResponseDto> {
         val randomSpeeches = randomSpeechService.getRandomSpeechList(userId)
-        return ApiResponse.success(randomSpeeches.map { it.toResponse() })
+        return ApiResponse.success(RandomSpeechListResponseDto(randomSpeeches.map { it.toResponse() }))
     }
 
     @GetMapping("/{randomSpeechId}")
     fun getRandomSpeechDetail(
-        @PathVariable randomSpeechId: Int
+        @PathVariable randomSpeechId: Int,
+        @UserId userId: Int
     ): ApiResponse<RandomSpeechDetailResponseDto> {
         val randomSpeech = randomSpeechService.getRandomSpeechDetail(userId, randomSpeechId)
         return ApiResponse.success(randomSpeech.toDetailResponse())
@@ -28,7 +31,8 @@ class RandomSpeechController(
 
     @PostMapping
     fun startRandomSpeech(
-        @RequestBody request: CreateRandomSpeechRequestDto
+        @RequestBody request: CreateRandomSpeechRequestDto,
+        @UserId userId: Int
     ): ApiResponse<RandomSpeechContentResponseDto> {
         val randomSpeech = request.toRandomSpeech(userId)
         val content = randomSpeechService.startRandomSpeech(randomSpeech)
@@ -46,7 +50,8 @@ class RandomSpeechController(
 
     @DeleteMapping("{randomSpeechId}")
     fun deleteRandomSpeech(
-        @PathVariable randomSpeechId: Int
+        @PathVariable randomSpeechId: Int,
+        @UserId userId: Int
     ): ApiResponse<Unit> {
         randomSpeechService.deleteRandomSpeech(userId, randomSpeechId)
         return ApiResponse.success()

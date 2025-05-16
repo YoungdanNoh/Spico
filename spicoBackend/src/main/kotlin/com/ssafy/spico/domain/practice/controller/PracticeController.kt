@@ -3,7 +3,10 @@ package com.ssafy.spico.domain.practice.controller
 import com.ssafy.spico.common.annotaion.UserId
 import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.practice.dto.*
+import com.ssafy.spico.domain.practice.entity.PracticeType
 import com.ssafy.spico.domain.practice.service.*
+import com.ssafy.spico.domain.project.service.ProjectService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -13,9 +16,9 @@ class PracticeController(
     private val finalPracticeService: FinalPracticeService,
     private val finalPracticeReportService: FinalPracticeReportService,
     private val coachingPracticeReportService: CoachingPracticeReportService,
-    private val deletePracticeService: DeletePracticeService
+    private val deletePracticeService: DeletePracticeService,
+    private val projectService: ProjectService,
 ) {
-
     // 연습 삭제
     @DeleteMapping("/{practiceId}")
     fun deletePractice(
@@ -112,5 +115,17 @@ class PracticeController(
     ): ApiResponse<CoachingPracticeReportResponseDto> {
 
         return ApiResponse.success(coachingPracticeReportService.coachingPracticeReport(projectId, practiceId))
+    }
+
+    @GetMapping
+    fun getPractices(
+        @UserId userId: Int,
+        @PathVariable projectId: Int,
+        @RequestParam(name = "practice-filter", required = false) practiceFilter: PracticeType?,
+        @RequestParam(required = false) cursor: Int?,
+        @RequestParam size: Int
+    ): ApiResponse<PracticeListResponseDto> {
+        val practices = projectService.getPractices(userId, projectId, practiceFilter, cursor, size)
+        return ApiResponse.success(PracticeListResponseDto(practices.map { it.toResponse()} ))
     }
 }

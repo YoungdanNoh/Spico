@@ -1,6 +1,8 @@
 package com.ssafy.spico.common.resolver
 
 import com.ssafy.spico.common.annotaion.UserId
+import com.ssafy.spico.domain.user.exception.user.UserError
+import com.ssafy.spico.domain.user.exception.user.UserException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -24,6 +26,6 @@ class UserIdArgumentResolver(
         binderFactory: WebDataBinderFactory?
     ): Any? {
         val request = webRequest.nativeRequest as HttpServletRequest
-        return request.getAttribute("userId") ?: throw RuntimeException("userId not found in request")
+        return request.getAttribute("userId") ?: throw UserException(UserError.USER_NOT_FOUND)
     }
 }
