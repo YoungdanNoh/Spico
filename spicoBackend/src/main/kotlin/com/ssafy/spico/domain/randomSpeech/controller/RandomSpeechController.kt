@@ -2,6 +2,7 @@ package com.ssafy.spico.domain.randomSpeech.controller
 
 import com.ssafy.spico.common.response.ApiResponse
 import com.ssafy.spico.domain.randomSpeech.dto.*
+import com.ssafy.spico.domain.randomSpeech.dto.gpt.RandomSpeechListResponseDto
 import com.ssafy.spico.domain.randomSpeech.service.RandomSpeechService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
@@ -13,9 +14,10 @@ class RandomSpeechController(
     @Value("\${user-id}") private val userId: Int
 ) {
     @GetMapping
-    fun getRandomSpeeches(): ApiResponse<List<RandomSpeechResponseDto>> {
+    fun getRandomSpeeches()
+    : ApiResponse<RandomSpeechListResponseDto> {
         val randomSpeeches = randomSpeechService.getRandomSpeechList(userId)
-        return ApiResponse.success(randomSpeeches.map { it.toResponse() })
+        return ApiResponse.success(RandomSpeechListResponseDto(randomSpeeches.map { it.toResponse() }))
     }
 
     @GetMapping("/{randomSpeechId}")
