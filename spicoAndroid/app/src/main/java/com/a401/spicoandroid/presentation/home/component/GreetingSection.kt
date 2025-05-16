@@ -157,39 +157,6 @@ fun GreetingSection(
                                 navController.navigate(NavRoutes.CoachingReport.route)
                             }
                         )
-
-                        CommonButton(
-                            text = "파이널모드",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.FinalModeAudience.route)
-                            }
-                        )
-
-                        CommonButton(
-                            text = "코칭모드",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.CoachingMode.route)
-                            }
-                        )
-
-                        CommonButton(
-                            text = "시작 전 화면체크",
-                            size = ButtonSize.MD,
-                            backgroundColor = Action,
-                            borderColor = Action,
-                            textColor = White,
-                            onClick = {
-                                navController.navigate(NavRoutes.FinalScreenCheck.route)
-                            }
-                        )
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))

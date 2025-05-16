@@ -17,6 +17,7 @@ import com.a401.spicoandroid.presentation.home.dummy.DummyProjectList
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.home.component.ProjectInfoDialog
+import com.a401.spicoandroid.presentation.home.viewmodel.HomeViewModel
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -25,8 +26,13 @@ fun HomeScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     calendarViewModel: WeeklyCalendarViewModel = hiltViewModel(),
-    practiceViewModel: PracticeViewModel
+    practiceViewModel: PracticeViewModel,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+    // 닉네임
+    val nickname by homeViewModel.nickname.collectAsState()
+    val userNameToShow = nickname ?: "사용자"
+    // 주간 달력
     val currentWeekDates by calendarViewModel.currentWeekDates.collectAsState()
     val markedDates by calendarViewModel.markedDates.collectAsState()
 
@@ -47,6 +53,7 @@ fun HomeScreen(
         // 인사말 카드
         GreetingSection(
             navController = navController,
+            username = userNameToShow,
             modifier = Modifier
                 .padding(horizontal = 24.dp, vertical = 24.dp)
         )

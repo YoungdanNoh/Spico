@@ -229,7 +229,6 @@ fun NavGraph(
                 )
             }
 
-
             // 코칭 모드
             composable(NavRoutes.CoachingMode.route) {
                 CoachingModeScreen(navController)
@@ -305,7 +304,9 @@ fun NavGraph(
 
             // 로그인
             composable(NavRoutes.Login.route) {
-                LoginScreen(loginViewModel)
+                LoginScreen(
+                    navController = navController,
+                    loginViewModel = hiltViewModel())
             }
 
             // 에러
