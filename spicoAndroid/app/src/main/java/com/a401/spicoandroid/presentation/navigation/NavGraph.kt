@@ -288,7 +288,9 @@ fun NavGraph(
 
             // 로그인
             composable(NavRoutes.Login.route) {
-                LoginScreen(loginViewModel)
+                LoginScreen(
+                    navController = navController,
+                    loginViewModel = hiltViewModel())
             }
 
             // 에러

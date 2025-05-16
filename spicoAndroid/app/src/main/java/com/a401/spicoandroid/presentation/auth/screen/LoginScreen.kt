@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.Hover
 import com.a401.spicoandroid.common.ui.theme.TextPrimary
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     // onKakaoLoginClick: () -> Unit
+    navController: NavController,
     loginViewModel: LoginViewModel
 ) {
     val imageList = listOf(
@@ -46,6 +48,19 @@ fun LoginScreen(
     val pagerState = rememberPagerState(initialPage = 0) { imageList.size }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    // 로그인 및 로그인 상태
+    val loginSuccess by loginViewModel.loginSuccess.collectAsState()
+    val isLoggedIn by loginViewModel.isLoggedIn.collectAsState()
+
+    // 로그인 상태일 경우, 홈으로 이동
+    if (loginSuccess || isLoggedIn) {
+        LaunchedEffect(Unit) {
+            navController.navigate("home") {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
 
     // 자동 슬라이딩
     LaunchedEffect(Unit) {

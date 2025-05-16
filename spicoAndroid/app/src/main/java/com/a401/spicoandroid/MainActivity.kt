@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import android.Manifest
+import android.util.Log
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.theme.SpeakoAndroidTheme
 import com.a401.spicoandroid.presentation.navigation.NavGraph
@@ -23,6 +24,7 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.a401.spicoandroid.common.ui.bottomsheet.CreateOrPracticeBottomSheet
 import com.a401.spicoandroid.common.ui.component.CommonBottomBar
+import com.kakao.sdk.common.util.Utility.getKeyHash
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -32,6 +34,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val keyHash = getKeyHash(this)
+        Log.d("HASH", keyHash)
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
