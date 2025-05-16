@@ -17,6 +17,7 @@ data class ReportData(
 @Serializable
 data class ReportItem(
     val type: String,
+    val projectId: Int,
     val practiceId: Int,
     val projectName: String,
     val practiceName: String,
@@ -25,10 +26,11 @@ data class ReportItem(
     fun toDomain(): HomeReport {
         return HomeReport(
             type = PracticeType.valueOf(type),
+            projectId = projectId,
             practiceId = practiceId,
             projectName = projectName,
             practiceName = practiceName,
-            reportId = reportsId // ⚠️ 'reportsId' → 'reportId'로 고쳐도 되지만 서버 응답 그대로면 유지
+            reportId = reportsId
         )
     }
 }

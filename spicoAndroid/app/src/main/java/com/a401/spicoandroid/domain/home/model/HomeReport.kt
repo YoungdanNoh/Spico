@@ -6,6 +6,7 @@ enum class PracticeType {
 
 data class HomeReport(
     val type: PracticeType,
+    val projectId: Int,
     val practiceId: Int,
     val projectName: String,
     val practiceName: String,
