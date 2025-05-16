@@ -1,38 +1,97 @@
 package com.a401.spicoandroid.presentation.report.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a401.spicoandroid.common.domain.DataResource
+import com.a401.spicoandroid.domain.practice.usecase.DeletePracticeUseCase
+import com.a401.spicoandroid.domain.report.usecase.GetCoachingReportUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CoachingReportViewModel @Inject constructor() : ViewModel() {
+class CoachingReportViewModel @Inject constructor(
+    private val getCoachingReportUseCase: GetCoachingReportUseCase,
+    private val deletePracticeUseCase: DeletePracticeUseCase
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CoachingReportState())
     val state: StateFlow<CoachingReportState> = _state.asStateFlow()
 
-    init {
-        loadMockReport()
-    }
+    fun fetchCoachingReport(projectId: Int, practiceId: Int) {
+        Log.d("CoachingReport", "📍 fetchCoachingReport() called with projectId=$projectId, practiceId=$practiceId")
 
-    private fun loadMockReport() {
         viewModelScope.launch {
-            _state.value = CoachingReportState(
-                projectName = "자율자율 프로젝트",
-                roundCount = 5,
-                recordUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                volumeStatus = "목소리 크기가 많이 작아요",
-                speedStatus = "말의 속도가 느린 편이에요",
-                pauseCount = 5,
-                pronunciationStatus = "특정 구간에서 발음이 뭉개져요"
-            )
+            _state.update { it.copy(isLoading = true, error = null) }
+            Log.d("CoachingReport", "🔄 State set to loading")
+
+            when (val result = getCoachingReportUseCase(projectId, practiceId)) {
+                is DataResource.Success -> {
+                    Log.d("CoachingReport", "✅ API Success: ${result.data}")
+
+                    _state.update {
+                        val report = result.data
+                        Log.d("CoachingReport", "📝 Report Data: $report")
+
+                        it.copy(
+                            projectName = report.projectName,
+                            roundCount = report.practiceName.filter { ch -> ch.isDigit() }.toIntOrNull() ?: 0,
+                            recordUrl = report.recordUrl,
+                            volumeStatus = when (report.volumeStatus) {
+                                "QUIET" -> "목소리가 작아요"
+                                "MIDDLE" -> "적당한 목소리였어요"
+                                "LOUD" -> "목소리가 커요"
+                                else -> report.volumeStatus
+                            },
+                            speedStatus = when (report.speedStatus) {
+                                "SLOW" -> "말의 속도가 느려요"
+                                "MIDDLE" -> "적당한 속도였어요"
+                                "FAST" -> "말의 속도가 빨라요"
+                                else -> report.speedStatus
+                            },
+                            pauseCount = report.pauseCount,
+                            pronunciationStatus = if (report.pronunciationScore >= 85) {
+                                "발음이 정확해요"
+                            } else {
+                                "특정 구간에서 발음이 부정확해요"
+                            },
+                            isLoading = false
+                        )
+                    }
+                }
+
+                is DataResource.Error -> {
+                    Log.e("CoachingReport", "❌ API Error", result.throwable)
+                    _state.update {
+                        it.copy(isLoading = false, error = result.throwable)
+                    }
+                }
+
+                is DataResource.Loading -> {
+                    Log.d("CoachingReport", "📡 API Loading 상태 받음")
+                    _state.update { it.copy(isLoading = true) }
+                }
+            }
         }
     }
 
-    fun deleteReport() {
+    fun deleteReport(
+        projectId: Int,
+        practiceId: Int,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        viewModelScope.launch {
+            when (val result = deletePracticeUseCase(projectId, practiceId)) {
+                is DataResource.Success -> onSuccess()
+                is DataResource.Error -> onError(result.throwable)
+                else -> Unit
+            }
+        }
     }
 }

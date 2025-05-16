@@ -73,7 +73,7 @@ fun ProjectSelectScreen(
                     iconResId = R.drawable.ic_add_white,
                     text = "새 프로젝트 생성",
                     size = ButtonSize.LG,
-                    onClick = { navController.navigate(NavRoutes.ProjectCreate.route) }
+                    onClick = { navController.navigate(NavRoutes.ProjectCreate.withReset(true)) }
                 )
             }
         },
