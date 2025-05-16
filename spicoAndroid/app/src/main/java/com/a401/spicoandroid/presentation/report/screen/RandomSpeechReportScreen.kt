@@ -91,7 +91,9 @@ fun RandomSpeechReportScreen(
             )
             RandomReportFeedbackSection(feedback = report.feedback)
             RandomReportScriptButton(
-                onClick = { navController.navigate(NavRoutes.VoiceScript.route) }
+                onClick = {
+                    navController.navigate(NavRoutes.VoiceScriptRandom.withId(randomSpeechId))
+                }
             )
         }
 

@@ -26,7 +26,6 @@ import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.openExternalLink
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechExitAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechReadyTimerSection
-import com.a401.spicoandroid.presentation.randomspeech.dummy.DummyRandomSpeechReady
 import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 
 @Composable

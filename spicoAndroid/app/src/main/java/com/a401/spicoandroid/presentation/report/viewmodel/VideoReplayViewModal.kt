@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
-import com.a401.spicoandroid.domain.report.repository.ReportRepository
+import com.a401.spicoandroid.domain.report.repository.RamdomReportRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VideoReplayViewModel @Inject constructor(
     private val app: Application,
-    private val reportRepository: ReportRepository
+    private val ramdomReportRepository: RamdomReportRepository
 ) : ViewModel() {
 
     val player: ExoPlayer = ExoPlayer.Builder(app).build()

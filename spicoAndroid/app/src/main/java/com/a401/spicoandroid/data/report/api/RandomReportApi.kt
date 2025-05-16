@@ -6,7 +6,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface ReportApi {
+interface RandomReportApi {
     @GET("random-speeches/{randomSpeechId}")
     suspend fun getRandomSpeechReport(
         @Path("randomSpeechId") id: Int

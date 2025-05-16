@@ -32,6 +32,9 @@ sealed class NavRoutes(val route: String) {
     object RandomSpeechReport : NavRoutes("randomspeech_report/{randomSpeechId}") {
         fun withId(randomSpeechId: Int) = "randomspeech_report/$randomSpeechId"
     }
+    object VoiceScriptRandom : NavRoutes("voice_script_random/{randomSpeechId}") {
+        fun withId(randomSpeechId: Int) = "voice_script_random/$randomSpeechId"
+    }
 
     // 코칭 모드
     object CoachingMode : NavRoutes("coaching_mode")

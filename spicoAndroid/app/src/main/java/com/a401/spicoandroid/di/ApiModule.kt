@@ -7,7 +7,7 @@ import com.a401.spicoandroid.data.practice.api.PracticeApi
 import com.a401.spicoandroid.data.project.api.ProjectApi
 import com.a401.spicoandroid.data.randomspeech.api.RandomSpeechApi
 import com.a401.spicoandroid.data.report.api.FinalReportApi
-import com.a401.spicoandroid.data.report.api.ReportApi
+import com.a401.spicoandroid.data.report.api.RandomReportApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,8 +47,8 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideReportApi(@NetworkModule.MainRetrofit retrofit: Retrofit): ReportApi {
-        return retrofit.create(ReportApi::class.java)
+    fun provideReportApi(@NetworkModule.MainRetrofit retrofit: Retrofit): RandomReportApi {
+        return retrofit.create(RandomReportApi::class.java)
     }
 
     @Provides
