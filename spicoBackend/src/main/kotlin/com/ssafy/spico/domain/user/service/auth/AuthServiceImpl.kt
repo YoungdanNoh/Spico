@@ -6,6 +6,7 @@ import com.ssafy.spico.domain.user.entity.UserEntity
 import com.ssafy.spico.domain.user.model.toModel
 import com.ssafy.spico.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthServiceImpl(
@@ -14,6 +15,7 @@ class AuthServiceImpl(
     private val jwtUtil: JwtUtil
 ) : AuthService {
 
+    @Transactional
     override fun loginWithKakao(kakaoAccessToken: String): TokenResponse {
         val kakaoUser = kakaoOAuth2Service.getUserInfo(kakaoAccessToken)
 
