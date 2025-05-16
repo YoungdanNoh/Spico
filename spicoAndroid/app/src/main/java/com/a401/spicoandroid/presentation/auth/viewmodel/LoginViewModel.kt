@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.domain.auth.AuthRepository
-import com.a401.spicoandroid.infrastructure.datastore.UserDataStore // ✅ 추가
+import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -22,15 +22,6 @@ class LoginViewModel @Inject constructor(
     // 로그인 성공 여부
     private val _loginSuccess = MutableStateFlow(false)
     val loginSuccess = _loginSuccess.asStateFlow()
-
-    // 앱 실행 시 이미 로그인되어 있는지 확인
-    val isLoggedIn: StateFlow<Boolean> = userDataStore.accessToken
-        .map { !it.isNullOrEmpty() }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            false
-        )
 
     fun onLoginClicked(accessToken: String) {
         viewModelScope.launch {

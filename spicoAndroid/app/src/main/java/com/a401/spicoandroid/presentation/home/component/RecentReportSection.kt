@@ -11,20 +11,12 @@ import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.ui.theme.dropShadow1
-import com.a401.spicoandroid.presentation.home.dummy.DummyPracticeReports
-
-data class PracticeReport(
-    val practiceId: Int,
-    val reportsId: Int,
-    val practiceName: String,
-    val projectName: String
-)
+import com.a401.spicoandroid.domain.home.model.HomeReport
 
 @Composable
 fun RecentReportSection(
     modifier: Modifier = Modifier,
-    reportList: List<PracticeReport> = DummyPracticeReports
-//    reportList: List<PracticeReport> = emptyList()
+    reportList: List<HomeReport>
 ) {
     Column(
         modifier = modifier
@@ -43,7 +35,7 @@ fun RecentReportSection(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp), // 원하는 여백 조절
+                    .height(160.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -66,6 +58,7 @@ fun RecentReportSection(
         }
     }
 }
+
 @Preview(showBackground = true, widthDp = 360)
 @Composable
 fun RecentReportSection_EmptyPreview() {

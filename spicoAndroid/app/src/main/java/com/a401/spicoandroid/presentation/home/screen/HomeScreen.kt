@@ -12,8 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.common.utils.formatDateWithDay
+import com.a401.spicoandroid.common.utils.formatMonthDay
 import com.a401.spicoandroid.presentation.home.component.*
-import com.a401.spicoandroid.presentation.home.dummy.DummyProjectList
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 import com.a401.spicoandroid.presentation.home.component.ProjectInfoDialog
@@ -39,8 +40,11 @@ fun HomeScreen(
     // 클릭된 날짜를 저장
     val selectedDate = remember { mutableStateOf<LocalDate?>(null) }
 
+    // 최근 리포트
+    val recentReports by homeViewModel.recentReports.collectAsState()
+
     LaunchedEffect(Unit) {
-        calendarViewModel.updateProjectList(DummyProjectList)
+        calendarViewModel.fetchCalendarProjects()
     }
 
     Column(
@@ -88,9 +92,9 @@ fun HomeScreen(
 
         // 최근 리포트
         RecentReportSection(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
+            reportList = recentReports
         )
-
         // 하단 푸터
         HomeFooterSection(
             modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
@@ -100,19 +104,18 @@ fun HomeScreen(
 
     // 일정이 있는 날짜 클릭 시만 다이얼로그 표시
     selectedDate.value?.let { clickedDate ->
-        val projectListForDate = DummyProjectList.filter {
-            it.projectLocalDate == clickedDate
-        }
+        val project = calendarViewModel.findProjectByDate(clickedDate)
 
-        if (projectListForDate.isNotEmpty()) {
+        if (project != null) {
             ProjectInfoDialog(
-                dateTitle = "${clickedDate.monthValue}월 ${clickedDate.dayOfMonth}일",
-                projectList = projectListForDate,
+                dateTitle = formatMonthDay(clickedDate),
+                projectList = listOf(project),
                 navController = navController,
                 onDismiss = { selectedDate.value = null }
             )
         } else {
             selectedDate.value = null
         }
+
     }
 }
