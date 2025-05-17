@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.pointerInput
@@ -74,21 +76,30 @@ fun ProjectCreateScreen(
         },
         bottomBar = {
             if (!isFocused.value) {
-                CommonButton(
-                    text = "다음",
-                    size = ButtonSize.LG,
-                    backgroundColor = Action,
-                    borderColor = Action,
-                    textColor = White,
-                    onClick = {
-                        if (isFormValid) {
-                            navController.navigate("project_script_input")
-                        } else {
-                            Toast.makeText(context, "모든 항목을 올바르게 입력해주세요.", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    modifier = Modifier.padding(16.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CommonButton(
+                        text = "다음",
+                        size = ButtonSize.LG,
+                        backgroundColor = Action,
+                        borderColor = Action,
+                        textColor = White,
+                        onClick = {
+                            if (isFormValid) {
+                                navController.navigate("project_script_input")
+                            } else {
+                                Toast.makeText(context, "모든 항목을 올바르게 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                }
             }
         },
         containerColor = White,
