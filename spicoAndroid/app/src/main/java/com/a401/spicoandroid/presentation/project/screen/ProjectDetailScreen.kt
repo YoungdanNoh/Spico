@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
@@ -25,7 +26,8 @@ import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import java.time.LocalDate
 import android.util.Log
-
+import androidx.compose.foundation.lazy.LazyColumn
+import com.a401.spicoandroid.common.utils.formatDateTimeWithDot
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -238,24 +240,26 @@ fun ProjectDetailScreen(
                                 message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
                             )
                         } else {
-                            filteredPractices.forEachIndexed { index, practice ->
-                                CommonList(
-                                    title = "${practice.name ?: "연습"} ${practice.count}회차",
-                                    description = practice.createdAt,
-                                    onClick = {
-                                        if (selectedTab == 1) {
-                                            navController.navigate(
-                                                NavRoutes.FinalReport.createRoute(projectId, practice.id)
-                                            )
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                items(filteredPractices) { practice ->
+                                    CommonList(
+                                        title = "${practice.name ?: "연습"} ${practice.count}회차",
+                                        description = formatDateTimeWithDot(practice.createdAt),
+                                        onClick = {
+                                            if (selectedTab == 1) {
+                                                navController.navigate(
+                                                    NavRoutes.FinalReport.createRoute(projectId, practice.id)
+                                                )
+                                            }
+                                        },
+                                        onLongClick = {
+                                            selectedPracticeId = practice.id
+                                            isBottomSheetVisible = true
                                         }
-                                    },
-                                    onLongClick = {
-                                        selectedPracticeId = practice.id
-                                        isBottomSheetVisible = true
-                                    }
-                                )
-                                if (index != filteredPractices.lastIndex) {
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    )
                                 }
                             }
                         }
