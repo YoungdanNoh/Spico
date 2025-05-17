@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class PracticeViewModel @Inject constructor(
@@ -33,16 +34,19 @@ class PracticeViewModel @Inject constructor(
             when (val result = getPracticeListUseCase(projectId, filter, cursor, size)) {
                 is DataResource.Success -> {
                     _practiceListState.update {
+                        Log.d("PracticeList", "✅ 목록 불러오기 성공: ${result.data}")
                         it.copy(practices = result.data, isLoading = false)
                     }
                 }
                 is DataResource.Error -> {
                     _practiceListState.update {
+                        Log.e("PracticeList", "❌ 목록 불러오기 실패: ${result.throwable}")
                         it.copy(error = result.throwable, isLoading = false)
                     }
                 }
                 is DataResource.Loading -> {
                     _practiceListState.update {
+                        Log.d("PracticeList", "⏳ 목록 불러오는 중")
                         it.copy(isLoading = true)
                     }
                 }

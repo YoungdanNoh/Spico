@@ -305,29 +305,77 @@ fun NavGraph(
             }
 
             // 파이널 모드
-            composable("final_mode_voice") {
-                FinalModeVoiceScreen(navController)
+            composable(
+                route = NavRoutes.FinalModeVoice.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                FinalModeVoiceScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
             }
-            composable("final_mode_audience") {
-                FinalModeAudienceScreen(navController)
+
+            composable(
+                route = NavRoutes.FinalModeAudience.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                FinalModeAudienceScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
             }
+
             composable(
                 route = NavRoutes.FinalModeLoading.route,
-                arguments = listOf(navArgument("type") { type = NavType.StringType })
+                arguments = listOf(
+                    navArgument("type") { type = NavType.StringType },
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
             ) { backStackEntry ->
-                val typeArg = backStackEntry.arguments?.getString("type") ?: "QUESTION"
-                val type = FinalModeLoadingType.valueOf(typeArg)
+                val type = FinalModeLoadingType.valueOf(backStackEntry.arguments?.getString("type")!!)
+                val projectId = backStackEntry.arguments?.getInt("projectId")!!
+                val practiceId = backStackEntry.arguments?.getInt("practiceId")!!
 
                 FinalModeLoadingScreen(
                     navController = navController,
-                    type = type
+                    type = type,
+                    projectId = projectId,
+                    practiceId = practiceId
                 )
             }
+
             composable(
-                route = NavRoutes.FinalModeQnA.route
-            ) {
-                FinalModeQnAScreen(navController = navController)
+                route = NavRoutes.FinalModeQnA.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                FinalModeQnAScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
             }
+
             composable(
                 route = NavRoutes.FinalReport.route,
                 arguments = listOf(
@@ -344,29 +392,6 @@ fun NavGraph(
                     practiceId = practiceId
                 )
             }
-
-            composable(
-                route = NavRoutes.VoiceScript.route,
-                arguments = listOf(
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
-                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-                VoiceScriptScreen(navController, projectId, practiceId)
-            }
-
-            composable(
-                route = NavRoutes.VideoReplay.route,
-                arguments = listOf(navArgument("encodedUrl") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val encodedUrl = backStackEntry.arguments?.getString("encodedUrl") ?: return@composable
-                val decodedUrl = Uri.decode(encodedUrl)
-                VideoReplayScreen(navController = navController, videoUrl = decodedUrl)
-            }
-
-
 
 
             // 로그인

@@ -1,9 +1,7 @@
 package com.a401.spicoandroid.presentation.finalmode.screen
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,10 +21,13 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 @Composable
 fun FinalModeQnAScreen(
     navController: NavController,
+    projectId: Int,
+    practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
     val countdown = viewModel.countdown
     val elapsedTime = viewModel.elapsedTime
     val showConfirm = viewModel.showStopConfirm
@@ -38,15 +39,16 @@ fun FinalModeQnAScreen(
         FinalRecordingCameraService(context, lifecycleOwner)
     }
 
-    // TODO: 나중에 STT 결과로 대체하기
+    // TODO: STT 결과로 대체 예정
     val dummySpeechContent = "Hello everyone, my name is John."
 
     LaunchedEffect(Unit) {
-        viewModel.generateFinalQuestions(
-            projectId = 1,
-            practiceId = 1,
-            speechContent = dummySpeechContent
-        )
+//        viewModel.generateFinalQuestions(
+//            projectId = projectId,
+//            practiceId = practiceId,
+//            speechContent = dummySpeechContent
+//        )
+
         cameraService.startCamera {
             viewModel.startCountdownAndRecording {
                 cameraService.startRecording { uri ->
@@ -63,39 +65,22 @@ fun FinalModeQnAScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 질문 텍스트
         when {
             questionState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(16.dp)
-                )
-                {
+                Box(modifier = Modifier.align(Alignment.TopCenter).padding(16.dp)) {
                     CommonFeedback(FeedbackType.FinalModeQnA("질문을 생성하고 있어요..."))
                 }
             }
             questionState.error != null -> {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(16.dp)
-                )
-                {
+                Box(modifier = Modifier.align(Alignment.TopCenter).padding(16.dp)) {
                     CommonFeedback(FeedbackType.FinalModeQnA("질문 생성에 실패했어요"))
                 }
             }
             questionState.questions.isNotEmpty() -> {
                 val currentQuestion = questionState.questions.getOrNull(currentIndex)
                 currentQuestion?.let {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(16.dp)
-                    ) {
-                        CommonFeedback(
-                            FeedbackType.FinalModeQnA(it.text)
-                        )
+                    Box(modifier = Modifier.align(Alignment.TopCenter).padding(16.dp)) {
+                        CommonFeedback(FeedbackType.FinalModeQnA(it.text))
                     }
                 }
             }
@@ -141,7 +126,16 @@ fun FinalModeQnAScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     viewModel.hideConfirmDialog()
-                    navController.navigate(NavRoutes.FinalModeLoading.withType(FinalModeLoadingType.REPORT))
+
+                    Log.d("FinalFlow", "🧠 QnA 종료: projectId=$projectId, practiceId=$practiceId")
+
+                    navController.navigate(
+                        NavRoutes.FinalModeLoading.withArgs(
+                            FinalModeLoadingType.REPORT,
+                            projectId,
+                            practiceId
+                        )
+                    )
                 },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,

@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.data.finalmode.repository
 
+import android.util.Log
 import com.a401.spicoandroid.common.data.dto.getOrThrow
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.common.utils.safeApiCall
@@ -27,6 +28,11 @@ class FinalModeRepositoryImpl @Inject constructor(
         practiceId: Int,
         request: FinalModeResultRequestDto
     ): DataResource<FinalModeResult> = safeApiCall {
-        api.finishFinalPractice(projectId, practiceId, request).getOrThrow { it.toDomain() }
+        val rawResponse = api.finishFinalPractice(projectId, practiceId, request)
+
+        Log.d("FinalFlow", "응답 전체: $rawResponse")
+
+        rawResponse.getOrThrow { it.toDomain() }
     }
+
 }
