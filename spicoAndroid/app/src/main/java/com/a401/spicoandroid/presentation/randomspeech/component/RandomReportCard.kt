@@ -33,7 +33,7 @@ fun RandomReportCardPreview() {
             id = 1,
             topic = "economy",
             title = "MZ는 개복치다",
-            dateTime = "2025-05-11 15:00",
+            dateTime = "2025.05.11 월요일",
             onClick = {},
             onLongClick = {}
         )

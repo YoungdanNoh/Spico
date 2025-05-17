@@ -4,8 +4,19 @@ import android.net.Uri
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
 
 sealed class NavRoutes(val route: String) {
+    // 홈, 프로필
     object Home : NavRoutes("home")
     object Profile : NavRoutes("profile")
+
+    object HomeCoachingReportDetail : NavRoutes("home_coaching_report/{projectId}/{practiceId}") {
+        fun createRoute(projectId: Int, practiceId: Int) =
+            "home_coaching_report/$projectId/$practiceId"
+    }
+
+    object HomeFinalReportDetail : NavRoutes("home_final_report/{projectId}/{practiceId}") {
+        fun createRoute(projectId: Int, practiceId: Int) =
+            "home_final_report/$projectId/$practiceId"
+    }
 
     // 발표 목록
     object ProjectCreate : NavRoutes("project_create") {
