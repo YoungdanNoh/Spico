@@ -41,6 +41,32 @@ class PracticeViewModel @Inject constructor(
     var questionCount: Int = 1
     var answerTimeLimit: Int = 90 // 단위: 초
 
+    // QnA 관련 설정값 백업용
+    var lastQnAQuestionCount: Int = 1
+    var lastQnAAnswerTimeLimit: Int = 90
+
+    // 파이널 모드 설정 시, ViewModel 갱신
+    fun updateQuestionCount(value: Int) {
+        questionCount = value
+        lastQnAQuestionCount = value
+    }
+
+    fun updateAnswerTimeLimit(value: Int) {
+        answerTimeLimit = value
+        lastQnAAnswerTimeLimit = value
+    }
+
+
+    // 파이널 모드 설정 유효성 보정 함수
+    private fun getSafeFinalPracticeRequest(): FinalPracticeRequest {
+        return FinalPracticeRequest(
+            hasAudience = hasAudience,
+            hasQnA = hasQnA,
+            questionCount = lastQnAQuestionCount,
+            answerTimeLimit = lastQnAAnswerTimeLimit
+        )
+    }
+
     // 생성된 연습 ID
     private val _practiceId = MutableStateFlow<Int?>(null)
     val practiceId: StateFlow<Int?> = _practiceId
@@ -118,12 +144,9 @@ class PracticeViewModel @Inject constructor(
                 }
 
                 PracticeMode.FINAL -> {
-                    val request = FinalPracticeRequest(
-                        hasAudience = hasAudience,
-                        hasQnA = hasQnA,
-                        questionCount = questionCount,
-                        answerTimeLimit = answerTimeLimit
-                    )
+                    val request = getSafeFinalPracticeRequest()
+
+                    Log.d("FinalFlow", "📤 FinalPracticeRequest: $request")
                     when (val result = createFinalPracticeUseCase(projectId, request)) {
                         is DataResource.Success -> {
                             _practiceId.value = result.data
@@ -152,6 +175,10 @@ class PracticeViewModel @Inject constructor(
             when (val result = getFinalSettingUseCase()) {
                 is DataResource.Success -> {
                     _finalSetting.value = result.data
+                    result.data?.let {
+                        lastQnAQuestionCount = it.questionCount
+                        lastQnAAnswerTimeLimit = it.answerTimeLimit
+                    }
                 }
                 is DataResource.Error -> {
                     Log.e("PracticeViewModel", "FinalSetting 불러오기 실패", result.throwable)
@@ -170,15 +197,16 @@ class PracticeViewModel @Inject constructor(
         onFailure: (Throwable) -> Unit = {}
     ) {
         viewModelScope.launch {
-            val request = FinalPracticeRequest(
-                hasAudience = hasAudience,
-                hasQnA = hasQnA,
-                questionCount = questionCount,
-                answerTimeLimit = answerTimeLimit
-            )
+            val request = getSafeFinalPracticeRequest()
             Log.d("FinalSettingRequest", "hasAudience: $hasAudience, hasQnA: $hasQnA, questionCount: $questionCount, answerTimeLimit: $answerTimeLimit")
             when (val result = saveFinalSettingUseCase(request)) {
                 is DataResource.Success -> {
+                    _finalSetting.value = FinalSetting(
+                        hasAudience = request.hasAudience,
+                        hasQnA = request.hasQnA,
+                        questionCount = request.questionCount,
+                        answerTimeLimit = request.answerTimeLimit
+                    )
                     onSuccess()
                 }
 

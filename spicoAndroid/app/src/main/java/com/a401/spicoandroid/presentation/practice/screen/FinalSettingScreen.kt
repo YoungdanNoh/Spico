@@ -30,19 +30,26 @@ fun FinalSettingScreen(
     var questionCount by remember { mutableIntStateOf(viewModel.questionCount) }
     var answerTimeSec by remember { mutableIntStateOf(viewModel.answerTimeLimit) }
 
+    // UI 내에서 백업 상태 기억
+    var backupQuestionCount by remember { mutableIntStateOf(viewModel.questionCount) }
+    var backupAnswerTime by remember { mutableIntStateOf(viewModel.answerTimeLimit) }
+
+
     // 에러 상태
     var questionError by remember { mutableStateOf(false) }
     var answerTimeError by remember { mutableStateOf(false) }
 
     // 화면 진입 시 서버에서 설정값 불러오기
-    LaunchedEffect(Unit) {
-        viewModel.fetchFinalSetting()
-    }
-    if (setting != null) {
-        hasAudience = setting!!.hasAudience
-        hasQnA = setting!!.hasQnA
-        questionCount = setting!!.questionCount
-        answerTimeSec = setting!!.answerTimeLimit
+    LaunchedEffect(setting) {
+        setting?.let {
+            hasAudience = it.hasAudience
+            hasQnA = it.hasQnA
+            questionCount = maxOf(it.questionCount, 1)
+            answerTimeSec = maxOf(it.answerTimeLimit, 30)
+
+            backupQuestionCount = it.questionCount
+            backupAnswerTime = it.answerTimeLimit
+        }
     }
 
     Scaffold(
@@ -69,10 +76,13 @@ fun FinalSettingScreen(
                     text = "다음",
                     size = ButtonSize.LG,
                     onClick = {
+                        val safeQuestionCount = if (hasQnA) questionCount else 1
+                        val safeAnswerTime = if (hasQnA) answerTimeSec else 30
+
                         viewModel.hasAudience = hasAudience
                         viewModel.hasQnA = hasQnA
-                        viewModel.questionCount = questionCount
-                        viewModel.answerTimeLimit = answerTimeSec
+                        viewModel.questionCount = safeQuestionCount
+                        viewModel.answerTimeLimit = safeAnswerTime
 
                         viewModel.saveFinalSetting(
                             onSuccess = {
@@ -107,7 +117,18 @@ fun FinalSettingScreen(
             SettingToggleItem(
                 title = "질의응답 여부",
                 checked = hasQnA,
-                onToggle = { hasQnA = it }
+                onToggle = {
+                    hasQnA = it
+                    viewModel.hasQnA = it
+                    if (it) {
+                        questionCount = backupQuestionCount
+                        answerTimeSec = backupAnswerTime
+                    } else {
+                        backupQuestionCount = questionCount
+                        backupAnswerTime = answerTimeSec
+                    }
+
+                }
             )
 
             // 질문 개수 (최소 1, 최대 3)
@@ -117,6 +138,7 @@ fun FinalSettingScreen(
                 onIncrement = {
                     if (questionCount < 3) {
                         questionCount++
+                        viewModel.updateQuestionCount(questionCount)
                         questionError = false
                     } else {
                         questionError = true
@@ -125,6 +147,7 @@ fun FinalSettingScreen(
                 onDecrement = {
                     if (questionCount > 1) {
                         questionCount--
+                        viewModel.updateQuestionCount(questionCount)
                         questionError = false
                     } else {
                         questionError = true
@@ -142,6 +165,7 @@ fun FinalSettingScreen(
                 onIncrement = {
                     if (answerTimeSec < 180) {
                         answerTimeSec += 30
+                        viewModel.updateAnswerTimeLimit(answerTimeSec)
                         answerTimeError = false
                     } else {
                         answerTimeError = true
@@ -150,6 +174,7 @@ fun FinalSettingScreen(
                 onDecrement = {
                     if (answerTimeSec > 30) {
                         answerTimeSec -= 30
+                        viewModel.updateAnswerTimeLimit(answerTimeSec)
                         answerTimeError = false
                     } else {
                         answerTimeError = true

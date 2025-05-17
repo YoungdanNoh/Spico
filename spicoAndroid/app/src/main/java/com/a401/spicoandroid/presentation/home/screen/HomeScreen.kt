@@ -119,7 +119,7 @@ fun HomeScreen(
         )
         // 하단 푸터
         HomeFooterSection(
-            modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
+            modifier = Modifier.padding(start = 24.dp, end = 20.dp, bottom = 16.dp)
         )
         Spacer(modifier = Modifier.height(36.dp))
     }
