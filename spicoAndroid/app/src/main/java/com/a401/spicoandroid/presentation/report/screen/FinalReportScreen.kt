@@ -2,6 +2,7 @@ package com.a401.spicoandroid.presentation.report.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
@@ -158,15 +159,19 @@ fun FinalReportScreen(
                         }
                     }
 
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         CommonButton(
                             text = "음성 스크립트",
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 navController.navigate(
                                     NavRoutes.VoiceScript.withArgs(projectId, practiceId)
                                 )
                             }
                         )
+
                         CommonButton(
                             text = "발표 영상 다시 보기",
                             onClick = {

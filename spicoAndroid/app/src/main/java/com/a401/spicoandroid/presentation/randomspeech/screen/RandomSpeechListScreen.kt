@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.common.utils.formatDateTimeWithDay
-import com.a401.spicoandroid.common.utils.formatDateWithDay
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomReportCard
@@ -114,7 +113,7 @@ fun RandomSpeechListScreen(
                             id = item.id,
                             topic = item.topic,
                             title = item.title,
-                            dateTime = formatDateWithDay(item.dateTime),
+                            dateTime = formatDateTimeWithDay(item.dateTime),
                             onClick = onProjectClick,
                             onLongClick = {
                                 selectedId = item.id

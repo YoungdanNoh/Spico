@@ -75,6 +75,7 @@ fun NavGraph(
             startDestination = NavRoutes.Home.route,
             modifier = modifier
         ) {
+            // 홈
             composable(NavRoutes.Home.route) {
                 HomeScreen(
                     navController = navController,
@@ -84,7 +85,44 @@ fun NavGraph(
                 )
             }
 
-            // 마이페이지
+            composable(
+                route = NavRoutes.HomeCoachingReportDetail.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType },
+                    navArgument("source") { type = NavType.StringType; defaultValue = "home" }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+                val source = backStackEntry.arguments?.getString("source") ?: "home"
+
+                CoachingReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
+            }
+
+            composable(
+                route = NavRoutes.HomeFinalReportDetail.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType },
+                    navArgument("source") { type = NavType.StringType; defaultValue = "home" }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+                val source = backStackEntry.arguments?.getString("source") ?: "home"
+
+                FinalReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
+            }
+            // 프로필
             composable(NavRoutes.Profile.route){
                 MyPageScreen(navController, modifier)
             }
