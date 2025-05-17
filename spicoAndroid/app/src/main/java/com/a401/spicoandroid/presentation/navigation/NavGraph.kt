@@ -315,6 +315,7 @@ fun NavGraph(
                     composable("final_check") {
                         FinalScreenCheckScreen(
                             navController = childNavController,
+                            parentNavController = navController,
                             practiceViewModel = practiceViewModel,
                             finalModeViewModel = sharedViewModel
                         )

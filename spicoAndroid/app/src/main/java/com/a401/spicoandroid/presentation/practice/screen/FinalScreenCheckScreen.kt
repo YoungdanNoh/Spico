@@ -25,6 +25,7 @@ import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 @Composable
 fun FinalScreenCheckScreen(
     navController: NavController,
+    parentNavController: NavController,
     practiceViewModel: PracticeViewModel,
     finalModeViewModel: FinalModeViewModel
 ) {
@@ -37,7 +38,7 @@ fun FinalScreenCheckScreen(
                     IconButton(
                         iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로가기",
-                        onClick = { navController.popBackStack() }
+                        onClick = { parentNavController.popBackStack()  }
                     )
                 }
             )
