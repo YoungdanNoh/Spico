@@ -26,6 +26,8 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import java.time.LocalDate
 import android.util.Log
 
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProjectDetailScreen(
@@ -65,18 +67,16 @@ fun ProjectDetailScreen(
 
     var selectedPracticeId by remember { mutableIntStateOf(-1) }
 
+
+
     LaunchedEffect(Unit) {
         viewModel.fetchProjectDetail(projectId)
     }
 
     LaunchedEffect(selectedTab) {
-        val filter = when (selectedTab) {
-            1 -> "final"
-            2 -> "coaching"
-            else -> null // 0번: 전체
-        }
+        val filter: String? = null
 
-        Log.d("PracticeList", "📥 테스트용 연습 목록 불러오기: projectId=$projectId, filter=final")
+        Log.d("PracticeList", "📥 연습 목록 요청: projectId=$projectId, filter=$filter")
 
         practiceViewModel.fetchPracticeList(
             projectId = projectId,
@@ -105,6 +105,12 @@ fun ProjectDetailScreen(
             minute = (it.time % 3600) / 60
             second = it.time % 60
         }
+    }
+
+    val filteredPractices = when (selectedTab) {
+        1 -> practiceState.practices.filter { it.finalCnt != null }
+        2 -> practiceState.practices.filter { it.coachingCnt != null }
+        else -> practiceState.practices
     }
 
 
@@ -232,17 +238,14 @@ fun ProjectDetailScreen(
                                 message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
                             )
                         } else {
-                            practiceState.practices.forEachIndexed { index, practice ->
+                            filteredPractices.forEachIndexed { index, practice ->
                                 CommonList(
-                                    title = "${practice.name} ${practice.count}회차",
+                                    title = "${practice.name ?: "연습"} ${practice.count}회차",
                                     description = practice.createdAt,
                                     onClick = {
-                                        if (selectedTab == 1) { // 파이널 모드 리포트
+                                        if (selectedTab == 1) {
                                             navController.navigate(
-                                                NavRoutes.FinalReport.createRoute(
-                                                    projectId = projectId,
-                                                    practiceId = practice.id
-                                                )
+                                                NavRoutes.FinalReport.createRoute(projectId, practice.id)
                                             )
                                         }
                                     },
@@ -251,7 +254,7 @@ fun ProjectDetailScreen(
                                         isBottomSheetVisible = true
                                     }
                                 )
-                                if (index != practiceState.practices.lastIndex) {
+                                if (index != filteredPractices.lastIndex) {
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
                             }

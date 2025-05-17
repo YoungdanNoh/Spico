@@ -134,13 +134,23 @@ fun FinalModeVoiceScreen(
 
                     Log.d("FinalFlow", "🛑 녹화 종료. projectId=$projectId, practiceId=$practiceId")
 
-                    navController.navigate(
-                        NavRoutes.FinalModeLoading.withArgs(
-                            FinalModeLoadingType.QUESTION,
-                            projectId,
-                            practiceId
+                    if (viewModel.getHasQnA()) {
+                        navController.navigate(
+                            NavRoutes.FinalModeLoading.withArgs(
+                                FinalModeLoadingType.QUESTION,
+                                projectId,
+                                practiceId
+                            )
                         )
-                    )
+                    } else {
+                        navController.navigate(
+                            NavRoutes.FinalModeLoading.withArgs(
+                                FinalModeLoadingType.REPORT,
+                                projectId,
+                                practiceId
+                            )
+                        )
+                    }
                 },
                 onCancel = { viewModel.hideAllDialogs() },
                 onDismissRequest = { viewModel.hideAllDialogs() },

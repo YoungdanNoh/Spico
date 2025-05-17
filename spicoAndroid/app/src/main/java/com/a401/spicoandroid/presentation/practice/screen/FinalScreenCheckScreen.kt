@@ -25,9 +25,9 @@ import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 @Composable
 fun FinalScreenCheckScreen(
     navController: NavController,
-    viewModel: PracticeViewModel = hiltViewModel()
+    practiceViewModel: PracticeViewModel,
+    finalModeViewModel: FinalModeViewModel
 ) {
-    val finalModeViewModel: FinalModeViewModel = hiltViewModel()
 
     Scaffold(
         topBar = {
@@ -53,19 +53,23 @@ fun FinalScreenCheckScreen(
                     text = "시작하기",
                     size = ButtonSize.LG,
                     onClick = {
-                        viewModel.createPractice(
+                        practiceViewModel.createPractice(
                             onSuccess = {
-                                val practiceId = viewModel.practiceId.value
-                                val projectId = viewModel.selectedProject?.id
+                                val practiceId = practiceViewModel.practiceId.value
+                                val projectId = practiceViewModel.selectedProject?.id
 
                                 Log.d("FinalFlow", "✅ createPractice 성공: projectId=$projectId, practiceId=$practiceId")
 
                                 if (practiceId != null && projectId != null) {
-                                    if (viewModel.hasAudience) {
+
+                                    if (practiceViewModel.hasAudience) {
                                         navController.navigate(NavRoutes.FinalModeAudience.withArgs(projectId, practiceId))
                                     } else {
                                         navController.navigate(NavRoutes.FinalModeVoice.withArgs(projectId, practiceId))
                                     }
+
+                                    finalModeViewModel.setPracticeId(practiceId)
+                                    finalModeViewModel.setHasQnA(practiceViewModel.hasQnA)
                                 }
                             },
                             onFailure = {

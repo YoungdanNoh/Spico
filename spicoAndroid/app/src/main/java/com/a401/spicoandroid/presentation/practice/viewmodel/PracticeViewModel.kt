@@ -62,10 +62,11 @@ class PracticeViewModel @Inject constructor(
         return FinalPracticeRequest(
             hasAudience = hasAudience,
             hasQnA = hasQnA,
-            questionCount = lastQnAQuestionCount,
-            answerTimeLimit = lastQnAAnswerTimeLimit
+            questionCount = if (hasQnA) lastQnAQuestionCount else 1,
+            answerTimeLimit = if (hasQnA) lastQnAAnswerTimeLimit else 30
         )
     }
+
 
     // 생성된 연습 ID
     private val _practiceId = MutableStateFlow<Int?>(null)

@@ -2,12 +2,14 @@ package com.a401.spicoandroid.presentation.navigation
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.infrastructure.speech.SpeechTestScreen
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
@@ -19,6 +21,7 @@ import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScree
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeQnAScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
+import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
@@ -205,12 +208,7 @@ fun NavGraph(
                     viewModel = practiceViewModel
                 )
             }
-            composable(NavRoutes.FinalScreenCheck.route) {
-                FinalScreenCheckScreen(
-                    navController = navController,
-                    viewModel = practiceViewModel
-                )
-            }
+
             // 랜덤 스피치
             composable(NavRoutes.RandomSpeechLanding.route) {
                 RandomSpeechLandingScreen()
@@ -305,92 +303,94 @@ fun NavGraph(
             }
 
             // 파이널 모드
-            composable(
-                route = NavRoutes.FinalModeVoice.route,
-                arguments = listOf(
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
-                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+            composable(NavRoutes.FinalModeRoot.route) {
+                val parentEntry = remember { navController.getBackStackEntry(NavRoutes.FinalModeRoot.route) }
+                val sharedViewModel: FinalModeViewModel = hiltViewModel(parentEntry)
+                val childNavController = rememberNavController()
 
-                FinalModeVoiceScreen(
-                    navController = navController,
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
-            }
-
-            composable(
-                route = NavRoutes.FinalModeAudience.route,
-                arguments = listOf(
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
-                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-
-                FinalModeAudienceScreen(
-                    navController = navController,
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
-            }
-
-            composable(
-                route = NavRoutes.FinalModeLoading.route,
-                arguments = listOf(
-                    navArgument("type") { type = NavType.StringType },
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val type = FinalModeLoadingType.valueOf(backStackEntry.arguments?.getString("type")!!)
-                val projectId = backStackEntry.arguments?.getInt("projectId")!!
-                val practiceId = backStackEntry.arguments?.getInt("practiceId")!!
-
-                FinalModeLoadingScreen(
-                    navController = navController,
-                    type = type,
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
-            }
-
-            composable(
-                route = NavRoutes.FinalModeQnA.route,
-                arguments = listOf(
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
-                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-
-                FinalModeQnAScreen(
-                    navController = navController,
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
-            }
-
-            composable(
-                route = NavRoutes.FinalReport.route,
-                arguments = listOf(
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
-                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-
-                FinalReportScreen(
-                    navController = navController,
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
+                NavHost(
+                    navController = childNavController,
+                    startDestination = "final_check"
+                ) {
+                    composable("final_check") {
+                        FinalScreenCheckScreen(
+                            navController = childNavController,
+                            practiceViewModel = practiceViewModel,
+                            finalModeViewModel = sharedViewModel
+                        )
+                    }
+                    composable("final_mode_voice/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeVoiceScreen(
+                            navController = childNavController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable("final_mode_audience/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeAudienceScreen(
+                            navController = childNavController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable("final_mode_loading/{type}/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("type") { type = NavType.StringType },
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeLoadingScreen(
+                            navController = childNavController,
+                            type = FinalModeLoadingType.valueOf(args.getString("type")!!),
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable("final_mode_qna/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeQnAScreen(
+                            navController = childNavController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable("final_mode_report/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalReportScreen(
+                            navController = childNavController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                        )
+                    }
+                }
             }
 
 
