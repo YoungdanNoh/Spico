@@ -45,5 +45,5 @@ data class AnswerDto(
 )
 
 fun FinalModeResultResponseDto.toDomain(): FinalModeResult {
-    return FinalModeResult(presignedUrl = this.presignedUrl)
+    return FinalModeResult(presignedUrl = this.presignedUrl ?: "")
 }

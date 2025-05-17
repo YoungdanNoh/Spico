@@ -1,53 +1,43 @@
 package com.a401.spicoandroid.presentation.finalmode.screen
 
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.a401.spicoandroid.presentation.navigation.NavRoutes
-import com.a401.spicoandroid.infrastructure.camera.FinalRecordingCameraService
-import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.timer.rememberElapsedSeconds
-import com.a401.spicoandroid.common.ui.component.ButtonSize
-import com.a401.spicoandroid.common.ui.component.CommonAlert
-import com.a401.spicoandroid.common.ui.component.CommonButton
-import com.a401.spicoandroid.common.ui.component.CommonTimer
-import com.a401.spicoandroid.common.ui.component.TimerType
+import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.infrastructure.camera.FinalRecordingCameraService
 import com.a401.spicoandroid.presentation.finalmode.component.VideoBackgroundPlayer
-
+import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun FinalModeAudienceScreen(
     navController: NavController,
+    projectId: Int,
+    practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
     val countdown = viewModel.countdown
     val elapsedTime = viewModel.elapsedTime
+    val elapsedSeconds = rememberElapsedSeconds(isRunning = countdown < 0)
 
     val cameraService = remember {
         FinalRecordingCameraService(context, lifecycleOwner)
     }
-
-    val elapsedSeconds = rememberElapsedSeconds(
-        isRunning = countdown < 0
-    )
 
     LaunchedEffect(Unit) {
         cameraService.startCamera {
@@ -100,7 +90,6 @@ fun FinalModeAudienceScreen(
             )
         }
 
-        // 30초 이상
         if (viewModel.showNormalExitDialog) {
             CommonAlert(
                 title = "파이널 모드를\n종료하시겠습니까?",
@@ -109,9 +98,16 @@ fun FinalModeAudienceScreen(
                     viewModel.hideAllDialogs()
                     viewModel.stopRecording()
                     viewModel.stopAudio()
-                    cameraService.stopRecording {
-                        navController.navigate(NavRoutes.FinalModeLoading.withType(FinalModeLoadingType.QUESTION))
-                    }
+
+                    Log.d("FinalFlow", "🛑 녹화 종료. projectId=$projectId, practiceId=$practiceId")
+
+                    navController.navigate(
+                        NavRoutes.FinalModeLoading.withArgs(
+                            FinalModeLoadingType.QUESTION,
+                            projectId,
+                            practiceId
+                        )
+                    )
                 },
                 onCancel = { viewModel.hideAllDialogs() },
                 onDismissRequest = { viewModel.hideAllDialogs() },
@@ -126,7 +122,6 @@ fun FinalModeAudienceScreen(
             )
         }
 
-        // 30초 미만
         if (viewModel.showEarlyExitDialog) {
             CommonAlert(
                 title = "30초 미만의 발표는\n리포트가 제공되지 않아요.\n종료하시겠어요?",
@@ -136,9 +131,7 @@ fun FinalModeAudienceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        navController.navigate(
-                            NavRoutes.ProjectList.route
-                        )
+                        navController.navigate(NavRoutes.ProjectList.route)
                     }
                 },
                 onCancel = { viewModel.hideAllDialogs() },

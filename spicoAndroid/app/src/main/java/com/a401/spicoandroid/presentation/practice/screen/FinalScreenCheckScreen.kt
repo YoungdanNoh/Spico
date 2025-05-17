@@ -17,6 +17,8 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.component.CameraPreview
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
@@ -25,6 +27,8 @@ fun FinalScreenCheckScreen(
     navController: NavController,
     viewModel: PracticeViewModel = hiltViewModel()
 ) {
+    val finalModeViewModel: FinalModeViewModel = hiltViewModel()
+
     Scaffold(
         topBar = {
             CommonTopBar(
@@ -51,17 +55,26 @@ fun FinalScreenCheckScreen(
                     onClick = {
                         viewModel.createPractice(
                             onSuccess = {
-                                if (viewModel.hasAudience) {
-                                    navController.navigate("final_mode_audience")
-                                } else {
-                                    navController.navigate("final_mode_voice")
+                                val practiceId = viewModel.practiceId.value
+                                val projectId = viewModel.selectedProject?.id
+
+                                Log.d("FinalFlow", "✅ createPractice 성공: projectId=$projectId, practiceId=$practiceId")
+
+                                if (practiceId != null && projectId != null) {
+                                    if (viewModel.hasAudience) {
+                                        navController.navigate(NavRoutes.FinalModeAudience.withArgs(projectId, practiceId))
+                                    } else {
+                                        navController.navigate(NavRoutes.FinalModeVoice.withArgs(projectId, practiceId))
+                                    }
                                 }
                             },
                             onFailure = {
-                                Log.e("FinalScreenCheck", "연습 생성 실패", it)
+                                Log.e("FinalFlow", "❌ createPractice 실패", it)
                             }
                         )
+
                     }
+
                 )
             }
         },
