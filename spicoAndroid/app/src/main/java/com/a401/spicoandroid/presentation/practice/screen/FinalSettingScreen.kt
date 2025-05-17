@@ -1,6 +1,5 @@
 package com.a401.spicoandroid.presentation.practice.screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +24,7 @@ fun FinalSettingScreen(
     viewModel: PracticeViewModel
 ) {
     // ViewModel
+    val setting by viewModel.finalSetting.collectAsState()
     var hasAudience by remember { mutableStateOf(viewModel.hasAudience) }
     var hasQnA by remember { mutableStateOf(viewModel.hasQnA) }
     var questionCount by remember { mutableIntStateOf(viewModel.questionCount) }
@@ -37,10 +37,12 @@ fun FinalSettingScreen(
     // 화면 진입 시 서버에서 설정값 불러오기
     LaunchedEffect(Unit) {
         viewModel.fetchFinalSetting()
-        hasAudience = viewModel.hasAudience
-        hasQnA = viewModel.hasQnA
-        questionCount = viewModel.questionCount
-        answerTimeSec = viewModel.answerTimeLimit
+    }
+    if (setting != null) {
+        hasAudience = setting!!.hasAudience
+        hasQnA = setting!!.hasQnA
+        questionCount = setting!!.questionCount
+        answerTimeSec = setting!!.answerTimeLimit
     }
 
     Scaffold(

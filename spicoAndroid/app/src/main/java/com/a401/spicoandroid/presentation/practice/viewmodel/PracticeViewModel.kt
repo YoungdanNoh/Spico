@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.data.practice.dto.FinalPracticeRequest
+import com.a401.spicoandroid.domain.practice.model.FinalSetting
 import com.a401.spicoandroid.domain.practice.usecase.CreateCoachingPracticeUseCase
 import com.a401.spicoandroid.domain.practice.usecase.CreateFinalPracticeUseCase
 import com.a401.spicoandroid.domain.practice.usecase.GetFinalSettingUseCase
@@ -48,6 +49,9 @@ class PracticeViewModel @Inject constructor(
     private val _projectList = MutableStateFlow<List<Project>>(emptyList())
     val projectList: StateFlow<List<Project>> = _projectList.asStateFlow()
 
+    // 파이널 모드 세팅값 상태
+    private val _finalSetting = MutableStateFlow<FinalSetting?>(null)
+    val finalSetting: StateFlow<FinalSetting?> = _finalSetting
     /**
      * 프로젝트 리스트 조회
      * 홈화면 등에서 연습 프로젝트 선택 시 사용됨
@@ -147,18 +151,12 @@ class PracticeViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = getFinalSettingUseCase()) {
                 is DataResource.Success -> {
-                    val setting = result.data
-                    hasAudience = setting.hasAudience
-                    hasQnA = setting.hasQnA
-                    questionCount = setting.questionCount
-                    answerTimeLimit = setting.answerTimeLimit
+                    _finalSetting.value = result.data
                 }
-
                 is DataResource.Error -> {
                     Log.e("PracticeViewModel", "FinalSetting 불러오기 실패", result.throwable)
                 }
-
-                is DataResource.Loading -> Unit
+                else -> Unit
             }
         }
     }
