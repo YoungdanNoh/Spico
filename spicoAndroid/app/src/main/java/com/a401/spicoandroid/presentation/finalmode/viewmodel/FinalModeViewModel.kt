@@ -230,5 +230,18 @@ class FinalModeViewModel @Inject constructor(
             onResult(result)
         }
     }
+
+    private var hasQnA: Boolean = false
+    fun setHasQnA(value: Boolean) {
+        Log.d("FinalFlow", "📥 setHasQnA called with: $value")
+        hasQnA = value
+    }
+
+    fun getHasQnA(): Boolean {
+        Log.d("FinalFlow", "📤 getHasQnA returns: $hasQnA")
+        return hasQnA
+    }
+
+
 }
 

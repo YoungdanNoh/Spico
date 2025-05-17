@@ -55,7 +55,6 @@ fun FinalModeLoadingScreen(
 
                 val questions = viewModel.finalQuestionState.value.questions
 
-// 새로 추가
                 if (questions.isEmpty()) {
                     Log.w("FinalFlow", "⚠️ 질문 리스트가 비어 있음 - 0.5초 대기 후 재시도")
                     delay(500) // 잠깐 기다림
@@ -63,8 +62,9 @@ fun FinalModeLoadingScreen(
 
                 val freshQuestions = viewModel.finalQuestionState.value.questions
 
-                val answers = if (freshQuestions.isEmpty()) {
-                    Log.w("FinalFlow", "⚠️ 여전히 비어 있어 대체 답변 사용")
+                val answers = if (!viewModel.getHasQnA()) {
+                    emptyList()
+                } else if (freshQuestions.isEmpty()) {
                     listOf(
                         AnswerDto(questionId = 1, answer = "This is a default answer."),
                         AnswerDto(questionId = 2, answer = "Another default answer.")
@@ -82,7 +82,6 @@ fun FinalModeLoadingScreen(
                     }
                 }
 
-
                 val request = FinalModeResultRequestDto(
                     fileName = "temp_video.mp4",
                     speechContent = "Today, I will talk about the importance of communication skills in public speaking.",
@@ -90,14 +89,14 @@ fun FinalModeLoadingScreen(
                     pauseCount = 2,
                     pauseScore = 80,
                     speedScore = 90,
-                    speedStatus = "MIDDLE",
+                    speedStatus = "FAST",
                     volumeScore = 88,
                     volumeStatus = "LOUD",
                     volumeRecords = listOf(
-                        VolumeRecordDto("2025-05-17T15:00:00Z", "2025-05-17T15:00:05Z", "MIDDLE")
+                        VolumeRecordDto("2025-05-17T15:00:00Z", "2025-05-17T15:00:05Z", "LOUD")
                     ),
                     speedRecords = listOf(
-                        SpeedRecordDto("2025-05-17T15:00:06Z", "2025-05-17T15:00:10Z", "MIDDLE")
+                        SpeedRecordDto("2025-05-17T15:00:06Z", "2025-05-17T15:00:10Z", "FAST")
                     ),
                     pauseRecords = listOf(
                         PauseRecordDto("2025-05-17T15:00:11Z", "2025-05-17T15:00:12Z")
