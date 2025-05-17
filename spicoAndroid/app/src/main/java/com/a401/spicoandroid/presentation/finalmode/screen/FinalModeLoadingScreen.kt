@@ -2,7 +2,7 @@ package com.a401.spicoandroid.presentation.finalmode.screen
 
 import android.net.Uri
 import androidx.compose.runtime.*
-import androidx.compose.ui.res.painterResource
+import android.util.Log
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import com.a401.spicoandroid.R
@@ -11,6 +11,11 @@ import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.a401.spicoandroid.data.finalmode.dto.AnswerDto
+import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
+import com.a401.spicoandroid.data.finalmode.dto.PauseRecordDto
+import com.a401.spicoandroid.data.finalmode.dto.SpeedRecordDto
+import com.a401.spicoandroid.data.finalmode.dto.VolumeRecordDto
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
 enum class FinalModeLoadingType {
@@ -21,40 +26,99 @@ enum class FinalModeLoadingType {
 @Composable
 fun FinalModeLoadingScreen(
     navController: NavController,
+    projectId: Int,
+    practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel(),
-    practiceViewModel: PracticeViewModel = hiltViewModel(),
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
-    val practiceIdState = practiceViewModel.practiceId.collectAsState()
-    val practiceId = practiceIdState.value
 
-    val projectId = practiceViewModel.selectedProject?.id
+    LaunchedEffect(Unit) {
+        Log.d("FinalFlow", "⏳ FinalModeLoadingScreen 진입: type=$type, projectId=$projectId, practiceId=$practiceId")
 
-    LaunchedEffect(practiceId) {
         when (type) {
             FinalModeLoadingType.QUESTION -> {
+                Log.d("FinalFlow", "🚀 질문 생성 시작")
                 viewModel.generateFinalQuestions(
-                    projectId = projectId ?: -1,
-                    practiceId = practiceId ?: -1,
-                    speechContent = "Hello everyone, my name is John." // TODO: STT 결과로 교체
+                    projectId = projectId,
+                    practiceId = practiceId,
+                    speechContent = "Today, I will talk about the importance of communication skills in public speaking." // TODO: 실제 STT 결과로 교체
                 )
                 delay(1500)
-                navController.navigate(NavRoutes.FinalModeQnA.route)
+                navController.navigate(NavRoutes.FinalModeQnA.withArgs(projectId, practiceId))
             }
 
             FinalModeLoadingType.REPORT -> {
-                delay(2000)
-                if (projectId != null && practiceId != null) {
-                    navController.navigate(
-                        NavRoutes.FinalReport.createRoute(
-                            projectId = projectId,
-                            practiceId = practiceId
-                        )
+                Log.d("FinalFlow", "📤 결과 전송 시작")
+
+                viewModel.setPracticeId(practiceId)
+
+                val questions = viewModel.finalQuestionState.value.questions
+
+// 새로 추가
+                if (questions.isEmpty()) {
+                    Log.w("FinalFlow", "⚠️ 질문 리스트가 비어 있음 - 0.5초 대기 후 재시도")
+                    delay(500) // 잠깐 기다림
+                }
+
+                val freshQuestions = viewModel.finalQuestionState.value.questions
+
+                val answers = if (freshQuestions.isEmpty()) {
+                    Log.w("FinalFlow", "⚠️ 여전히 비어 있어 대체 답변 사용")
+                    listOf(
+                        AnswerDto(questionId = 1, answer = "This is a default answer."),
+                        AnswerDto(questionId = 2, answer = "Another default answer.")
                     )
                 } else {
-                    navController.navigate(NavRoutes.ProjectList.route)
+                    freshQuestions.mapIndexed { index, question ->
+                        AnswerDto(
+                            questionId = question.id,
+                            answer = when (index) {
+                                0 -> "That's a good question."
+                                1 -> "Here's my second answer."
+                                else -> "Thank you for asking."
+                            }
+                        )
+                    }
                 }
+
+
+                val request = FinalModeResultRequestDto(
+                    fileName = "temp_video.mp4",
+                    speechContent = "Today, I will talk about the importance of communication skills in public speaking.",
+                    pronunciationScore = 85,
+                    pauseCount = 2,
+                    pauseScore = 80,
+                    speedScore = 90,
+                    speedStatus = "MIDDLE",
+                    volumeScore = 88,
+                    volumeStatus = "LOUD",
+                    volumeRecords = listOf(
+                        VolumeRecordDto("2025-05-17T15:00:00Z", "2025-05-17T15:00:05Z", "MIDDLE")
+                    ),
+                    speedRecords = listOf(
+                        SpeedRecordDto("2025-05-17T15:00:06Z", "2025-05-17T15:00:10Z", "MIDDLE")
+                    ),
+                    pauseRecords = listOf(
+                        PauseRecordDto("2025-05-17T15:00:11Z", "2025-05-17T15:00:12Z")
+                    ),
+                    answers = answers
+                )
+
+                Log.d("FinalFlow", "📦 전송 request = $request")
+
+                viewModel.submitFinalModeResult(
+                    projectId = projectId,
+                    request = request
+                )
+
+                delay(2000)
+                navController.navigate(
+                    NavRoutes.FinalReport.createRoute(
+                        projectId = projectId,
+                        practiceId = practiceId
+                    )
+                )
             }
         }
     }
@@ -71,3 +135,5 @@ fun FinalModeLoadingScreen(
         message = message
     )
 }
+
+

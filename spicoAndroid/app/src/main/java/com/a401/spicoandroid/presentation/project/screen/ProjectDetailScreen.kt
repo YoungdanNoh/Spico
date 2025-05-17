@@ -24,6 +24,7 @@ import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewMod
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import java.time.LocalDate
+import android.util.Log
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -74,6 +75,9 @@ fun ProjectDetailScreen(
             2 -> "coaching"
             else -> null // 0번: 전체
         }
+
+        Log.d("PracticeList", "📥 테스트용 연습 목록 불러오기: projectId=$projectId, filter=final")
+
         practiceViewModel.fetchPracticeList(
             projectId = projectId,
             filter = filter,
