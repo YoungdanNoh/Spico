@@ -40,15 +40,25 @@ fun FinalSettingScreen(
     var answerTimeError by remember { mutableStateOf(false) }
 
     // 화면 진입 시 서버에서 설정값 불러오기
+    LaunchedEffect(Unit) {
+        viewModel.fetchFinalSetting()
+    }
+
     LaunchedEffect(setting) {
         setting?.let {
             hasAudience = it.hasAudience
             hasQnA = it.hasQnA
-            questionCount = maxOf(it.questionCount, 1)
-            answerTimeSec = maxOf(it.answerTimeLimit, 30)
+            val safeQuestion = maxOf(it.questionCount, 1)
+            val safeAnswer = maxOf(it.answerTimeLimit, 30)
 
-            backupQuestionCount = it.questionCount
-            backupAnswerTime = it.answerTimeLimit
+            questionCount = safeQuestion
+            answerTimeSec = safeAnswer
+
+            backupQuestionCount = safeQuestion
+            backupAnswerTime = safeAnswer
+
+            viewModel.updateQuestionCount(safeQuestion)
+            viewModel.updateAnswerTimeLimit(safeAnswer)
         }
     }
 
@@ -76,13 +86,17 @@ fun FinalSettingScreen(
                     text = "다음",
                     size = ButtonSize.LG,
                     onClick = {
-                        val safeQuestionCount = if (hasQnA) questionCount else 1
-                        val safeAnswerTime = if (hasQnA) answerTimeSec else 30
+                        val safeQuestionCount = if (hasQnA) questionCount else backupQuestionCount
+                        val safeAnswerTime = if (hasQnA) answerTimeSec else backupAnswerTime
 
+                        // 안전한 값 ViewModel에 저장
                         viewModel.hasAudience = hasAudience
                         viewModel.hasQnA = hasQnA
                         viewModel.questionCount = safeQuestionCount
                         viewModel.answerTimeLimit = safeAnswerTime
+
+                        viewModel.updateQuestionCount(safeQuestionCount)
+                        viewModel.updateAnswerTimeLimit(safeAnswerTime)
 
                         viewModel.saveFinalSetting(
                             onSuccess = {
@@ -120,6 +134,7 @@ fun FinalSettingScreen(
                 onToggle = {
                     hasQnA = it
                     viewModel.hasQnA = it
+
                     if (it) {
                         questionCount = backupQuestionCount
                         answerTimeSec = backupAnswerTime
@@ -127,7 +142,6 @@ fun FinalSettingScreen(
                         backupQuestionCount = questionCount
                         backupAnswerTime = answerTimeSec
                     }
-
                 }
             )
 

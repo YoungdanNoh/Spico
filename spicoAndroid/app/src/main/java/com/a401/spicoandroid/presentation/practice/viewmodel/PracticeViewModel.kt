@@ -47,23 +47,24 @@ class PracticeViewModel @Inject constructor(
 
     // 파이널 모드 설정 시, ViewModel 갱신
     fun updateQuestionCount(value: Int) {
-        questionCount = value
-        lastQnAQuestionCount = value
+        val safeValue = maxOf(value, 1)
+        questionCount = safeValue
+        lastQnAQuestionCount = safeValue
     }
 
     fun updateAnswerTimeLimit(value: Int) {
-        answerTimeLimit = value
-        lastQnAAnswerTimeLimit = value
+        val safeValue = maxOf(value, 30)
+        answerTimeLimit = safeValue
+        lastQnAAnswerTimeLimit = safeValue
     }
-
 
     // 파이널 모드 설정 유효성 보정 함수
     private fun getSafeFinalPracticeRequest(): FinalPracticeRequest {
         return FinalPracticeRequest(
             hasAudience = hasAudience,
             hasQnA = hasQnA,
-            questionCount = if (hasQnA) lastQnAQuestionCount else 1,
-            answerTimeLimit = if (hasQnA) lastQnAAnswerTimeLimit else 30
+            questionCount = lastQnAQuestionCount,
+            answerTimeLimit = lastQnAAnswerTimeLimit
         )
     }
 
@@ -179,6 +180,11 @@ class PracticeViewModel @Inject constructor(
                     result.data?.let {
                         lastQnAQuestionCount = it.questionCount
                         lastQnAAnswerTimeLimit = it.answerTimeLimit
+
+                        Log.d(
+                            "FinalSettingFetch",
+                            "✅ 조회 결과 → hasAudience=${it.hasAudience}, hasQnA=${it.hasQnA}, questionCount=${it.questionCount}, answerTimeLimit=${it.answerTimeLimit}"
+                        )
                     }
                 }
                 is DataResource.Error -> {
