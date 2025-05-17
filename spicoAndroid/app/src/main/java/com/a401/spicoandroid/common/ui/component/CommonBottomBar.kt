@@ -27,6 +27,9 @@ fun CommonBottomBar(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
+    // 홀화면에서 진입하는 리포트
+    val source = backStackEntry?.arguments?.getString("source")
+
     val navItems = listOf(
         NavItem(
             route = NavRoutes.Home.route,
@@ -41,7 +44,9 @@ fun CommonBottomBar(
                 NavRoutes.ProjectList.route,
                 "project_detail",
                 NavRoutes.CoachingReport.route,
-                NavRoutes.FinalReport.route
+                NavRoutes.FinalReport.route,
+                "home_coaching_report",
+                "home_final_report"
             ),
             iconRes = R.drawable.ic_presention_line,
             selectedIconRes = R.drawable.ic_presention_filled,
@@ -84,18 +89,21 @@ fun CommonBottomBar(
             navItems.take(2).forEach { item ->
                 BottomNavItem(
                     item = item,
-                    selected = item.matchingRoutes.any { currentRoute?.startsWith(it) == true },
+                    selected = item.matchingRoutes.any { match ->
+                        currentRoute?.split("/")?.firstOrNull() == match
+                    },
                     onClick = { navController.navigate(item.route) },
                     modifier = Modifier.weight(1f)
                 )
             }
-
             Spacer(modifier = Modifier.weight(1f)) // FAB 공간
 
             navItems.takeLast(2).forEach { item ->
                 BottomNavItem(
                     item = item,
-                    selected = item.matchingRoutes.any { currentRoute?.startsWith(it) == true },
+                    selected = item.matchingRoutes.any { match ->
+                        currentRoute?.split("/")?.firstOrNull() == match
+                    },
                     onClick = { navController.navigate(item.route) },
                     modifier = Modifier.weight(1f)
                 )

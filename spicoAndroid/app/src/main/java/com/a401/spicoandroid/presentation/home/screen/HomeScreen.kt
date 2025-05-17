@@ -99,14 +99,18 @@ fun HomeScreen(
                     PracticeType.COACHING -> {
                         navController.navigate(
                             NavRoutes.HomeCoachingReportDetail.createRoute(
-                                report.projectId, report.practiceId
+                                projectId = report.projectId,
+                                practiceId = report.practiceId,
+                                source = "home"
                             )
                         )
                     }
                     PracticeType.FINAL -> {
                         navController.navigate(
                             NavRoutes.HomeFinalReportDetail.createRoute(
-                                report.projectId, report.practiceId
+                                projectId = report.projectId,
+                                practiceId = report.practiceId,
+                                source = "home"
                             )
                         )
                     }

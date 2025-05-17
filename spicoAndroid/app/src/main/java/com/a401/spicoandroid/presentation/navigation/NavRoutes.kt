@@ -8,14 +8,14 @@ sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
     object Profile : NavRoutes("profile")
 
-    object HomeCoachingReportDetail : NavRoutes("home_coaching_report/{projectId}/{practiceId}") {
-        fun createRoute(projectId: Int, practiceId: Int) =
-            "home_coaching_report/$projectId/$practiceId"
+    object HomeCoachingReportDetail : NavRoutes("home_coaching_report/{projectId}/{practiceId}?source={source}") {
+        fun createRoute(projectId: Int, practiceId: Int, source: String = "home") =
+            "home_coaching_report/$projectId/$practiceId?source=$source"
     }
 
-    object HomeFinalReportDetail : NavRoutes("home_final_report/{projectId}/{practiceId}") {
-        fun createRoute(projectId: Int, practiceId: Int) =
-            "home_final_report/$projectId/$practiceId"
+    object HomeFinalReportDetail : NavRoutes("home_final_report/{projectId}/{practiceId}?source={source}") {
+        fun createRoute(projectId: Int, practiceId: Int, source: String = "home") =
+            "home_final_report/$projectId/$practiceId?source=$source"
     }
 
     // 발표 목록
