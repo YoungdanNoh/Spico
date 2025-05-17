@@ -46,7 +46,7 @@ fun FinalScreenCheckScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 32.dp),
+                    .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CommonButton(
@@ -84,12 +84,12 @@ fun FinalScreenCheckScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(horizontal = 16.dp, vertical = 24.dp)
         ) {
+            // 상단 고정 텍스트
             Text(
                 text = "모드가 시작되면 본인 모습을 볼 수 없습니다.",
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = Typography.titleLarge.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
@@ -97,14 +97,24 @@ fun FinalScreenCheckScreen(
                 color = TextSecondary
             )
 
-            // 전면 카메라 뷰
-            CameraPreview(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(3f / 4f)
-                    .clip(RoundedCornerShape(4.dp))
-            )
+            Spacer(modifier = Modifier.height(24.dp))
 
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 카메라 중앙 정렬
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CameraPreview(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(3f / 4f)
+                        .clip(RoundedCornerShape(4.dp))
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

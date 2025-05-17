@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -45,26 +47,35 @@ fun ProjectScriptInputScreen (
             )
         },
         bottomBar = {
-            CommonButton(
-                text = "완료",
-                size = ButtonSize.LG,
-                backgroundColor = Action,
-                borderColor = Action,
-                textColor = White,
-                onClick = {
-                    viewModel.createProject(
-                        onSuccess = {
-                            navController.popBackStack()
-                            navController.popBackStack()
-                        },
-                        onError = {
-                            navController.popBackStack()
-                            navController.popBackStack()
-                        }
-                    )
-                },
-                modifier = modifier.padding(16.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CommonButton(
+                    text = "완료",
+                    size = ButtonSize.LG,
+                    backgroundColor = Action,
+                    borderColor = Action,
+                    textColor = White,
+                    onClick = {
+                        viewModel.createProject(
+                            onSuccess = {
+                                navController.popBackStack()
+                                navController.popBackStack()
+                            },
+                            onError = {
+                                navController.popBackStack()
+                                navController.popBackStack()
+                            }
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
         },
         containerColor = White,
     ) {
