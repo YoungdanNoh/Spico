@@ -23,7 +23,7 @@ fun RecentReportSection(
         modifier = modifier
             .fillMaxWidth()
             .background(BrokenWhite)
-            .padding(vertical = 28.dp, horizontal = 16.dp)
+            .padding(top = 28.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Text(
             text = "최근 연습 리포트",

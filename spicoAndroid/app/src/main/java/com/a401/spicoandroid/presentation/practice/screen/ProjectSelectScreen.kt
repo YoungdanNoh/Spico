@@ -69,7 +69,7 @@ fun ProjectSelectScreen(
                 CommonIconTextButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp, horizontal = 16.dp),
+                        .padding(horizontal = 16.dp),
                     iconResId = R.drawable.ic_add_white,
                     text = "새 프로젝트 생성",
                     size = ButtonSize.LG,
