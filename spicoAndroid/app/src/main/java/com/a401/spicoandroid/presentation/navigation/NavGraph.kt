@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.navigation
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -304,7 +305,8 @@ fun NavGraph(
 
             // 파이널 모드
             composable(NavRoutes.FinalModeRoot.route) {
-                val parentEntry = remember { navController.getBackStackEntry(NavRoutes.FinalModeRoot.route) }
+                val parentEntry =
+                    remember { navController.getBackStackEntry(NavRoutes.FinalModeRoot.route) }
                 val sharedViewModel: FinalModeViewModel = hiltViewModel(parentEntry)
                 val childNavController = rememberNavController()
 
@@ -320,7 +322,8 @@ fun NavGraph(
                             finalModeViewModel = sharedViewModel
                         )
                     }
-                    composable("final_mode_voice/{projectId}/{practiceId}",
+                    composable(
+                        "final_mode_voice/{projectId}/{practiceId}",
                         arguments = listOf(
                             navArgument("projectId") { type = NavType.IntType },
                             navArgument("practiceId") { type = NavType.IntType }
@@ -329,12 +332,14 @@ fun NavGraph(
                         val args = it.arguments!!
                         FinalModeVoiceScreen(
                             navController = childNavController,
+                            parentNavController = navController,
                             projectId = args.getInt("projectId"),
                             practiceId = args.getInt("practiceId"),
                             viewModel = sharedViewModel
                         )
                     }
-                    composable("final_mode_audience/{projectId}/{practiceId}",
+                    composable(
+                        "final_mode_audience/{projectId}/{practiceId}",
                         arguments = listOf(
                             navArgument("projectId") { type = NavType.IntType },
                             navArgument("practiceId") { type = NavType.IntType }
@@ -348,7 +353,8 @@ fun NavGraph(
                             viewModel = sharedViewModel
                         )
                     }
-                    composable("final_mode_loading/{type}/{projectId}/{practiceId}",
+                    composable(
+                        "final_mode_loading/{type}/{projectId}/{practiceId}",
                         arguments = listOf(
                             navArgument("type") { type = NavType.StringType },
                             navArgument("projectId") { type = NavType.IntType },
@@ -358,13 +364,15 @@ fun NavGraph(
                         val args = it.arguments!!
                         FinalModeLoadingScreen(
                             navController = childNavController,
+                            parentNavController = navController,
                             type = FinalModeLoadingType.valueOf(args.getString("type")!!),
                             projectId = args.getInt("projectId"),
                             practiceId = args.getInt("practiceId"),
                             viewModel = sharedViewModel
                         )
                     }
-                    composable("final_mode_qna/{projectId}/{practiceId}",
+                    composable(
+                        "final_mode_qna/{projectId}/{practiceId}",
                         arguments = listOf(
                             navArgument("projectId") { type = NavType.IntType },
                             navArgument("practiceId") { type = NavType.IntType }
@@ -378,20 +386,27 @@ fun NavGraph(
                             viewModel = sharedViewModel
                         )
                     }
-                    composable("final_mode_report/{projectId}/{practiceId}",
-                        arguments = listOf(
-                            navArgument("projectId") { type = NavType.IntType },
-                            navArgument("practiceId") { type = NavType.IntType }
-                        )
-                    ) {
-                        val args = it.arguments!!
-                        FinalReportScreen(
-                            navController = childNavController,
-                            projectId = args.getInt("projectId"),
-                            practiceId = args.getInt("practiceId"),
-                        )
-                    }
                 }
+            }
+
+            // 파이널 리포트
+            composable(
+                route = NavRoutes.FinalReport.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                Log.d("NavGraph", "✅ FinalReport 라우트 진입: $projectId / $practiceId")
+
+                FinalReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
             }
 
 

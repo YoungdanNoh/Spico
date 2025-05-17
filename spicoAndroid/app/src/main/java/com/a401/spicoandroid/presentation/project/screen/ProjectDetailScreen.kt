@@ -249,10 +249,42 @@ fun ProjectDetailScreen(
                                         title = "${practice.name ?: "연습"} ${practice.count}회차",
                                         description = formatDateTimeWithDot(practice.createdAt),
                                         onClick = {
-                                            if (selectedTab == 1) {
-                                                navController.navigate(
-                                                    NavRoutes.FinalReport.createRoute(projectId, practice.id)
-                                                )
+                                            Log.d("ReportNav", "🟡 리포트 클릭됨: selectedTab=$selectedTab, practiceId=${practice.id}, finalCnt=${practice.finalCnt}, coachingCnt=${practice.coachingCnt}")
+                                            when (selectedTab) {
+                                                1 -> { // 파이널 모드
+                                                    navController.navigate(
+                                                        NavRoutes.FinalReport.createRoute(projectId, practice.id)
+                                                    )
+                                                }
+                                                2 -> { // 코칭 모드
+                                                    navController.navigate(
+                                                        NavRoutes.CoachingReport.createRoute(projectId, practice.id)
+                                                    )
+                                                }
+                                                else -> { // 전체 탭 - finalCnt 또는 coachingCnt를 기반으로 분기
+                                                    when {
+                                                        practice.finalCnt != null -> {
+                                                            val route =
+                                                                NavRoutes.FinalReport.createRoute(
+                                                                    projectId,
+                                                                    practice.id
+                                                                )
+                                                            navController.navigate(route)
+                                                        }
+
+                                                        practice.coachingCnt != null -> {
+                                                            val route =
+                                                                NavRoutes.CoachingReport.createRoute(
+                                                                    projectId,
+                                                                    practice.id
+                                                                )
+                                                            navController.navigate(route)
+                                                        }
+
+                                                        else -> {
+                                                        }
+                                                    }
+                                                }
                                             }
                                         },
                                         onLongClick = {
@@ -317,7 +349,10 @@ fun ProjectDetailScreen(
             },
             onDismissRequest = {
                 showDeleteAlert = false
-            }
+            },
+            confirmTextColor = White,
+            confirmBackgroundColor = Error,
+            confirmBorderColor = Error
         )
     }
 }
