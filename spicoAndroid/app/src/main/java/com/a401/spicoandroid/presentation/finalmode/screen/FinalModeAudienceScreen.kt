@@ -40,14 +40,19 @@ fun FinalModeAudienceScreen(
     }
 
     LaunchedEffect(Unit) {
-        cameraService.startCamera {
-            viewModel.startCountdownAndRecording {
-                cameraService.startRecording { uri ->
-                    Log.d("FinalRecording", "저장 완료: $uri")
+        try {
+            cameraService.startCamera {
+                viewModel.startCountdownAndRecording {
+                    cameraService.startRecording { uri ->
+                        Log.d("FinalRecording", "저장 완료: $uri")
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Log.e("FinalFlow", "❌ 카메라 실행 중 예외 발생", e)
         }
     }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         VideoBackgroundPlayer(
@@ -101,13 +106,21 @@ fun FinalModeAudienceScreen(
 
                     Log.d("FinalFlow", "🛑 녹화 종료. projectId=$projectId, practiceId=$practiceId")
 
-                    navController.navigate(
-                        NavRoutes.FinalModeLoading.withArgs(
-                            FinalModeLoadingType.QUESTION,
-                            projectId,
-                            practiceId
+                    // 종료 버튼 → 알럿 확인 이후
+                    if (viewModel.getHasQnA()) {
+                        navController.navigate(
+                            NavRoutes.FinalModeLoading.withArgs(
+                                FinalModeLoadingType.QUESTION, projectId, practiceId
+                            )
                         )
-                    )
+                    } else {
+                        navController.navigate(
+                            NavRoutes.FinalModeLoading.withArgs(
+                                FinalModeLoadingType.REPORT, projectId, practiceId
+                            )
+                        )
+                    }
+
                 },
                 onCancel = { viewModel.hideAllDialogs() },
                 onDismissRequest = { viewModel.hideAllDialogs() },

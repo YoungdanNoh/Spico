@@ -86,7 +86,7 @@ fun FinalSettingScreen(
 
                         viewModel.saveFinalSetting(
                             onSuccess = {
-                                navController.navigate(NavRoutes.FinalScreenCheck.route)
+                                navController.navigate(NavRoutes.FinalModeRoot.route)
                             },
                             onFailure = {
                                 // TODO: 에러
