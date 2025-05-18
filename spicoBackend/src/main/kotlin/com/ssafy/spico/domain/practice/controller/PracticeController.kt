@@ -88,11 +88,13 @@ class PracticeController(
         @PathVariable projectId: Int,
         @PathVariable practiceId: Int,
         @RequestBody request: EndCoachingPracticeRequestDto
-    ): ApiResponse<EndCoachingPracticeResponseDto> {
+    ): ApiResponse<Unit> {
 
         val endCoachingPractice = request.toModel()
 
-        return ApiResponse.success(coachingPracticeService.endCoachingPractice(userId, projectId, practiceId, endCoachingPractice))
+        coachingPracticeService.endCoachingPractice(userId, projectId, practiceId, endCoachingPractice)
+
+        return ApiResponse.success()
     }
 
     // 파이널 모드 리포트 조회
