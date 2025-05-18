@@ -45,13 +45,27 @@ class FinalReportViewModel @Inject constructor(
         }
     }
 
-    fun deleteReport(projectId: Int, practiceId: Int, onSuccess: () -> Unit, onError: (Throwable) -> Unit) {
+    fun deleteReport(
+        projectId: Int,
+        practiceId: Int,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
         viewModelScope.launch {
+            Log.d("PracticeList", "🧨 deleteReport 호출됨: projectId=$projectId, practiceId=$practiceId")
+
             when (val result = deletePracticeUseCase(projectId, practiceId)) {
-                is DataResource.Success -> onSuccess()
-                is DataResource.Error -> onError(result.throwable)
+                is DataResource.Success -> {
+                    Log.d("PracticeList", "✅ deleteReport 성공")
+                    onSuccess()
+                }
+                is DataResource.Error -> {
+                    Log.e("PracticeList", "❌ deleteReport 실패: ${result.throwable}", result.throwable)
+                    onError(result.throwable)
+                }
                 else -> Unit
             }
         }
     }
+
 }
