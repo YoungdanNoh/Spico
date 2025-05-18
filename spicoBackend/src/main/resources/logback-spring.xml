@@ -3,7 +3,7 @@
     <!-- 콘솔 출력 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p --- [%15.15t] %-40.40logger{39} : %msg%n%ex</pattern>
         </encoder>
     </appender>
 
@@ -38,7 +38,7 @@
                 <pattern>service=backend-api,level=%level</pattern>
             </label>
             <message>
-                <pattern>t=%d{yyyy-MM-dd HH:mm:ss.SSS} l=%level c=%logger{20} t=%thread | %msg %ex</pattern>
+                <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5p --- [%15.15t] %-40.40logger{39} : %msg%n%ex</pattern>
             </message>
             <sortByTime>true</sortByTime>
         </format>
