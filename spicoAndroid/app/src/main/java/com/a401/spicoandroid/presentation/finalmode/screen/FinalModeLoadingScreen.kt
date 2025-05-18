@@ -26,6 +26,7 @@ enum class FinalModeLoadingType {
 @Composable
 fun FinalModeLoadingScreen(
     navController: NavController,
+    parentNavController: NavController,
     projectId: Int,
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel(),
@@ -112,7 +113,7 @@ fun FinalModeLoadingScreen(
                 )
 
                 delay(2000)
-                navController.navigate(
+                parentNavController.navigate(
                     NavRoutes.FinalReport.createRoute(
                         projectId = projectId,
                         practiceId = practiceId

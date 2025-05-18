@@ -28,6 +28,7 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 @Composable
 fun FinalModeVoiceScreen(
     navController: NavController,
+    parentNavController: NavController,
     projectId: Int,
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel()
@@ -143,7 +144,7 @@ fun FinalModeVoiceScreen(
                             )
                         )
                     } else {
-                        navController.navigate(
+                        parentNavController.navigate(
                             NavRoutes.FinalModeLoading.withArgs(
                                 FinalModeLoadingType.REPORT,
                                 projectId,

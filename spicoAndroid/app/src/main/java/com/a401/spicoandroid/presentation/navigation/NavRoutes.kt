@@ -52,7 +52,9 @@ sealed class NavRoutes(val route: String) {
 
     // 코칭 모드
     object CoachingMode : NavRoutes("coaching_mode")
-    object CoachingReport : NavRoutes("coaching_report")
+    object CoachingReport : NavRoutes("coaching_report/{projectId}/{practiceId}") {
+        fun createRoute(projectId: Int, practiceId: Int) = "coaching_report/$projectId/$practiceId"
+    }
 
     // 파이널 모드
     object FinalModeRoot : NavRoutes("final_mode_root")
