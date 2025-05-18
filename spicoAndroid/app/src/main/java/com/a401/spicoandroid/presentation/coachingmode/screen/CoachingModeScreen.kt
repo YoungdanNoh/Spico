@@ -33,10 +33,10 @@ import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewMod
 
 @Composable
 fun CoachingModeScreen(
+    modifier: Modifier = Modifier,
     navController: NavController,
     coachingModeViewModel: CoachingModeViewModel = hiltViewModel(),
     scriptViewModel: ProjectScriptViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier,
     projectId: Int,
     practiceId: Int
 ) {
