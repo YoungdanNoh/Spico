@@ -50,10 +50,11 @@ fun millisToTimestamp(millis: Long): String {
 
 @Composable
 fun CoachingReportScreen(
+    modifier: Modifier = Modifier,
     navController : NavController,
     projectId: Int,
     practiceId: Int,
-    modifier: Modifier = Modifier,
+    source: String = "script",
     viewModel: CoachingReportViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
@@ -105,7 +106,21 @@ fun CoachingReportScreen(
                     IconButton(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
-                        onClick = { navController.popBackStack() }
+                        onClick = {
+                            when (source) {
+                                "home" -> {
+                                    navController.navigate(NavRoutes.Home.route) {
+                                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                                    }
+                                }
+                                else -> {
+                                    val targetRoute = NavRoutes.ProjectDetail.withId(projectId)
+                                    navController.navigate(targetRoute) {
+                                        popUpTo(NavRoutes.ProjectList.route) { inclusive = false }
+                                    }
+                                }
+                            }
+                        }
                     )
                 },
                 rightContent = {

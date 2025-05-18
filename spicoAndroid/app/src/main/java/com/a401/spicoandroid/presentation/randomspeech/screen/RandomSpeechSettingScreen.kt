@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +31,11 @@ fun RandomSpeechSettingScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val topic = uiState.topic
+
+    // 로딩 중이면 뒤로가기 방지
+    BackHandler(enabled = uiState.isLoading) {
+        // 아무 동작도 하지 않음 (뒤로가기 무시)
+    }
 
     // 로딩 상태면 바로 리턴
     if (uiState.isLoading) {

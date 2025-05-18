@@ -102,12 +102,41 @@ fun RandomSpeechScreen(
         }
     }
 
+    // 제한 시간이 지나면 종료 요청
     val totalSeconds = speakMin * 60
     val remainingSeconds by countdownTimer(
         totalSeconds = totalSeconds,
-        onFinish = onFinish,
-        isRunning = startMainTimer
+        isRunning = startMainTimer,
+        onFinish = {
+            audioRecorderService.stop()
+            val file = recordedFile.value
+            if (file != null) {
+                coroutineScope.launch {
+                    try {
+                        val transcript = WhisperApiHelper.transcribeWavFile(file)
+                        Log.d("ExitFlow", "⏰ 제한시간 종료 후 STT 완료")
+
+                        viewModel.submitScript(
+                            script = transcript,
+                            onSuccess = {
+                                val id = viewModel.getSpeechIdForReport()
+                                Log.d("ExitFlow", "⏰ 제한시간 종료 후 저장 완료, id = $id")
+                                if (id != null) {
+                                    navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                                }
+                            },
+                            onError = {
+                                Log.e("ExitFlow", "❌ 제한시간 종료 후 저장 실패: ${viewModel.uiState.value.errorMessage}")
+                            }
+                        )
+                    } catch (e: Exception) {
+                        Log.e("ExitFlow", "❌ 제한시간 STT 실패: ${e.message}")
+                    }
+                }
+            }
+        }
     )
+
     val elapsedSeconds by rememberElapsedSeconds(isRunning = startMainTimer)
 
     fun handleExit() {
@@ -232,18 +261,24 @@ fun RandomSpeechScreen(
                     onCancel = { showExitAlert = false },
                     onConfirm = {
                         showExitAlert = false
+                        viewModel.setLoading(true)
                         audioRecorderService.stop()
+
+                        Log.d("ExitFlow", "🎤 audioRecorderService stop")
 
                         val file = recordedFile.value
                         if (file != null) {
+                            Log.d("ExitFlow", "📁 녹음 파일 존재: ${file.name}")
                             coroutineScope.launch {
                                 try {
                                     val transcript = WhisperApiHelper.transcribeWavFile(file)
+                                    Log.d("ExitFlow", "🗣️ Whisper 변환 완료: $transcript")
 
                                     viewModel.submitScript(
                                         script = transcript,
                                         onSuccess = {
                                             val id = viewModel.getSpeechIdForReport()
+                                            Log.d("ExitFlow", "✅ submitScript 성공, id = $id")
                                             if (id != null) {
                                                 navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
                                             }
@@ -312,5 +347,20 @@ fun RandomSpeechScreen(
                 }
             )
         }
+    }
+    if (uiState.isLoading) {
+        LoadingInProgressView(
+            imageRes = R.drawable.character_home_5,
+            message = "스크립트를 저장 중이에요.\n잠시만 기다려주세요!",
+            homeLinkText = "리포트 목록으로 이동",
+            onHomeClick = {
+                navController.navigate(
+                    route = NavRoutes.RandomSpeechList.route,
+                    navOptions = navOptions {
+                        popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                    }
+                )
+            }
+        )
     }
 }
