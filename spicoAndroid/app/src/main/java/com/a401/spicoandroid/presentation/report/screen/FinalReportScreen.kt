@@ -33,6 +33,7 @@ fun FinalReportScreen(
     navController: NavController,
     projectId: Int,
     practiceId: Int,
+    source: String = "script",
     viewModel: FinalReportViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -56,7 +57,21 @@ fun FinalReportScreen(
                     IconButton(
                         iconResId = R.drawable.arrow_left,
                         contentDescription = "뒤로 가기",
-                        onClick = { navController.popBackStack() }
+                        onClick = {
+                            when (source) {
+                                "home" -> {
+                                    navController.navigate(NavRoutes.Home.route) {
+                                        popUpTo(NavRoutes.Home.route) { inclusive = false }
+                                    }
+                                }
+                                else -> {
+                                    val targetRoute = NavRoutes.ProjectDetail.withId(projectId)
+                                    navController.navigate(targetRoute) {
+                                        popUpTo(NavRoutes.ProjectList.route) { inclusive = false }
+                                    }
+                                }
+                            }
+                        }
                     )
                 },
                 rightContent = {

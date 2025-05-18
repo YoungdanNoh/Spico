@@ -102,7 +102,8 @@ fun MainNavGraph(
                     CoachingReportScreen(
                         navController = navController,
                         projectId = projectId,
-                        practiceId = practiceId
+                        practiceId = practiceId,
+                        source = source
                     )
             }
 
@@ -121,7 +122,8 @@ fun MainNavGraph(
                 FinalReportScreen(
                     navController = navController,
                     projectId = projectId,
-                    practiceId = practiceId
+                    practiceId = practiceId,
+                    source = source
                 )
             }
 
@@ -246,7 +248,12 @@ fun MainNavGraph(
                 backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-                CoachingReportScreen(navController, projectId, practiceId)
+                CoachingReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId,
+                    source = "script"
+                )
             }
 
             // 파이널 모드
@@ -345,13 +352,15 @@ fun MainNavGraph(
             ) { backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+                val source = backStackEntry.arguments?.getString("source") ?: "script"
 
                 Log.d("NavGraph", "✅ FinalReport 라우트 진입: $projectId / $practiceId")
 
                 FinalReportScreen(
                     navController = navController,
                     projectId = projectId,
-                    practiceId = practiceId
+                    practiceId = practiceId,
+                    source = source
                 )
             }
 
