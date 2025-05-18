@@ -1,9 +1,10 @@
 package com.a401.spicoandroid.presentation.report.screen
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.magnifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
@@ -39,6 +40,8 @@ fun FinalReportScreen(
     val pagerState = rememberPagerState(initialPage = 0) { state.reportItems.size }
     val coroutineScope = rememberCoroutineScope()
     var isAlertVisible by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     // API 호출
     LaunchedEffect(projectId, practiceId) {
@@ -197,11 +200,22 @@ fun FinalReportScreen(
                 confirmText = "삭제",
                 onConfirm = {
                     isAlertVisible = false
+                    Log.d("PracticeList", "🧨 삭제 버튼 클릭됨 (UI)")
+
                     viewModel.deleteReport(
                         projectId = projectId,
                         practiceId = practiceId,
-                        onSuccess = { navController.popBackStack(NavRoutes.ProjectList.route, false)},
-                        onError = {}
+                        onSuccess = {
+                            Toast.makeText(context, "리포트를 삭제했어요", Toast.LENGTH_SHORT).show()
+                            navController.navigate(NavRoutes.ProjectDetail.withId(projectId)) {
+                                popUpTo(NavRoutes.ProjectList.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        },
+                        onError = { throwable ->
+                            Toast.makeText(context, "삭제에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                            Log.e("FinalReport", "❌ 삭제 실패: ${throwable.message}", throwable)
+                        }
                     )
                 },
                 confirmTextColor = White,

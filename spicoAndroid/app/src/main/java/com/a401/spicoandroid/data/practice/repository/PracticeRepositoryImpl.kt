@@ -83,7 +83,12 @@ class PracticeRepositoryImpl @Inject constructor(
         projectId: Int,
         practiceId: Int
     ): DataResource<Unit> = safeApiCall {
-        api.deletePractice(projectId, practiceId).getOrThrow { Unit }
+        val response = api.deletePractice(projectId, practiceId)
+        if (response.isSuccessful) {
+            DataResource.Success(Unit)
+        } else {
+            DataResource.Error(Exception("삭제 실패: ${response.code()} ${response.message()}"))
+        }
     }
 
 }
