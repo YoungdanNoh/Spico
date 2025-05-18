@@ -28,12 +28,15 @@ import com.a401.spicoandroid.common.timer.rememberElapsedSeconds
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
+import com.a401.spicoandroid.infrastructure.audio.AudioRecorderService
 import com.a401.spicoandroid.presentation.navigation.LocalNavController
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.randomspeech.component.RandomSpeechExitAlert
 import com.a401.spicoandroid.presentation.randomspeech.component.countdownTimer
 import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Locale
 
 @Composable
@@ -58,6 +61,9 @@ fun RandomSpeechScreen(
 
     val waveform = remember { mutableStateOf(emptyList<Float>()) }
     val audioAnalyzer = remember { AudioAnalyzer() }
+    val audioRecorderService = remember { AudioRecorderService(context) }
+
+    val recordedFile = remember { mutableStateOf<File?>(null) }
 
     // 권한 요청
     LaunchedEffect(Unit) {
@@ -84,9 +90,15 @@ fun RandomSpeechScreen(
     // 녹음 시작
     LaunchedEffect(startMainTimer) {
         if (startMainTimer) {
-            audioAnalyzer.start(scope = coroutineScope) { amps ->
-                waveform.value = amps
-            }
+            audioRecorderService.start(
+                scope = coroutineScope,
+                onWaveformUpdate = { amps ->
+                    waveform.value = amps
+                },
+                onComplete = { file ->
+                    recordedFile.value = file
+                }
+            )
         }
     }
 
@@ -99,7 +111,7 @@ fun RandomSpeechScreen(
     val elapsedSeconds by rememberElapsedSeconds(isRunning = startMainTimer)
 
     fun handleExit() {
-        audioAnalyzer.stop()
+        audioRecorderService.stop()
         if (elapsedSeconds < 30) {
             showExitConfirmDialog = true
         } else {
@@ -220,23 +232,34 @@ fun RandomSpeechScreen(
                     onCancel = { showExitAlert = false },
                     onConfirm = {
                         showExitAlert = false
-                        audioAnalyzer.stop()
+                        audioRecorderService.stop()
 
-                        val script = "임시 STT 결과 텍스트" // TODO: 음성 인식 결과
-                        viewModel.submitScript(
-                            script = script,
-                            onSuccess = {
-                                val id = viewModel.getSpeechIdForReport()
-                                if (id != null) {
-                                    navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                        val file = recordedFile.value
+                        if (file != null) {
+                            coroutineScope.launch {
+                                try {
+                                    val transcript = WhisperApiHelper.transcribeWavFile(file)
+
+                                    viewModel.submitScript(
+                                        script = transcript,
+                                        onSuccess = {
+                                            val id = viewModel.getSpeechIdForReport()
+                                            if (id != null) {
+                                                navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                                            }
+                                        },
+                                        onError = {
+                                            val errorMessage = viewModel.uiState.value.errorMessage
+                                            Log.d("RandomSpeech", "❌ 종료 실패: $errorMessage")
+                                            // TODO: 실패 처리
+                                        }
+                                    )
+                                } catch (e: Exception) {
+                                    Log.e("RandomSpeech", "❌ Whisper STT 실패: ${e.message}")
+                                    // 예외 처리 필요 (e.g. 토스트 or fallback)
                                 }
-                            },
-                            onError = {
-                                val errorMessage = viewModel.uiState.value.errorMessage
-                                Log.d("RandomSpeech", "❌ 종료 실패: $errorMessage")
-                                // TODO: 실패 처리
                             }
-                        )
+                        }
                     }
                 )
             }
