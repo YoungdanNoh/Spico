@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
@@ -24,6 +25,12 @@ import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewMod
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import java.time.LocalDate
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.lazy.LazyColumn
+import com.a401.spicoandroid.common.utils.formatDateTimeWithDot
+import androidx.compose.ui.platform.LocalContext
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -57,40 +64,28 @@ fun ProjectDetailScreen(
 
     val practiceViewModel: PracticeViewModel = hiltViewModel()
     val practiceState by practiceViewModel.practiceListState.collectAsState()
-    val practiceDeleteState by practiceViewModel.practiceDeleteState.collectAsState()
 
     val projectViewModel: ProjectViewModel = hiltViewModel()
-    val deleteState by projectViewModel.deleteState.collectAsState()
 
     var selectedPracticeId by remember { mutableIntStateOf(-1) }
+
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchProjectDetail(projectId)
     }
 
     LaunchedEffect(selectedTab) {
-        val filter = when (selectedTab) {
-            1 -> "final"
-            2 -> "coaching"
-            else -> null // 0번: 전체
-        }
+        val filter: String? = null
+
+        Log.d("PracticeList", "📥 연습 목록 요청: projectId=$projectId, filter=$filter")
+
         practiceViewModel.fetchPracticeList(
             projectId = projectId,
             filter = filter,
             cursor = null,
             size = 10
         )
-    }
-
-    LaunchedEffect(practiceDeleteState.isSuccess) {
-        if (practiceDeleteState.isSuccess) {
-            practiceViewModel.fetchPracticeList(
-                projectId = projectId,
-                filter = if (selectedTab == 0) "coaching" else "final",
-                cursor = null,
-                size = 10
-            )
-        }
     }
 
     LaunchedEffect(project) {
@@ -103,6 +98,11 @@ fun ProjectDetailScreen(
         }
     }
 
+    val filteredPractices = when (selectedTab) {
+        1 -> practiceState.practices.filter { it.finalCnt != null }
+        2 -> practiceState.practices.filter { it.coachingCnt != null }
+        else -> practiceState.practices
+    }
 
     val dropdownItems = listOf(
         DropdownMenuItemData(
@@ -144,10 +144,37 @@ fun ProjectDetailScreen(
             onDeleteClick = {
                 isBottomSheetVisible = false
                 if (selectedPracticeId != -1) {
-                    practiceViewModel.deletePractice(projectId, selectedPracticeId)
+                    practiceViewModel.deletePractice(
+                        projectId = projectId,
+                        practiceId = selectedPracticeId,
+                        onSuccess = {
+                            Toast.makeText(context, "연습을 삭제했어요", Toast.LENGTH_SHORT).show()
+
+                            selectedPracticeId = -1
+                            val filter = when (selectedTab) {
+                                1 -> "final"
+                                2 -> "coaching"
+                                else -> null
+                            }
+
+                            practiceViewModel.fetchPracticeList(
+                                projectId = projectId,
+                                filter = filter,
+                                cursor = null,
+                                size = 10
+                            )
+
+                            practiceViewModel.resetDeleteState()
+                        },
+                        onError = {
+                            Toast.makeText(context, "삭제에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                            practiceViewModel.resetDeleteState()
+                        }
+                    )
                 }
-                practiceViewModel.resetDeleteState()
-            },
+            }
+
+            ,
             onDismissRequest = {
                 isBottomSheetVisible = false
             }
@@ -228,27 +255,58 @@ fun ProjectDetailScreen(
                                 message = "등록된 연습이 없어요.\n연습을 시작해보세요!",
                             )
                         } else {
-                            practiceState.practices.forEachIndexed { index, practice ->
-                                CommonList(
-                                    title = "${practice.name} ${practice.count}회차",
-                                    description = practice.createdAt,
-                                    onClick = {
-                                        if (selectedTab == 1) { // 파이널 모드 리포트
-                                            navController.navigate(
-                                                NavRoutes.FinalReport.createRoute(
-                                                    projectId = projectId,
-                                                    practiceId = practice.id
-                                                )
-                                            )
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                items(filteredPractices) { practice ->
+                                    CommonList(
+                                        title = "${practice.name ?: "연습"} ${practice.count}회차",
+                                        description = formatDateTimeWithDot(practice.createdAt),
+                                        onClick = {
+                                            Log.d("ReportNav", "🟡 리포트 클릭됨: selectedTab=$selectedTab, practiceId=${practice.id}, finalCnt=${practice.finalCnt}, coachingCnt=${practice.coachingCnt}")
+                                            when (selectedTab) {
+                                                1 -> { // 파이널 모드
+                                                    navController.navigate(
+                                                        NavRoutes.FinalReport.createRoute(projectId, practice.id)
+                                                    )
+                                                }
+                                                2 -> { // 코칭 모드
+                                                    navController.navigate(
+                                                        NavRoutes.CoachingReport.withArgs(projectId, practice.id)
+                                                    )
+                                                }
+                                                else -> { // 전체 탭 - finalCnt 또는 coachingCnt를 기반으로 분기
+                                                    when {
+                                                        practice.finalCnt != null -> {
+                                                            val route =
+                                                                NavRoutes.FinalReport.createRoute(
+                                                                    projectId,
+                                                                    practice.id
+                                                                )
+                                                            navController.navigate(route)
+                                                        }
+
+                                                        practice.coachingCnt != null -> {
+                                                            val route =
+                                                                NavRoutes.CoachingReport.withArgs(
+                                                                    projectId,
+                                                                    practice.id
+                                                                )
+                                                            navController.navigate(route)
+                                                        }
+
+                                                        else -> {
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        onLongClick = {
+                                            selectedPracticeId = practice.id
+                                            isBottomSheetVisible = true
                                         }
-                                    },
-                                    onLongClick = {
-                                        selectedPracticeId = practice.id
-                                        isBottomSheetVisible = true
-                                    }
-                                )
-                                if (index != practiceState.practices.lastIndex) {
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    )
                                 }
                             }
                         }
@@ -306,7 +364,10 @@ fun ProjectDetailScreen(
             },
             onDismissRequest = {
                 showDeleteAlert = false
-            }
+            },
+            confirmTextColor = White,
+            confirmBackgroundColor = Error,
+            confirmBorderColor = Error
         )
     }
 }

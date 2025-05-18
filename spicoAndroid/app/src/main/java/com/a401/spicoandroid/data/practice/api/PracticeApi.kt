@@ -49,5 +49,5 @@ interface PracticeApi {
     suspend fun deletePractice(
         @Path("projectId") projectId: Int,
         @Path("practiceId") practiceId: Int
-    ): ApiResponse<Unit>
+    ): Response<Unit>
 }

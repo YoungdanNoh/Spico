@@ -6,7 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.theme.*
@@ -17,13 +16,14 @@ import com.a401.spicoandroid.domain.home.model.PracticeType
 @Composable
 fun RecentReportSection(
     modifier: Modifier = Modifier,
-    reportList: List<HomeReport>
+    reportList: List<HomeReport>,
+    onReportClick: (HomeReport) -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(BrokenWhite)
-            .padding(vertical = 16.dp)
+            .padding(top = 28.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Text(
             text = "최근 연습 리포트",
@@ -56,9 +56,9 @@ fun RecentReportSection(
                 CommonList(
                     modifier = Modifier.dropShadow1(),
                     title = report.practiceName,
-                    description = description
+                    description = description,
+                    onClick = { onReportClick(report)}
                 )
-
                 if (index < reportList.lastIndex) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -66,15 +66,3 @@ fun RecentReportSection(
         }
     }
 }
-
-@Preview(showBackground = true, widthDp = 360)
-@Composable
-fun RecentReportSection_EmptyPreview() {
-    SpeakoAndroidTheme {
-        RecentReportSection(
-            reportList = emptyList(),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-    }
-}
-

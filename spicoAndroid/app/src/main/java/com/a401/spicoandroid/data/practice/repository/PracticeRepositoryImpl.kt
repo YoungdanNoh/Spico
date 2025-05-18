@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.data.practice.repository
 
+import android.util.Log
 import com.a401.spicoandroid.common.data.dto.getOrThrow
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.common.utils.safeApiCall
@@ -22,9 +23,14 @@ class PracticeRepositoryImpl @Inject constructor(
         cursor: Int?,
         size: Int
     ): DataResource<List<Practice>> = safeApiCall {
-        api.getPracticeList(projectId, filter, cursor, size)
-            .getOrThrow { it.practices.map { dto -> dto.toDomain() } }
+        Log.d("PracticeRepo", "📤 호출: projectId=$projectId, filter=$filter")
+
+        val result = api.getPracticeList(projectId, filter, cursor, size)
+        Log.d("PracticeRepo", "📥 응답: ${result.data?.practices}")
+
+        result.getOrThrow { it.practices.map { dto -> dto.toDomain() } }
     }
+
 
     override suspend fun createCoachingPractice(projectId: Int): DataResource<Int> {
         return try {
@@ -77,7 +83,12 @@ class PracticeRepositoryImpl @Inject constructor(
         projectId: Int,
         practiceId: Int
     ): DataResource<Unit> = safeApiCall {
-        api.deletePractice(projectId, practiceId).getOrThrow { Unit }
+        val response = api.deletePractice(projectId, practiceId)
+        if (response.isSuccessful) {
+            DataResource.Success(Unit)
+        } else {
+            DataResource.Error(Exception("삭제 실패: ${response.code()} ${response.message()}"))
+        }
     }
 
 }

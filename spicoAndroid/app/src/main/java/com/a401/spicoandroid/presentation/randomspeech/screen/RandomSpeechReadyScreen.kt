@@ -98,10 +98,17 @@ fun RandomSpeechReadyScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (newsTitle.isNotBlank() && newsSummary.isNotBlank() && newsUrl.isNotBlank()) {
+                val maxLength = 300
+                val trimmedSummary = if (newsSummary.length > maxLength) {
+                    newsSummary.substring(0, maxLength) + "..."
+                } else {
+                    newsSummary
+                }
+
                 InfoSection(title = "관련기사") {
                     Text(newsTitle, style = Typography.displaySmall, color = TextPrimary)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(newsSummary, style = Typography.titleMedium, color = TextTertiary)
+                    Text(trimmedSummary, style = Typography.titleMedium, color = TextTertiary)
                     Spacer(modifier = Modifier.height(12.dp))
                     CommonButton(
                         text = "기사 원문 확인하기",
@@ -112,7 +119,6 @@ fun RandomSpeechReadyScreen(
                         onClick = { openExternalLink(context, newsUrl) }
                     )
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
             }
 

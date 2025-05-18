@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.finalmode.viewmodel
 
 import android.Manifest
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,13 @@ class FinalModeViewModel @Inject constructor(
     private val finishFinalPracticeUseCase: FinishFinalPracticeUseCase,
     private val uploadManager: UploadManager
 ) : ViewModel() {
+
+    private var practiceId: Int? = null
+
+    fun setPracticeId(id: Int) {
+        practiceId = id
+    }
+
 
     // 1. 오디오 관련
     private val audioAnalyzer = AudioAnalyzer()
@@ -157,6 +165,7 @@ class FinalModeViewModel @Inject constructor(
 
             when (val result = generateFinalQuestionsUseCase(projectId, practiceId, speechContent)) {
                 is DataResource.Success -> {
+                    Log.d("FinalFlow", "✅ 질문 생성 성공: ${result.data}")
                     _finalQuestionState.update {
                         it.copy(questions = result.data, isLoading = false)
                     }
@@ -164,6 +173,7 @@ class FinalModeViewModel @Inject constructor(
                     startAutoQuestionCycle()
                 }
                 is DataResource.Error -> {
+                    Log.e("FinalFlow", "❌ 질문 생성 실패: ${result.throwable}")
                     _finalQuestionState.update {
                         it.copy(error = result.throwable, isLoading = false)
                     }
@@ -180,34 +190,58 @@ class FinalModeViewModel @Inject constructor(
 
     fun submitFinalModeResult(
         projectId: Int,
-        practiceId: Int,
         request: FinalModeResultRequestDto
     ) {
+        val id = practiceId ?: run {
+            Log.e("FinalFlow", "❌ practiceId가 null입니다.")
+            return
+        }
+
+        Log.d("FinalFlow", "📤 결과 저장 요청: projectId=$projectId, practiceId=$id")
+        Log.d("FinalFlow", "📤 결과 저장 요청: projectId=$projectId, practiceId=$id")
+
         viewModelScope.launch {
             _finalResultState.update { it.copy(isLoading = true, error = null) }
 
-            when (val result = finishFinalPracticeUseCase(projectId, practiceId, request)) {
+            when (val result = finishFinalPracticeUseCase(projectId, id, request)) {
                 is DataResource.Success -> {
+                    Log.d("FinalFlow", "✅ 저장 성공: presignedUrl=${result.data.presignedUrl}")
                     _finalResultState.update {
                         it.copy(presignedUrl = result.data.presignedUrl, isLoading = false)
                     }
                 }
                 is DataResource.Error -> {
+                    Log.e("FinalFlow", "❌ 저장 실패: ${result.throwable}")
                     _finalResultState.update {
                         it.copy(error = result.throwable, isLoading = false)
                     }
                 }
                 is DataResource.Loading -> {
+                    Log.d("FinalFlow", "⏳ 저장 중")
                     _finalResultState.update { it.copy(isLoading = true) }
                 }
             }
         }
     }
+
     fun uploadFinalVideo(presignedUrl: String, file: File, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             val result = uploadManager.uploadVideoToPresignedUrl(presignedUrl, file)
             onResult(result)
         }
     }
+
+    private var hasQnA: Boolean = false
+    fun setHasQnA(value: Boolean) {
+        Log.d("FinalFlow", "📥 setHasQnA called with: $value")
+        hasQnA = value
+    }
+
+    fun getHasQnA(): Boolean {
+        Log.d("FinalFlow", "📤 getHasQnA returns: $hasQnA")
+        return hasQnA
+    }
+
+
 }
 

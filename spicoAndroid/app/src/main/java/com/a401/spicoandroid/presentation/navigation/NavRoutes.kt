@@ -4,8 +4,19 @@ import android.net.Uri
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
 
 sealed class NavRoutes(val route: String) {
+    // 홈, 프로필
     object Home : NavRoutes("home")
     object Profile : NavRoutes("profile")
+
+    object HomeCoachingReportDetail : NavRoutes("home_coaching_report/{projectId}/{practiceId}?source={source}") {
+        fun createRoute(projectId: Int, practiceId: Int, source: String = "home") =
+            "home_coaching_report/$projectId/$practiceId?source=$source"
+    }
+
+    object HomeFinalReportDetail : NavRoutes("home_final_report/{projectId}/{practiceId}?source={source}") {
+        fun createRoute(projectId: Int, practiceId: Int, source: String = "home") =
+            "home_final_report/$projectId/$practiceId?source=$source"
+    }
 
     // 발표 목록
     object ProjectCreate : NavRoutes("project_create") {
@@ -40,20 +51,34 @@ sealed class NavRoutes(val route: String) {
     }
 
     // 코칭 모드
-    object CoachingMode : NavRoutes("coaching_mode")
-    object CoachingReport : NavRoutes("coaching_report")
-
-    // 파이널 모드
-    object FinalModeVoice : NavRoutes("final_mode_voice")
-    object FinalModeAudience : NavRoutes("final_mode_audience")
-    object FinalModeLoading : NavRoutes("final_mode_loading/{type}") {
-        fun withType(type: FinalModeLoadingType) = "final_mode_loading/${type.name}"
+    object CoachingMode {
+        const val route = "coaching_mode/{projectId}/{practiceId}"
+        fun withArgs(projectId: Int, practiceId: Int) = "coaching_mode/$projectId/$practiceId"
+    }
+    object CoachingReport {
+        const val route = "coaching_report/{projectId}/{practiceId}"
+        fun withArgs(projectId: Int, practiceId: Int) =
+            "coaching_report/$projectId/$practiceId"
     }
 
-    object FinalModeQnA : NavRoutes("final_mode_qna")
+    // 파이널 모드
+    object FinalModeRoot : NavRoutes("final_mode_root")
+
+    object FinalModeVoice : NavRoutes("final_mode_voice/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "final_mode_voice/$projectId/$practiceId"
+    }
+    object FinalModeAudience : NavRoutes("final_mode_audience/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "final_mode_audience/$projectId/$practiceId"
+    }
+    object FinalModeLoading : NavRoutes("final_mode_loading/{type}/{projectId}/{practiceId}") {
+        fun withArgs(type: FinalModeLoadingType, projectId: Int, practiceId: Int) =
+            "final_mode_loading/${type.name}/$projectId/$practiceId"
+    }
+    object FinalModeQnA : NavRoutes("final_mode_qna/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "final_mode_qna/$projectId/$practiceId"
+    }
     object FinalReport : NavRoutes("final_mode_report/{projectId}/{practiceId}") {
-        fun createRoute(projectId: Int, practiceId: Int): String =
-            "final_mode_report/$projectId/$practiceId"
+        fun createRoute(projectId: Int, practiceId: Int) = "final_mode_report/$projectId/$practiceId"
     }
 
     // 영상 다시 보기

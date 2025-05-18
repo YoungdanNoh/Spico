@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,16 +27,22 @@ import com.a401.spicoandroid.common.utils.formatDateWithDay
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeMode
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectDetailViewModel
+import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun ProjectSelectScreen(
     navController: NavController,
-    viewModel: PracticeViewModel = hiltViewModel()
+    viewModel: PracticeViewModel = hiltViewModel(),
+    detailViewModel: ProjectDetailViewModel = hiltViewModel(),
+    scriptViewModel: ProjectScriptViewModel = hiltViewModel()
 ) {
-
     val projectList by viewModel.projectList.collectAsState()
     val selectedMode = viewModel.selectedMode
+
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.fetchProjectList()
@@ -69,7 +76,7 @@ fun ProjectSelectScreen(
                 CommonIconTextButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp, horizontal = 16.dp),
+                        .padding(horizontal = 16.dp),
                     iconResId = R.drawable.ic_add_white,
                     text = "새 프로젝트 생성",
                     size = ButtonSize.LG,
@@ -124,24 +131,32 @@ fun ProjectSelectScreen(
                             description = formatDateWithDay(project.date),
                             onClick = {
                                 viewModel.selectedProject = project
-
-
                                 when (selectedMode) {
                                     PracticeMode.FINAL -> {
                                         navController.navigate(NavRoutes.FinalSetting.route)
                                     }
-
                                     PracticeMode.COACHING -> {
-                                        viewModel.createPractice(
-                                            onSuccess = {
-                                                navController.navigate(NavRoutes.CoachingMode.route)
-                                            },
-                                            onFailure = {
-                                                Log.e("ProjectSelectScreen", "코칭 연습 생성 실패", it)
-                                            }
-                                        )
-                                    }
+                                        scope.launch {
+                                            val detail = detailViewModel.fetchProjectDetailAndGet(project.id)
 
+                                            scriptViewModel.initializeScript(
+                                                projectId = project.id.toLong(),
+                                                title = project.title,
+                                                rawScript = detail.script
+                                            )
+
+                                            viewModel.createPractice(
+                                                onSuccess = { practiceId ->
+                                                    navController.navigate(
+                                                        route = NavRoutes.CoachingMode.withArgs(project.id, practiceId)
+                                                    )
+                                                },
+                                                onFailure = {
+                                                    Log.e("ProjectSelectScreen", "코칭 연습 생성 실패", it)
+                                                }
+                                            )
+                                        }
+                                    }
                                     null -> {
                                         // TODO: 모드가 선택되지 않았을 경우 처리
                                     }
