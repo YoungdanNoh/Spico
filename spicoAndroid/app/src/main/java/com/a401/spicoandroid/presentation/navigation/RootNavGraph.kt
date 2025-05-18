@@ -18,7 +18,7 @@ fun RootNavGraph(
     if (accessToken == null) {
         LoginNavGraph(navController = navController, userDataStore = userDataStore, modifier = modifier)
     } else {
-        NavGraph(navController = navController, userDataStore = userDataStore, modifier = modifier)
+        MainNavGraph(navController = navController, userDataStore = userDataStore, modifier = modifier)
     }
 }
 

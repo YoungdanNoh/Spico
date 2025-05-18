@@ -2,7 +2,6 @@ package com.a401.spicoandroid.presentation.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,13 +52,11 @@ import com.a401.spicoandroid.presentation.report.screen.VoiceScriptRandomScreen
 import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 
 @Composable
-fun NavGraph(
+fun MainNavGraph(
     navController: NavHostController,
     userDataStore: UserDataStore,
     modifier: Modifier = Modifier
 ) {
-    val accessTokenState = userDataStore.observeAccessToken().collectAsState(initial = null)
-    val accessToken = accessTokenState.value
 
     NavControllerProvider(navController = navController) {
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
