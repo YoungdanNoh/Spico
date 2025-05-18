@@ -200,7 +200,9 @@ fun NavGraph(
             composable(route = NavRoutes.ProjectSelect.route) {
                 ProjectSelectScreen(
                     navController = navController,
-                    viewModel = practiceViewModel
+                    viewModel = practiceViewModel,
+                    scriptViewModel = projectScriptViewModel,
+                    detailViewModel = projectDetailViewModel
                 )
             }
             // 파이널 모드 설정 화면
@@ -287,9 +289,24 @@ fun NavGraph(
             }
 
             // 코칭 모드
-            composable(NavRoutes.CoachingMode.route) {
-                CoachingModeScreen(navController)
+            composable(
+                route = NavRoutes.CoachingMode.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                CoachingModeScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId,
+                    scriptViewModel = projectScriptViewModel
+                )
             }
+
             composable(
                 NavRoutes.CoachingReport.route,
                 arguments = listOf(
@@ -297,7 +314,7 @@ fun NavGraph(
                     navArgument("practiceId") { type = NavType.IntType }
                 )
             ){
-                    backStackEntry ->
+                backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
                 CoachingReportScreen(navController, projectId, practiceId)

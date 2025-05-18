@@ -5,12 +5,14 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -18,37 +20,50 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.bottomsheet.ScriptBottomSheet
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.infrastructure.speech.GoogleStt
 import com.a401.spicoandroid.presentation.coachingmode.component.CoachingFeedbackPanel
 import com.a401.spicoandroid.presentation.coachingmode.viewmodel.CoachingModeViewModel
-import com.a401.spicoandroid.presentation.coachingmode.viewmodel.RecordingState
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewModel
 
 @Composable
 fun CoachingModeScreen(
+    modifier: Modifier = Modifier,
     navController: NavController,
-    coachingModeviewModel: CoachingModeViewModel = hiltViewModel(),
+    coachingModeViewModel: CoachingModeViewModel = hiltViewModel(),
     scriptViewModel: ProjectScriptViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    projectId: Int,
+    practiceId: Int
 ) {
+    BackHandler(enabled = true) {}
+
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val countdown = coachingModeviewModel.countdown
-    val elapsedTime = coachingModeviewModel.elapsedTime
-    val showConfirm = coachingModeviewModel.showStopConfirm
-    val recordingState = coachingModeviewModel.recordingState
-
-    val waveform by coachingModeviewModel.waveform.collectAsState()
+    val state by coachingModeViewModel.coachingState.collectAsState()
     val scriptState by scriptViewModel.scriptState.collectAsState()
 
     val showScriptSheet = remember { mutableStateOf(false) }
-
     var permissionGranted by remember { mutableStateOf(false) }
 
+    // STT 설정
+    val googleStt = remember {
+        GoogleStt(
+            context = context,
+            onResult = { Log.d("STT", "결과: $it") },
+            onError = { Log.e("STT", it) }
+        ).apply {
+            setOnWaveformUpdate { coachingModeViewModel.pushWaveformValue(it) }
+            setOnVolumeFeedback { coachingModeViewModel.updateVolumeFeedback(it) }
+        }
+    }
+
+    // 권한 요청
     LaunchedEffect(Unit) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
             != PackageManager.PERMISSION_GRANTED
@@ -64,37 +79,61 @@ fun CoachingModeScreen(
     }
 
     LaunchedEffect(permissionGranted) {
+        Log.d("Permission", "녹음 권한 granted? $permissionGranted")
         if (permissionGranted) {
-            coachingModeviewModel.startCountdownAndRecording()
+            coachingModeViewModel.startCountdownAndRecording {
+                googleStt.start()
+            }
         }
     }
 
-    val isCountdown = countdown >= 0
-    val isPaused = recordingState == RecordingState.PAUSED
-    val isRecording = recordingState == RecordingState.RECORDING
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            Log.d("PostResult", "📦 Navigation 이동 시작")
+            navController.navigate(
+                route = NavRoutes.CoachingReport.withArgs(projectId = projectId, practiceId = practiceId),
+                navOptions = navOptions {
+                    popUpTo(NavRoutes.CoachingMode.route) { inclusive = true }
+                }
+            )
+        }
+    }
+
+    val isCountdown = state.countdown >= 0
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(BrokenWhite)
     ) {
-
-        CoachingFeedbackPanel(
-            modifier = Modifier.padding(16.dp),
-            characterPainter = painterResource(id = R.drawable.character_coaching),
-            latestFeedback = "목소리를 더 키워봐요!"
-        )
-
-        Box(
+        Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(top = 16.dp)
-                .height(200.dp)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            AudioWaveformView(waveform = waveform, modifier = Modifier.fillMaxSize())
-            if (isCountdown) {
-                Box(modifier = Modifier.align(Alignment.Center)) {
-                    CommonTimer(timeText = countdown.toString(), type = TimerType.CIRCLE)
+            CoachingFeedbackPanel(
+                modifier = Modifier.fillMaxWidth(),
+                characterPainter = painterResource(id = R.drawable.character_coaching),
+                latestFeedback = state.volumeFeedback ?: ""
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clipToBounds()
+            ) {
+                AudioWaveformView(
+                    waveform = state.waveform,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (isCountdown) {
+                    Box(modifier = Modifier.align(Alignment.Center)) {
+                        CommonTimer(timeText = state.countdown.toString(), type = TimerType.CIRCLE)
+                    }
                 }
             }
         }
@@ -107,10 +146,12 @@ fun CoachingModeScreen(
                 .padding(top = 8.dp, bottom = 16.dp)
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CommonTimer(timeText = elapsedTime, type = TimerType.CHIP_LARGE)
+                CommonTimer(timeText = state.elapsedTime, type = TimerType.CHIP_LARGE)
             }
 
             Row(
@@ -130,30 +171,16 @@ fun CoachingModeScreen(
                 LargeIconCircleButton(
                     icon = {
                         Icon(
-                            painter = painterResource(
-                                id = when {
-                                    isCountdown || isPaused -> R.drawable.ic_record_white
-                                    isRecording -> R.drawable.ic_pause_white
-                                    else -> R.drawable.ic_record_white
-                                }
-                            ),
+                            painter = painterResource(id = R.drawable.ic_microphone_white),
                             contentDescription = "Record",
                             tint = White,
                             modifier = Modifier.size(32.dp)
                         )
                     },
-                    borderColor = when {
-                        isCountdown || isPaused -> Error
-                        isRecording -> Disabled
-                        else -> Disabled
-                    },
-                    backgroundColor = when {
-                        isCountdown || isPaused -> ErrorHover
-                        isRecording -> Action
-                        else -> Disabled
-                    },
-                    enabled = !isCountdown,
-                    onClick = { if (!isCountdown) coachingModeviewModel.toggleRecording() }
+                    borderColor = Disabled,
+                    backgroundColor = Action,
+                    enabled = false,
+                    onClick = {}
                 )
 
                 CommonButton(
@@ -162,27 +189,31 @@ fun CoachingModeScreen(
                     borderColor = Error,
                     textColor = White,
                     size = ButtonSize.SM,
-                    onClick = { coachingModeviewModel.showConfirmDialog() }
+                    onClick = { coachingModeViewModel.showConfirmDialog() }
                 )
             }
         }
 
-        if (showConfirm) {
+        if (state.showStopConfirm) {
             CommonAlert(
                 title = "코칭 모드를 종료하시겠습니까?",
                 confirmText = "종료",
                 onConfirm = {
-                    val canStop = coachingModeviewModel.stopRecording()
+                    val canStop = coachingModeViewModel.stopRecording()
                     if (!canStop) {
-                        Toast.makeText(context, "녹음이 너무 짧아요! 조금 더 녹음해주세요.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "너무 짧아요! 조금 더 진행해주세요.", Toast.LENGTH_SHORT).show()
                     } else {
-                        navController.navigate("home")
+                        googleStt.stop()
+                        coachingModeViewModel.calculateAndStoreVolumeScore(
+                            records = googleStt.getVolumeRecordList()
+                        )
+                        coachingModeViewModel.postResult(projectId = projectId, practiceId = practiceId)
                     }
-                    coachingModeviewModel.hideConfirmDialog()
+                    coachingModeViewModel.hideConfirmDialog()
                 },
                 cancelText = "취소",
-                onCancel = { coachingModeviewModel.hideConfirmDialog() },
-                onDismissRequest = { coachingModeviewModel.hideConfirmDialog() },
+                onCancel = { coachingModeViewModel.hideConfirmDialog() },
+                onDismissRequest = { coachingModeViewModel.hideConfirmDialog() },
                 confirmTextColor = White,
                 confirmBackgroundColor = Error,
                 confirmBorderColor = Error,
@@ -196,14 +227,10 @@ fun CoachingModeScreen(
         if (showScriptSheet.value) {
             ScriptBottomSheet(
                 scripts = scriptState.paragraphs.map { it.text },
-                onScriptClick = { index ->
-                    Log.d("Script", "선택된 스크립트 인덱스: $index")
-                    showScriptSheet.value = false
-                },
-                onDismissRequest = {
-                    showScriptSheet.value = false
-                }
+                onScriptClick = { showScriptSheet.value = false },
+                onDismissRequest = { showScriptSheet.value = false }
             )
         }
     }
 }
+

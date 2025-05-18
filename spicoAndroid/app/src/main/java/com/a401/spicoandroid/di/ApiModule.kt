@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.auth.api.AuthApi
+import com.a401.spicoandroid.data.coachingmode.api.CoachingModeApi
 import com.a401.spicoandroid.data.finalmode.api.FinalModeApi
 import com.a401.spicoandroid.data.home.api.HomeApi
 import com.a401.spicoandroid.data.practice.api.PracticeApi
@@ -67,6 +68,12 @@ object ApiModule {
     @Singleton
     fun provideAuthApi(@NetworkModule.MainRetrofit retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCoachingModeApi(@NetworkModule.MainRetrofit retrofit: Retrofit): CoachingModeApi {
+        return retrofit.create(CoachingModeApi::class.java)
     }
 
 }

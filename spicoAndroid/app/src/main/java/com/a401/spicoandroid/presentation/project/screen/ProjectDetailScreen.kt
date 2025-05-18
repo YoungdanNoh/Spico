@@ -273,7 +273,7 @@ fun ProjectDetailScreen(
                                                 }
                                                 2 -> { // 코칭 모드
                                                     navController.navigate(
-                                                        NavRoutes.CoachingReport.createRoute(projectId, practice.id)
+                                                        NavRoutes.CoachingReport.withArgs(projectId, practice.id)
                                                     )
                                                 }
                                                 else -> { // 전체 탭 - finalCnt 또는 coachingCnt를 기반으로 분기
@@ -289,7 +289,7 @@ fun ProjectDetailScreen(
 
                                                         practice.coachingCnt != null -> {
                                                             val route =
-                                                                NavRoutes.CoachingReport.createRoute(
+                                                                NavRoutes.CoachingReport.withArgs(
                                                                     projectId,
                                                                     practice.id
                                                                 )
