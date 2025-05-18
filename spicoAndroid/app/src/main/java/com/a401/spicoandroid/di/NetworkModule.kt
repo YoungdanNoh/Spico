@@ -30,6 +30,9 @@ object NetworkModule {
         authInterceptor: AuthInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS) // 서버 연결 시도 제한 시간
+            .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)    // 응답 기다리는 최대 시간
+            .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)   // 요청 전송 시간 제한
             .retryOnConnectionFailure(true)
             .addInterceptor(authInterceptor)
             .build()

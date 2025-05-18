@@ -45,9 +45,7 @@ fun RandomSpeechReadyScreen(
     val prepMin = uiState.prepTime / 60
     val speakMin = uiState.speakTime / 60
 
-    BackHandler(enabled = true) {
-        showExitAlert = true
-    }
+    BackHandler(enabled = true) {showExitAlert = true}
 
     Scaffold(
         topBar = {
@@ -131,7 +129,10 @@ fun RandomSpeechReadyScreen(
                 onCancel = { showExitAlert = false },
                 onConfirm = {
                     showExitAlert = false
-                    onEndClick()
+                    viewModel.deleteSpeech(
+                        onSuccess = { onEndClick() },
+                        onError = { onEndClick() }
+                    )
                 }
             )
         }

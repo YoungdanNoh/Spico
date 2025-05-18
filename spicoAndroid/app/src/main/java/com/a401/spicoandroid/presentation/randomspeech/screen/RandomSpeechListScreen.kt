@@ -64,7 +64,13 @@ fun RandomSpeechListScreen(
         topBar = {
             CommonTopBar(
                 centerText = "리포트 목록",
-                leftContent = { BackIconButton(navController) },
+                leftContent = {
+                    BackIconButton {
+                        navController.navigate(NavRoutes.RandomSpeechLanding.route) {
+                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = false }
+                        }
+                    }
+                },
                 rightContent = {
                     CommonButton(
                         text = "시작",

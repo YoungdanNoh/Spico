@@ -190,7 +190,9 @@ fun ProjectDetailScreen(
                         iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로가기",
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigate(NavRoutes.ProjectList.route) {
+                                popUpTo(NavRoutes.ProjectScriptDetail.route) { inclusive = false }
+                            }
                         }
                     )
                 },
