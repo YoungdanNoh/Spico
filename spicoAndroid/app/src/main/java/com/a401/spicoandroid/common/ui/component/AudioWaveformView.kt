@@ -25,7 +25,7 @@ fun AudioWaveformView(
         val barWidth = size.width / waveform.size.coerceAtLeast(1)
 
         waveform.forEachIndexed { index, amp ->
-            val scaledAmp = (amp * 3f).coerceAtMost(1f)
+            val scaledAmp = (amp / 10f).coerceIn(0.05f, 1f)
             val barHeight = scaledAmp * size.height
             drawLine(
                 color = Action,

@@ -64,6 +64,8 @@ class GoogleStt(
                }
 
                override fun onRmsChanged(rmsdB: Float) {
+                   onWaveformUpdate?.invoke(rmsdB)
+
                    // 성량 피드백
                    val currentTime = System.currentTimeMillis()
                    volumeBuffer.add(rmsdB)
@@ -88,6 +90,13 @@ class GoogleStt(
                            val secondHalf = recentAvgList.takeLast(recentAvgList.size / 2).average().toFloat()
                            val trend = secondHalf - firstHalf
                            val trendLevel = classifyVolume(trend)
+
+                           val feedback = when (trendLevel) {
+                               VolumeLevel.LOUD -> "목소리가 커요!"
+                               VolumeLevel.QUIET -> "조금 더 크게 말해볼까요?"
+                               VolumeLevel.MIDDLE -> "좋아요! 지금 톤을 유지해요"
+                           }
+                           onVolumeFeedback?.invoke(feedback)
 
                            val timeOffset = currentTime - speechStartTimestamp
                            val timeStr = formatElapsedTime(timeOffset)
@@ -284,4 +293,15 @@ class GoogleStt(
     fun getVolumeRecordList(): List<VolumeRecord> {
         return volumeRecords.toList()
     }
+
+    private var onWaveformUpdate: ((Float) -> Unit)? = null
+    fun setOnWaveformUpdate(callback: (Float) -> Unit) {
+        onWaveformUpdate = callback
+    }
+
+    private var onVolumeFeedback: ((String) -> Unit)? = null
+    fun setOnVolumeFeedback(callback: (String) -> Unit) {
+        onVolumeFeedback = callback
+    }
+
 }

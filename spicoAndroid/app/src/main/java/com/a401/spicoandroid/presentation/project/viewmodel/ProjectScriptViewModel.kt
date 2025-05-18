@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.project.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ open class ProjectScriptViewModel @Inject constructor() : ViewModel() {
     fun initializeScript(projectId: Long, title: String, rawScript: String) {
         val current = _scriptState.value
         val incoming = rawScript.split("\n\n")
+        Log.d("ScriptInit", "📘 스크립트 초기화 시작 - 문단 수: ${incoming.size}")
 
         val isSame = current.title == title && current.paragraphs.map { it.text } == incoming
 

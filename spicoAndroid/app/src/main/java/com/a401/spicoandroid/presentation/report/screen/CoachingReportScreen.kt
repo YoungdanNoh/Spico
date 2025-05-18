@@ -30,13 +30,13 @@ import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.component.ChipType
 import com.a401.spicoandroid.common.ui.component.CommonAlert
 import com.a401.spicoandroid.common.ui.component.CommonButton
-import com.a401.spicoandroid.common.ui.component.CommonList
 import com.a401.spicoandroid.common.ui.component.CommonTopBar
 import com.a401.spicoandroid.common.ui.component.IconButton
 import com.a401.spicoandroid.common.ui.component.LoadingInProgressView
 import com.a401.spicoandroid.common.ui.theme.*
 import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import com.a401.spicoandroid.presentation.report.component.FeedbackCard
 import com.a401.spicoandroid.presentation.report.component.ReportInfoHeader
 import com.a401.spicoandroid.presentation.report.viewmodel.CoachingReportViewModel
 import kotlinx.coroutines.delay
@@ -169,31 +169,47 @@ fun CoachingReportScreen(
 //                            exoPlayer.seekTo(newPosition)
 //                        }
 //                    )
-
-                    CommonList(
-                        imagePainter = painterResource(id = R.drawable.img_feedback_volume),
+                    FeedbackCard(
+                        imageResId = R.drawable.img_feedback_volume,
                         title = "성량",
-                        titleStyle = Typography.headlineLarge.copy(color = Action),
-                        description = reportState.volumeStatus,
-                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                        height = 88.dp
+                        description = reportState.volumeStatus
                     )
-                    CommonList(
-                        imagePainter = painterResource(id = R.drawable.img_feedback_speed),
+
+                    FeedbackCard(
+                        imageResId = R.drawable.img_feedback_speed,
                         title = "속도",
-                        titleStyle = Typography.headlineLarge.copy(color = Action),
-                        description = reportState.speedStatus,
-                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                        height = 88.dp
+                        description = reportState.speedStatus
                     )
-                    CommonList(
-                        imagePainter = painterResource(id = R.drawable.img_feedback_silence),
+
+                    FeedbackCard(
+                        imageResId = R.drawable.img_feedback_silence,
                         title = "휴지",
-                        titleStyle = Typography.headlineLarge.copy(color = Action),
-                        description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요",
-                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                        height = 88.dp
+                        description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요"
                     )
+//                    CommonList(
+//                        imagePainter = painterResource(id = R.drawable.img_feedback_volume),
+//                        title = "성량",
+//                        titleStyle = Typography.headlineLarge.copy(color = Action),
+//                        description = reportState.volumeStatus,
+//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+//                        height = 88.dp
+//                    )
+//                    CommonList(
+//                        imagePainter = painterResource(id = R.drawable.img_feedback_speed),
+//                        title = "속도",
+//                        titleStyle = Typography.headlineLarge.copy(color = Action),
+//                        description = reportState.speedStatus,
+//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+//                        height = 88.dp
+//                    )
+//                    CommonList(
+//                        imagePainter = painterResource(id = R.drawable.img_feedback_silence),
+//                        title = "휴지",
+//                        titleStyle = Typography.headlineLarge.copy(color = Action),
+//                        description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요",
+//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+//                        height = 88.dp
+//                    )
 //                    CommonList(
 //                        imagePainter = painterResource(id = R.drawable.img_feedback_pronunciation),
 //                        title = "발음",
@@ -202,14 +218,14 @@ fun CoachingReportScreen(
 //                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
 //                        height = 88.dp
 //                    )
-                    CommonList(
-                        imagePainter = painterResource(id = R.drawable.img_feedback_script_match),
-                        title = "대본일치도",
-                        titleStyle = Typography.headlineLarge.copy(color = Action),
-                        description = reportState.pronunciationStatus,
-                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-                        height = 88.dp
-                    )
+//                    CommonList(
+//                        imagePainter = painterResource(id = R.drawable.img_feedback_script_match),
+//                        title = "대본일치도",
+//                        titleStyle = Typography.headlineLarge.copy(color = Action),
+//                        description = reportState.pronunciationStatus,
+//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
+//                        height = 88.dp
+//                    )
                 }
             }
         }

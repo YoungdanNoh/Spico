@@ -89,7 +89,7 @@ class PracticeViewModel @Inject constructor(
      * 코칭/파이널 모드에 따라 각각의 API 호출 분기 처리
      */
     fun createPractice(
-        onSuccess: () -> Unit,
+        onSuccess: (practiceId: Int) -> Unit,
         onFailure: (Throwable) -> Unit
     ) {
         val projectId = selectedProject?.id ?: return
@@ -100,7 +100,7 @@ class PracticeViewModel @Inject constructor(
                     when (val result = createCoachingPracticeUseCase(projectId)) {
                         is DataResource.Success -> {
                             _practiceId.value = result.data
-                            onSuccess()
+                            onSuccess(result.data)
                         }
 
                         is DataResource.Error -> {
@@ -123,7 +123,7 @@ class PracticeViewModel @Inject constructor(
                     when (val result = createFinalPracticeUseCase(projectId, request)) {
                         is DataResource.Success -> {
                             _practiceId.value = result.data
-                            onSuccess()
+                            onSuccess(result.data)
                         }
 
                         is DataResource.Error -> {
