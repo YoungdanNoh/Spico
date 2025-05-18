@@ -26,8 +26,10 @@ import com.a401.spicoandroid.presentation.project.viewmodel.ProjectViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import java.time.LocalDate
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.lazy.LazyColumn
 import com.a401.spicoandroid.common.utils.formatDateTimeWithDot
+import androidx.compose.ui.platform.LocalContext
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -62,14 +64,12 @@ fun ProjectDetailScreen(
 
     val practiceViewModel: PracticeViewModel = hiltViewModel()
     val practiceState by practiceViewModel.practiceListState.collectAsState()
-    val practiceDeleteState by practiceViewModel.practiceDeleteState.collectAsState()
 
     val projectViewModel: ProjectViewModel = hiltViewModel()
-    val deleteState by projectViewModel.deleteState.collectAsState()
 
     var selectedPracticeId by remember { mutableIntStateOf(-1) }
 
-
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchProjectDetail(projectId)
@@ -88,17 +88,6 @@ fun ProjectDetailScreen(
         )
     }
 
-    LaunchedEffect(practiceDeleteState.isSuccess) {
-        if (practiceDeleteState.isSuccess) {
-            practiceViewModel.fetchPracticeList(
-                projectId = projectId,
-                filter = if (selectedTab == 0) "coaching" else "final",
-                cursor = null,
-                size = 10
-            )
-        }
-    }
-
     LaunchedEffect(project) {
         project?.let {
             title = it.name
@@ -114,7 +103,6 @@ fun ProjectDetailScreen(
         2 -> practiceState.practices.filter { it.coachingCnt != null }
         else -> practiceState.practices
     }
-
 
     val dropdownItems = listOf(
         DropdownMenuItemData(
@@ -156,10 +144,37 @@ fun ProjectDetailScreen(
             onDeleteClick = {
                 isBottomSheetVisible = false
                 if (selectedPracticeId != -1) {
-                    practiceViewModel.deletePractice(projectId, selectedPracticeId)
+                    practiceViewModel.deletePractice(
+                        projectId = projectId,
+                        practiceId = selectedPracticeId,
+                        onSuccess = {
+                            Toast.makeText(context, "연습을 삭제했어요", Toast.LENGTH_SHORT).show()
+
+                            selectedPracticeId = -1
+                            val filter = when (selectedTab) {
+                                1 -> "final"
+                                2 -> "coaching"
+                                else -> null
+                            }
+
+                            practiceViewModel.fetchPracticeList(
+                                projectId = projectId,
+                                filter = filter,
+                                cursor = null,
+                                size = 10
+                            )
+
+                            practiceViewModel.resetDeleteState()
+                        },
+                        onError = {
+                            Toast.makeText(context, "삭제에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                            practiceViewModel.resetDeleteState()
+                        }
+                    )
                 }
-                practiceViewModel.resetDeleteState()
-            },
+            }
+
+            ,
             onDismissRequest = {
                 isBottomSheetVisible = false
             }
