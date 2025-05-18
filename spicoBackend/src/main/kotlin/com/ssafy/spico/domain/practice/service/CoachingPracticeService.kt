@@ -15,6 +15,6 @@ interface CoachingPracticeService {
         projectId: Int,
         practiceId: Int,
         endCoachingPractice: EndCoachingPractice
-    ): EndCoachingPracticeResponseDto
+    )
 
 }
