@@ -82,7 +82,9 @@ class RandomSpeechSharedViewModel @Inject constructor(
                 }
 
                 is DataResource.Error -> {
-                    Log.e("SubmitScript", "❌ 실패: ${result.throwable.message}")
+                    Log.e("SubmitScript", "❌ 실패: ${result.throwable.message}", result.throwable) // 전체 stack trace 포함
+                    Log.e("SubmitScript", "📛 throwable 클래스: ${result.throwable::class.java.simpleName}")
+                    Log.e("SubmitScript", "📛 throwable 전체 내용: ${result.throwable}")
                     _uiState.update { it.copy(isLoading = false, errorMessage = result.throwable.message) }
                     onError()
                 }
@@ -126,6 +128,10 @@ class RandomSpeechSharedViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
     }
 
 

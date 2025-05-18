@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.data.randomspeech.repository
 
 import com.a401.spicoandroid.common.data.dto.getOrThrow
+import com.a401.spicoandroid.common.data.dto.getOrThrowNull
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.common.utils.safeApiCall
 import com.a401.spicoandroid.data.randomspeech.api.RandomSpeechApi
@@ -37,8 +38,7 @@ class RandomSpeechRepositoryImpl @Inject constructor(
         script: String
     ): DataResource<Unit> = safeApiCall {
         val request = SubmitRandomSpeechScriptRequestDto(script = script)
-        api.submitRandomSpeechScript(speechId, request)
-        Unit
+        api.submitRandomSpeechScript(speechId, request).getOrThrowNull { Unit }
     }
 
     // 랜덤 스피치 리포트 리스트 불러오기
