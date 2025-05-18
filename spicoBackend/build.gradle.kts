@@ -60,6 +60,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
+    /* loki */
+    implementation("com.github.loki4j:loki-logback-appender:1.5.2")
+
     // GPT 관련 의존성 추가
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
