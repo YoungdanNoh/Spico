@@ -21,10 +21,17 @@ fun RandomReportNewsSection(
     url: String,
     context: Context
 ) {
+    val maxLength = 300
+    val trimmedSummary = if (summary.length > maxLength) {
+        summary.substring(0, maxLength) + "..."
+    } else {
+        summary
+    }
+
     InfoSection(title = "관련기사") {
         Text(title, style = Typography.displaySmall, color = TextPrimary)
         Spacer(modifier = Modifier.height(4.dp))
-        Text(summary, style = Typography.titleMedium, color = TextTertiary)
+        Text(trimmedSummary, style = Typography.titleMedium, color = TextTertiary)
         Spacer(modifier = Modifier.height(12.dp))
         CommonButton(
             text = "기사 원문 확인하기",
@@ -36,6 +43,7 @@ fun RandomReportNewsSection(
         )
     }
 }
+
 
 @Preview(showBackground = true, widthDp = 360)
 @Composable
