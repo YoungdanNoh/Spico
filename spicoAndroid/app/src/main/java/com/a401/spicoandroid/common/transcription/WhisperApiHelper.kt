@@ -27,7 +27,7 @@ object WhisperApiHelper {
 
         val request = Request.Builder()
             .url("https://api.openai.com/v1/audio/transcriptions")
-            .addHeader("Authorization", "Bearer ${OPENAI_KEY}}") // ✅ 키는 실제 값으로 교체
+            .addHeader("Authorization", "Bearer ${OPENAI_KEY}") // ✅ 키는 실제 값으로 교체
             .post(requestBody)
             .build()
 
