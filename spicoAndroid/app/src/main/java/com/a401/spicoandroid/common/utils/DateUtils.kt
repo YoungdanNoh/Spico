@@ -60,3 +60,18 @@ fun formatDateTimeWithDay(dateTimeString: String): String {
         "--.--.--"
     }
 }
+
+/**
+ * "2025-04-28 15:00" → "2025.04.28 15:00"
+ */
+fun formatDateTimeWithDot(dateTimeString: String): String {
+    return try {
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.KOREAN)
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm", Locale.KOREAN)
+        val parsedDateTime = LocalDateTime.parse(dateTimeString, inputFormatter)
+        parsedDateTime.format(outputFormatter)
+    } catch (e: Exception) {
+        "--.--.--"
+    }
+}
+

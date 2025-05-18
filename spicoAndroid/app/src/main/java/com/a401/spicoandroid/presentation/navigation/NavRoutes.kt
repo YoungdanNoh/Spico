@@ -62,16 +62,23 @@ sealed class NavRoutes(val route: String) {
     }
 
     // 파이널 모드
-    object FinalModeVoice : NavRoutes("final_mode_voice")
-    object FinalModeAudience : NavRoutes("final_mode_audience")
-    object FinalModeLoading : NavRoutes("final_mode_loading/{type}") {
-        fun withType(type: FinalModeLoadingType) = "final_mode_loading/${type.name}"
-    }
+    object FinalModeRoot : NavRoutes("final_mode_root")
 
-    object FinalModeQnA : NavRoutes("final_mode_qna")
+    object FinalModeVoice : NavRoutes("final_mode_voice/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "final_mode_voice/$projectId/$practiceId"
+    }
+    object FinalModeAudience : NavRoutes("final_mode_audience/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "final_mode_audience/$projectId/$practiceId"
+    }
+    object FinalModeLoading : NavRoutes("final_mode_loading/{type}/{projectId}/{practiceId}") {
+        fun withArgs(type: FinalModeLoadingType, projectId: Int, practiceId: Int) =
+            "final_mode_loading/${type.name}/$projectId/$practiceId"
+    }
+    object FinalModeQnA : NavRoutes("final_mode_qna/{projectId}/{practiceId}") {
+        fun withArgs(projectId: Int, practiceId: Int) = "final_mode_qna/$projectId/$practiceId"
+    }
     object FinalReport : NavRoutes("final_mode_report/{projectId}/{practiceId}") {
-        fun createRoute(projectId: Int, practiceId: Int): String =
-            "final_mode_report/$projectId/$practiceId"
+        fun createRoute(projectId: Int, practiceId: Int) = "final_mode_report/$projectId/$practiceId"
     }
 
     // 영상 다시 보기

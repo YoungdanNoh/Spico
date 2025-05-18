@@ -28,6 +28,9 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 @Composable
 fun FinalModeVoiceScreen(
     navController: NavController,
+    parentNavController: NavController,
+    projectId: Int,
+    practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -43,7 +46,7 @@ fun FinalModeVoiceScreen(
         FinalRecordingCameraService(context, lifecycleOwner)
     }
 
-    // 마이크 권한 요청
+    // 🎙 마이크 권한 요청 및 오디오 분석 시작
     LaunchedEffect(Unit) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
             != PackageManager.PERMISSION_GRANTED
@@ -54,11 +57,11 @@ fun FinalModeVoiceScreen(
                 1001
             )
         } else {
-            viewModel.startAudio() // 권한 있을 경우 바로 시작
+            viewModel.startAudio()
         }
     }
 
-    // 카메라 녹화 시작
+    // 🎥 카메라 녹화 시작
     LaunchedEffect(Unit) {
         cameraService.startCamera {
             viewModel.startCountdownAndRecording {
@@ -74,7 +77,7 @@ fun FinalModeVoiceScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // 실시간 파형 + 카운트다운 겹치기
+        // 실시간 파형 + 카운트다운
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -115,7 +118,8 @@ fun FinalModeVoiceScreen(
                 size = ButtonSize.SM,
                 onClick = {
                     viewModel.checkElapsedAndShowDialog(elapsedSeconds.value)
-                }
+                },
+                enabled = countdown < 0
             )
         }
 
@@ -128,8 +132,25 @@ fun FinalModeVoiceScreen(
                     viewModel.hideAllDialogs()
                     viewModel.stopRecording()
                     viewModel.stopAudio()
-                    cameraService.stopRecording {
-                        navController.navigate(NavRoutes.FinalModeLoading.withType(FinalModeLoadingType.QUESTION))
+
+                    Log.d("FinalFlow", "🛑 녹화 종료. projectId=$projectId, practiceId=$practiceId")
+
+                    if (viewModel.getHasQnA()) {
+                        navController.navigate(
+                            NavRoutes.FinalModeLoading.withArgs(
+                                FinalModeLoadingType.QUESTION,
+                                projectId,
+                                practiceId
+                            )
+                        )
+                    } else {
+                        parentNavController.navigate(
+                            NavRoutes.FinalModeLoading.withArgs(
+                                FinalModeLoadingType.REPORT,
+                                projectId,
+                                practiceId
+                            )
+                        )
                     }
                 },
                 onCancel = { viewModel.hideAllDialogs() },
@@ -145,7 +166,7 @@ fun FinalModeVoiceScreen(
             )
         }
 
-// 30초 미만 종료 다이얼로그
+        // 30초 미만 종료 다이얼로그
         if (viewModel.showEarlyExitDialog) {
             CommonAlert(
                 title = "30초 미만의 발표는\n리포트가 제공되지 않아요.\n종료하시겠어요?",

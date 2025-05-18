@@ -17,14 +17,19 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.practice.component.CameraPreview
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
 @Composable
 fun FinalScreenCheckScreen(
     navController: NavController,
-    viewModel: PracticeViewModel = hiltViewModel()
+    parentNavController: NavController,
+    practiceViewModel: PracticeViewModel,
+    finalModeViewModel: FinalModeViewModel
 ) {
+
     Scaffold(
         topBar = {
             CommonTopBar(
@@ -33,7 +38,7 @@ fun FinalScreenCheckScreen(
                     IconButton(
                         iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로가기",
-                        onClick = { navController.popBackStack() }
+                        onClick = { parentNavController.popBackStack()  }
                     )
                 }
             )
@@ -42,26 +47,39 @@ fun FinalScreenCheckScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 32.dp),
+                    .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CommonButton(
                     text = "시작하기",
                     size = ButtonSize.LG,
                     onClick = {
-                        viewModel.createPractice(
+                        practiceViewModel.createPractice(
                             onSuccess = {
-                                if (viewModel.hasAudience) {
-                                    navController.navigate("final_mode_audience")
-                                } else {
-                                    navController.navigate("final_mode_voice")
+                                val practiceId = practiceViewModel.practiceId.value
+                                val projectId = practiceViewModel.selectedProject?.id
+
+                                Log.d("FinalFlow", "✅ createPractice 성공: projectId=$projectId, practiceId=$practiceId")
+
+                                if (practiceId != null && projectId != null) {
+
+                                    if (practiceViewModel.hasAudience) {
+                                        navController.navigate(NavRoutes.FinalModeAudience.withArgs(projectId, practiceId))
+                                    } else {
+                                        navController.navigate(NavRoutes.FinalModeVoice.withArgs(projectId, practiceId))
+                                    }
+
+                                    finalModeViewModel.setPracticeId(practiceId)
+                                    finalModeViewModel.setHasQnA(practiceViewModel.hasQnA)
                                 }
                             },
                             onFailure = {
-                                Log.e("FinalScreenCheck", "연습 생성 실패", it)
+                                Log.e("FinalFlow", "❌ createPractice 실패", it)
                             }
                         )
+
                     }
+
                 )
             }
         },
@@ -71,12 +89,12 @@ fun FinalScreenCheckScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(horizontal = 16.dp, vertical = 24.dp)
         ) {
+            // 상단 고정 텍스트
             Text(
                 text = "모드가 시작되면 본인 모습을 볼 수 없습니다.",
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = Typography.titleLarge.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
@@ -84,14 +102,24 @@ fun FinalScreenCheckScreen(
                 color = TextSecondary
             )
 
-            // 전면 카메라 뷰
-            CameraPreview(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(3f / 4f)
-                    .clip(RoundedCornerShape(4.dp))
-            )
+            Spacer(modifier = Modifier.height(24.dp))
 
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 카메라 중앙 정렬
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CameraPreview(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(3f / 4f)
+                        .clip(RoundedCornerShape(4.dp))
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

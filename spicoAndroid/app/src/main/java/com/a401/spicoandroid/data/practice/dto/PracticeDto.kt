@@ -12,9 +12,11 @@ data class PracticeDto(
 
 fun PracticeDto.toDomain(): Practice {
     return Practice(
-        id = this.practiceId,
-        name = this.practiceName,
-        count = this.coachingCnt ?: this.finalCnt ?: 0,
-        createdAt = this.createdAt
+        id = practiceId,
+        name = practiceName,
+        count = finalCnt ?: coachingCnt ?: 0,
+        createdAt = createdAt,
+        finalCnt = finalCnt,
+        coachingCnt = coachingCnt
     )
 }

@@ -1,13 +1,16 @@
 package com.a401.spicoandroid.presentation.navigation
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.infrastructure.speech.SpeechTestScreen
 import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
@@ -19,6 +22,7 @@ import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScree
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeQnAScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeVoiceScreen
+import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.home.screen.HomeScreen
 import com.a401.spicoandroid.presentation.home.viewmodel.WeeklyCalendarViewModel
 import com.a401.spicoandroid.presentation.mypage.screen.MyPageScreen
@@ -207,12 +211,7 @@ fun NavGraph(
                     viewModel = practiceViewModel
                 )
             }
-            composable(NavRoutes.FinalScreenCheck.route) {
-                FinalScreenCheckScreen(
-                    navController = navController,
-                    viewModel = practiceViewModel
-                )
-            }
+
             // 랜덤 스피치
             composable(NavRoutes.RandomSpeechLanding.route) {
                 RandomSpeechLandingScreen()
@@ -322,29 +321,92 @@ fun NavGraph(
             }
 
             // 파이널 모드
-            composable("final_mode_voice") {
-                FinalModeVoiceScreen(navController)
-            }
-            composable("final_mode_audience") {
-                FinalModeAudienceScreen(navController)
-            }
-            composable(
-                route = NavRoutes.FinalModeLoading.route,
-                arguments = listOf(navArgument("type") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val typeArg = backStackEntry.arguments?.getString("type") ?: "QUESTION"
-                val type = FinalModeLoadingType.valueOf(typeArg)
+            composable(NavRoutes.FinalModeRoot.route) {
+                val parentEntry =
+                    remember { navController.getBackStackEntry(NavRoutes.FinalModeRoot.route) }
+                val sharedViewModel: FinalModeViewModel = hiltViewModel(parentEntry)
+                val childNavController = rememberNavController()
 
-                FinalModeLoadingScreen(
-                    navController = navController,
-                    type = type
-                )
+                NavHost(
+                    navController = childNavController,
+                    startDestination = "final_check"
+                ) {
+                    composable("final_check") {
+                        FinalScreenCheckScreen(
+                            navController = childNavController,
+                            parentNavController = navController,
+                            practiceViewModel = practiceViewModel,
+                            finalModeViewModel = sharedViewModel
+                        )
+                    }
+                    composable(
+                        "final_mode_voice/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeVoiceScreen(
+                            navController = childNavController,
+                            parentNavController = navController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable(
+                        "final_mode_audience/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeAudienceScreen(
+                            navController = childNavController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable(
+                        "final_mode_loading/{type}/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("type") { type = NavType.StringType },
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeLoadingScreen(
+                            navController = childNavController,
+                            parentNavController = navController,
+                            type = FinalModeLoadingType.valueOf(args.getString("type")!!),
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                    composable(
+                        "final_mode_qna/{projectId}/{practiceId}",
+                        arguments = listOf(
+                            navArgument("projectId") { type = NavType.IntType },
+                            navArgument("practiceId") { type = NavType.IntType }
+                        )
+                    ) {
+                        val args = it.arguments!!
+                        FinalModeQnAScreen(
+                            navController = childNavController,
+                            projectId = args.getInt("projectId"),
+                            practiceId = args.getInt("practiceId"),
+                            viewModel = sharedViewModel
+                        )
+                    }
+                }
             }
-            composable(
-                route = NavRoutes.FinalModeQnA.route
-            ) {
-                FinalModeQnAScreen(navController = navController)
-            }
+
+            // 파이널 리포트
             composable(
                 route = NavRoutes.FinalReport.route,
                 arguments = listOf(
@@ -355,35 +417,14 @@ fun NavGraph(
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
 
+                Log.d("NavGraph", "✅ FinalReport 라우트 진입: $projectId / $practiceId")
+
                 FinalReportScreen(
                     navController = navController,
                     projectId = projectId,
                     practiceId = practiceId
                 )
             }
-
-            composable(
-                route = NavRoutes.VoiceScript.route,
-                arguments = listOf(
-                    navArgument("projectId") { type = NavType.IntType },
-                    navArgument("practiceId") { type = NavType.IntType }
-                )
-            ) { backStackEntry ->
-                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
-                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-                VoiceScriptScreen(navController, projectId, practiceId)
-            }
-
-            composable(
-                route = NavRoutes.VideoReplay.route,
-                arguments = listOf(navArgument("encodedUrl") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val encodedUrl = backStackEntry.arguments?.getString("encodedUrl") ?: return@composable
-                val decodedUrl = Uri.decode(encodedUrl)
-                VideoReplayScreen(navController = navController, videoUrl = decodedUrl)
-            }
-
-
 
 
             // 로그인
