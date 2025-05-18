@@ -38,6 +38,10 @@ android {
             "\"${properties["azure.region"]}\""
         )
         manifestPlaceholders["AZURE_REGION"] = properties.getProperty("azure.region")
+
+        buildConfigField("String", "OPENAI_KEY",
+            "\"${properties["openai.key"]}\"")
+        manifestPlaceholders["OPENAI_KEY"] = properties.getProperty("openai.key")
     }
 
     buildTypes {

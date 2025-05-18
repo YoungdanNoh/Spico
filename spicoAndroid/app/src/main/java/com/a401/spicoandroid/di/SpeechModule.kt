@@ -18,4 +18,5 @@ object SpeechModule {
     fun provideSpeechRecognizerHelper(@ApplicationContext context: Context): SpeechRecognizerHelper {
         return SpeechRecognizerHelper(context)
     }
+
 }
