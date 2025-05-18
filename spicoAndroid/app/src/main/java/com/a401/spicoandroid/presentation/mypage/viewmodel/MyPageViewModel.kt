@@ -21,10 +21,6 @@ class MyPageViewModel @Inject constructor(
     private val _state = MutableStateFlow(MyPageState())
     val state: StateFlow<MyPageState> = _state.asStateFlow()
 
-    // 로그아웃
-    private val _navigateToLogin = MutableStateFlow(false)
-    val navigateToLogin: StateFlow<Boolean> = _navigateToLogin.asStateFlow()
-
     init {
         viewModelScope.launch {
             authRepository.observeNickname().collect { nickname  ->
@@ -36,7 +32,6 @@ class MyPageViewModel @Inject constructor(
     fun onLogoutClicked() {
         viewModelScope.launch {
             userDataStore.clear()
-            _navigateToLogin.value = true
         }
     }
 

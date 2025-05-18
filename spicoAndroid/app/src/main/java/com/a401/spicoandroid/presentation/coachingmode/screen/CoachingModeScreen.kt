@@ -40,7 +40,9 @@ fun CoachingModeScreen(
     projectId: Int,
     practiceId: Int
 ) {
-    BackHandler(enabled = true) {}
+    BackHandler(enabled = true) {
+        coachingModeViewModel.showConfirmDialog()
+    }
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -50,6 +52,8 @@ fun CoachingModeScreen(
 
     val showScriptSheet = remember { mutableStateOf(false) }
     var permissionGranted by remember { mutableStateOf(false) }
+
+    val showEarlyExitConfirm = remember { mutableStateOf(false) }
 
     // STT 설정
     val googleStt = remember {
