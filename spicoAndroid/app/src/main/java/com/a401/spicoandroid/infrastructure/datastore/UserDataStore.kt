@@ -23,6 +23,7 @@ class UserDataStore @Inject constructor(
             it[UserPreferences.NICKNAME] = nickname
             it[UserPreferences.EXPIRES_AT] = expiresAt
         }
+        println("✅ token 저장됨 → $token")
     }
 
     val accessToken: Flow<String?> = context.dataStore.data.map {
