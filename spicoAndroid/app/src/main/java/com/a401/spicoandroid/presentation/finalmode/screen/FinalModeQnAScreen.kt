@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.finalmode.screen
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -56,6 +57,11 @@ fun FinalModeQnAScreen(
                 }
             }
         }
+    }
+
+    // 뒤로 가기 막기
+    BackHandler(enabled = true) {
+        viewModel.showConfirmDialog()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -120,7 +126,7 @@ fun FinalModeQnAScreen(
 
         if (showConfirm) {
             CommonAlert(
-                title = "파이널 모드를 종료하시겠습니까?",
+                title = "Q&A를 종료하시겠습니까?",
                 confirmText = "종료",
                 onConfirm = {
                     viewModel.stopRecording()

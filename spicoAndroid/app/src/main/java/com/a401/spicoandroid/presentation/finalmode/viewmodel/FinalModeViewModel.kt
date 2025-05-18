@@ -15,6 +15,7 @@ import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
 import com.a401.spicoandroid.domain.finalmode.usecase.FinishFinalPracticeUseCase
 import com.a401.spicoandroid.domain.finalmode.usecase.GenerateFinalQuestionsUseCase
+import com.a401.spicoandroid.domain.practice.usecase.DeletePracticeUseCase
 import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
 import com.a401.spicoandroid.infrastructure.camera.UploadManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,8 @@ import java.io.File
 class FinalModeViewModel @Inject constructor(
     private val generateFinalQuestionsUseCase: GenerateFinalQuestionsUseCase,
     private val finishFinalPracticeUseCase: FinishFinalPracticeUseCase,
-    private val uploadManager: UploadManager
+    private val uploadManager: UploadManager,
+    private val deletePracticeUseCase: DeletePracticeUseCase
 ) : ViewModel() {
 
     private var practiceId: Int? = null
@@ -158,6 +160,28 @@ class FinalModeViewModel @Inject constructor(
             }
         }
     }
+    // 연습 삭제
+    fun deletePracticeAndExit(
+        projectId: Int,
+        practiceId: Int,
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+        viewModelScope.launch {
+            when (val result = deletePracticeUseCase(projectId, practiceId)) {
+                is DataResource.Success -> {
+                    Log.d("FinalFlow", "✅ 연습 삭제 성공")
+                    onSuccess()
+                }
+                is DataResource.Error -> {
+                    Log.e("FinalFlow", "❌ 연습 삭제 실패", result.throwable)
+                    onError()
+                }
+                else -> {}
+            }
+        }
+    }
+
 
     fun generateFinalQuestions(projectId: Int, practiceId: Int, speechContent: String) {
         viewModelScope.launch {

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -71,6 +72,14 @@ fun FinalModeVoiceScreen(
             }
         }
     }
+
+    // 뒤로 가기 막기
+    BackHandler(enabled = true) {
+        if (countdown < 0) {
+            viewModel.checkElapsedAndShowDialog(elapsedSeconds.value)
+        }
+    }
+
 
     Box(
         modifier = Modifier

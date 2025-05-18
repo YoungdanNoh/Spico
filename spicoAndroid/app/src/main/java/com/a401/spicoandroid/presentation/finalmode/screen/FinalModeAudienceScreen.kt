@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.finalmode.screen
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +54,12 @@ fun FinalModeAudienceScreen(
         }
     }
 
+    // 뒤로 가기 막기
+    BackHandler(enabled = true) {
+        if (countdown < 0) {
+            viewModel.checkElapsedAndShowDialog(elapsedSeconds.value)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         VideoBackgroundPlayer(

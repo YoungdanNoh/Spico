@@ -15,8 +15,10 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.*
 import com.a401.spicoandroid.common.ui.theme.*
+import com.a401.spicoandroid.presentation.auth.viewmodel.LoginViewModel
 import com.a401.spicoandroid.presentation.mypage.component.WithdrawAlert
 import com.a401.spicoandroid.presentation.mypage.viewmodel.MyPageViewModel
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 
 @Composable
 fun MyPageScreen(
@@ -26,7 +28,6 @@ fun MyPageScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var isAlertVisible by remember { mutableStateOf(false) }
-    val navigateToLogin by viewModel.navigateToLogin.collectAsState()
 
     Scaffold(
         topBar = {
@@ -91,12 +92,5 @@ fun MyPageScreen(
             )
         }
         // 로그아웃 시, 로그인 페이지 이동
-        if (navigateToLogin) {
-            LaunchedEffect(Unit) {
-                navController.navigate("login") {
-                    popUpTo(0) { inclusive = true }
-                }
-            }
-        }
     }
 }

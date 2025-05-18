@@ -1,6 +1,5 @@
 package com.a401.spicoandroid.presentation.navigation
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -12,11 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.a401.spicoandroid.infrastructure.speech.SpeechTestScreen
-import com.a401.spicoandroid.presentation.auth.screen.LoginScreen
+import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
-import com.a401.spicoandroid.presentation.error.screen.NotFoundScreen
-import com.a401.spicoandroid.presentation.auth.viewmodel.LoginViewModel
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingType
@@ -49,44 +45,46 @@ import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechSettin
 import com.a401.spicoandroid.presentation.randomspeech.screen.RandomSpeechTopicSelectScreen
 import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechListViewModel
 import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSharedViewModel
-import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
 import com.a401.spicoandroid.presentation.report.screen.VoiceScriptRandomScreen
-import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
 import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
-import kotlin.math.log
 
 @Composable
-fun NavGraph(
+fun MainNavGraph(
     navController: NavHostController,
+    userDataStore: UserDataStore,
     modifier: Modifier = Modifier
 ) {
+
     NavControllerProvider(navController = navController) {
         val weeklyCalendarViewModel: WeeklyCalendarViewModel = hiltViewModel()
         val projectViewModel: ProjectViewModel = hiltViewModel()
         val practiceViewModel: PracticeViewModel = hiltViewModel()
-        val loginViewModel: LoginViewModel = hiltViewModel()
         val randomSpeechViewModel: RandomSpeechSharedViewModel = hiltViewModel()
         val projectFormViewModel: ProjectFormViewModel = hiltViewModel()
         val randomSpeechListViewModel: RandomSpeechListViewModel = hiltViewModel()
         val projectDetailViewModel: ProjectDetailViewModel = hiltViewModel()
         val projectScriptViewModel: ProjectScriptViewModel = hiltViewModel()
-        
+
         NavHost(
             navController = navController,
             startDestination = NavRoutes.Home.route,
-            modifier = modifier
+                    modifier = modifier
         ) {
+
+            //// 인증 접근 가능////
             // 홈
             composable(NavRoutes.Home.route) {
-                HomeScreen(
-                    navController = navController,
-                    modifier = modifier,
-                    calendarViewModel = weeklyCalendarViewModel,
-                    practiceViewModel = practiceViewModel
-                )
+                AuthRoute(navController, userDataStore) {
+                    HomeScreen(
+                        navController = navController,
+                        modifier = modifier,
+                        calendarViewModel = weeklyCalendarViewModel,
+                        practiceViewModel = practiceViewModel
+                    )
+                }
             }
 
             composable(
@@ -101,11 +99,11 @@ fun NavGraph(
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
                 val source = backStackEntry.arguments?.getString("source") ?: "home"
 
-                CoachingReportScreen(
-                    navController = navController,
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
+                    CoachingReportScreen(
+                        navController = navController,
+                        projectId = projectId,
+                        practiceId = practiceId
+                    )
             }
 
             composable(
@@ -126,11 +124,13 @@ fun NavGraph(
                     practiceId = practiceId
                 )
             }
+
             // 프로필
             composable(NavRoutes.Profile.route){
                 MyPageScreen(navController, modifier)
             }
 
+            // 프로젝트 생성
             composable(
                 route = NavRoutes.ProjectCreate.routeWithReset,
                 arguments = listOf(
@@ -138,19 +138,29 @@ fun NavGraph(
                 )
             ) { backStackEntry ->
                 val reset = backStackEntry.arguments?.getString("reset")?.toBooleanStrictOrNull() ?: false
-
                 ProjectCreateScreen(
                     navController = navController,
                     modifier = modifier,
                     viewModel = projectFormViewModel,
                     reset = reset
                 )
+
             }
 
+            // 대본
             composable(NavRoutes.ProjectScriptInput.route) {
                 ProjectScriptInputScreen(navController, modifier, projectFormViewModel)
             }
 
+            composable(NavRoutes.ProjectScriptEdit.route) {
+                ProjectScriptEditScreen(
+                    navController,
+                    projectDetailViewModel,
+                    projectScriptViewModel
+                )
+            }
+
+            // 프로젝트 목록
             composable(NavRoutes.ProjectList.route) {
                 ProjectListScreen(
                     navController = navController,
@@ -170,14 +180,6 @@ fun NavGraph(
                 )
             }
 
-            composable(NavRoutes.ProjectScriptEdit.route) {
-                ProjectScriptEditScreen(
-                    navController,
-                    projectDetailViewModel,
-                    projectScriptViewModel
-                )
-            }
-
             composable(
                 route = NavRoutes.ProjectDetail.route,
                 arguments = listOf(navArgument("projectId") { type = NavType.IntType })
@@ -189,7 +191,8 @@ fun NavGraph(
                     projectId = projectId
                 )
             }
-            // 연습하기
+
+            // 연습 하기
             composable(NavRoutes.ModeSelect.route) {
                 ModeSelectScreen(
                     navController = navController,
@@ -205,87 +208,13 @@ fun NavGraph(
                     detailViewModel = projectDetailViewModel
                 )
             }
+
             // 파이널 모드 설정 화면
             composable(NavRoutes.FinalSetting.route) {
-                FinalSettingScreen(navController = navController,
+                FinalSettingScreen(
+                    navController = navController,
                     viewModel = practiceViewModel
                 )
-            }
-
-            // 랜덤 스피치
-            composable(NavRoutes.RandomSpeechLanding.route) {
-                RandomSpeechLandingScreen()
-            }
-
-            composable(NavRoutes.RandomSpeechTopicSelect.route) {
-                RandomSpeechTopicSelectScreen(
-                    navController = navController,
-                    viewModel = randomSpeechViewModel
-                )
-            }
-
-            composable(NavRoutes.RandomSpeechSetting.route) {
-                RandomSpeechSettingScreen(
-                    navController = navController,
-                    viewModel = randomSpeechViewModel
-                )
-            }
-
-            composable(NavRoutes.RandomSpeechReady.route) {
-                RandomSpeechReadyScreen(
-                    viewModel = randomSpeechViewModel,
-                    onEndClick = {
-                        navController.navigate(NavRoutes.RandomSpeechLanding.route) {
-                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
-                        }
-                    },
-                    onStartClick = { _, _ ->
-                        navController.navigate(NavRoutes.RandomSpeech.route)
-                    }
-                )
-            }
-
-            composable(NavRoutes.RandomSpeech.route) {
-                RandomSpeechScreen(
-                    viewModel = randomSpeechViewModel,
-                    navController = navController,
-                    onFinish = {
-                        navController.navigate(NavRoutes.RandomSpeechLanding.route) {
-                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-
-            composable(NavRoutes.RandomSpeechList.route) {
-                RandomSpeechListScreen(
-                    viewModel = randomSpeechListViewModel,
-                    onProjectClick = { id ->
-                        navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
-                    }
-                )
-            }
-
-            // 랜덤 스피치 리포트
-            composable(
-                route = NavRoutes.RandomSpeechReport.route,
-                arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val reportViewModel: RandomReportViewModel = hiltViewModel()
-                val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: -1
-                RandomSpeechReportScreen(
-                    navController = navController,
-                    randomSpeechId = randomSpeechId,
-                    viewModel = reportViewModel
-                )
-            }
-
-            composable(
-                route = NavRoutes.VoiceScriptRandom.route,
-                arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: return@composable
-                VoiceScriptRandomScreen(navController = navController, randomSpeechId = randomSpeechId)
             }
 
             // 코칭 모드
@@ -298,7 +227,6 @@ fun NavGraph(
             ) { backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
-
                 CoachingModeScreen(
                     navController = navController,
                     projectId = projectId,
@@ -307,6 +235,7 @@ fun NavGraph(
                 )
             }
 
+            // 코칭 리포트
             composable(
                 NavRoutes.CoachingReport.route,
                 arguments = listOf(
@@ -426,24 +355,85 @@ fun NavGraph(
                 )
             }
 
+            // 랜덤 스피치
+            composable(NavRoutes.RandomSpeechLanding.route) {
+                RandomSpeechLandingScreen()
+            }
 
-            // 로그인
-            composable(NavRoutes.Login.route) {
-                LoginScreen(
+            composable(NavRoutes.RandomSpeechTopicSelect.route) {
+                RandomSpeechTopicSelectScreen(
                     navController = navController,
-                    loginViewModel = hiltViewModel())
+                    viewModel = randomSpeechViewModel
+                )
             }
 
-            // 에러
-            composable(NavRoutes.NotFound.route) {
-                NotFoundScreen(navController)
+            composable(NavRoutes.RandomSpeechSetting.route) {
+                RandomSpeechSettingScreen(
+                    navController = navController,
+                    viewModel = randomSpeechViewModel
+                )
             }
 
-            // stt 테스트 스크린
-            composable(NavRoutes.SpeechTest.route) {
-                SpeechTestScreen(navController)
+            composable(NavRoutes.RandomSpeechReady.route) {
+                RandomSpeechReadyScreen(
+                    viewModel = randomSpeechViewModel,
+                    onEndClick = {
+                        navController.navigate(NavRoutes.RandomSpeechLanding.route) {
+                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                        }
+                    },
+                    onStartClick = { _, _ ->
+                        navController.navigate(NavRoutes.RandomSpeech.route)
+                    }
+                )
             }
 
+            composable(NavRoutes.RandomSpeech.route) {
+                RandomSpeechScreen(
+                    viewModel = randomSpeechViewModel,
+                    navController = navController,
+                    onFinish = {
+                        navController.navigate(NavRoutes.RandomSpeechLanding.route) {
+                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            // 랜덤 스피치 목록
+            composable(NavRoutes.RandomSpeechList.route) {
+                RandomSpeechListScreen(
+                    viewModel = randomSpeechListViewModel,
+                    onProjectClick = { id ->
+                        navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                    }
+                )
+            }
+
+            // 랜덤 스피치 리포트
+            composable(
+                route = NavRoutes.RandomSpeechReport.route,
+                arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val reportViewModel: RandomReportViewModel = hiltViewModel()
+                val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: -1
+                RandomSpeechReportScreen(
+                    navController = navController,
+                    randomSpeechId = randomSpeechId,
+                    viewModel = reportViewModel
+                )
+            }
+
+            composable(
+                route = NavRoutes.VoiceScriptRandom.route,
+                arguments = listOf(navArgument("randomSpeechId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val randomSpeechId = backStackEntry.arguments?.getInt("randomSpeechId") ?: return@composable
+                VoiceScriptRandomScreen(
+                    navController = navController,
+                    randomSpeechId = randomSpeechId
+                )
+            }
         }
     }
 }

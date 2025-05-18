@@ -3,6 +3,7 @@ package com.a401.spicoandroid.presentation.finalmode.screen
 import android.net.Uri
 import androidx.compose.runtime.*
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import com.a401.spicoandroid.R
@@ -33,6 +34,9 @@ fun FinalModeLoadingScreen(
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
+
+    // 뒤로 가기 막기
+    BackHandler(enabled = true){}
 
     LaunchedEffect(Unit) {
         Log.d("FinalFlow", "⏳ FinalModeLoadingScreen 진입: type=$type, projectId=$projectId, practiceId=$practiceId")

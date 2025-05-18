@@ -1,7 +1,9 @@
 package com.a401.spicoandroid
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,22 +11,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.compose.rememberNavController
-import android.Manifest
-import android.util.Log
-import com.a401.spicoandroid.common.ui.component.CommonTopBar
-import com.a401.spicoandroid.common.ui.theme.SpeakoAndroidTheme
-import com.a401.spicoandroid.presentation.navigation.NavGraph
-import dagger.hilt.android.AndroidEntryPoint
-import com.a401.spicoandroid.presentation.navigation.NavGraph
-import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.a401.spicoandroid.common.ui.bottomsheet.CreateOrPracticeBottomSheet
 import com.a401.spicoandroid.common.ui.component.CommonBottomBar
+import com.a401.spicoandroid.common.ui.theme.SpeakoAndroidTheme
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import com.a401.spicoandroid.presentation.navigation.RootNavGraph
 import com.kakao.sdk.common.util.Utility.getKeyHash
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -34,15 +31,13 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         val keyHash = getKeyHash(this)
         Log.d("HASH", keyHash)
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // 카메라 권한 체크, 요청
+        // 카메라 권한 체크
         if (!hasCameraPermission()) {
             requestCameraPermission()
         }
@@ -66,61 +61,47 @@ class MainActivity : ComponentActivity() {
             )
 
             val shouldShowBottomBar = bottomBarRoutes.any { currentRoute?.startsWith(it) == true }
-
             val showBottomSheet = remember { mutableStateOf(false) }
 
             SpeakoAndroidTheme {
-                Box(Modifier.fillMaxSize()) {
-                    if (shouldShowBottomBar) {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .windowInsetsPadding(WindowInsets.safeDrawing),
-                            bottomBar = {
-                                CommonBottomBar(
-                                    navController = navController,
-                                    onFabClick = {
-                                        showBottomSheet.value = true
-                                    }
-                                )
-                            }
-                        ) { innerPadding ->
-                            NavGraph(
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.safeDrawing),
+                    bottomBar = {
+                        if (shouldShowBottomBar) {
+                            CommonBottomBar(
                                 navController = navController,
-                                modifier = Modifier.padding(innerPadding)
-                            )
-                        }
-                    } else {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .windowInsetsPadding(WindowInsets.safeDrawing)
-                        ) { innerPadding ->
-                            NavGraph(
-                                navController = navController,
-                                modifier = Modifier.padding(innerPadding)
+                                onFabClick = { showBottomSheet.value = true }
                             )
                         }
                     }
-
-                    if (showBottomSheet.value) {
-                        CreateOrPracticeBottomSheet(
-                            onCreateProjectClick = {
-                                showBottomSheet.value = false
-                                navController.navigate(NavRoutes.ProjectCreate.withReset(true))
-                            },
-                            onPracticeClick = {
-                                showBottomSheet.value = false
-                                navController.navigate(NavRoutes.ModeSelect.route)
-                            },
-                            onDismissRequest = { showBottomSheet.value = false }
+                ) { innerPadding ->
+                    Box(Modifier.fillMaxSize()) {
+                        RootNavGraph(
+                            navController = navController,
+                            modifier = Modifier.padding(innerPadding)
                         )
+
+                        if (showBottomSheet.value) {
+                            CreateOrPracticeBottomSheet(
+                                onCreateProjectClick = {
+                                    showBottomSheet.value = false
+                                    navController.navigate(NavRoutes.ProjectCreate.withReset(true))
+                                },
+                                onPracticeClick = {
+                                    showBottomSheet.value = false
+                                    navController.navigate(NavRoutes.ModeSelect.route)
+                                },
+                                onDismissRequest = { showBottomSheet.value = false }
+                            )
+                        }
                     }
                 }
             }
         }
-
     }
+
     private fun hasCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             this,

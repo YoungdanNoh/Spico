@@ -16,18 +16,22 @@ import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.Hover
 import com.a401.spicoandroid.common.ui.theme.TextPrimary
+import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
 import com.a401.spicoandroid.presentation.auth.component.*
 import com.a401.spicoandroid.presentation.auth.viewmodel.LoginViewModel
+import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     navController: NavController,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    userDataStore: UserDataStore
 ) {
     val imageList = listOf(
         R.drawable.img_login1,
@@ -49,6 +53,27 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
+
+    LaunchedEffect(loginSuccess) {
+        if (loginSuccess) {
+            println("🔥 로그인 성공 - 이동 시작")
+
+            // ✅ suspend 함수는 이렇게 coroutineScope 안에서 실행
+            var token: String? = null
+            while (token == null) {
+                token = userDataStore.observeAccessToken().first()
+                delay(50)
+            }
+
+            println("✅ 토큰 반영 완료 후 홈으로 이동 → $token")
+
+            navController.navigate(NavRoutes.Home.route) {
+                popUpTo(0) { inclusive = true }
+            }
+
+            loginViewModel.resetLoginState()
+        }
+    }
 
     LaunchedEffect(Unit) {
         while (true) {
