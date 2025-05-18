@@ -43,13 +43,6 @@ fun User.updateSettings(request: FinalSettingsRequest): User {
     }
     if(request.hasQnA != null) {
         this.hasQna = request.hasQnA
-        if(this.hasQna == true){
-            this.questionCount = request.questionCount?: 1
-            this.answerTimeLimit = request.answerTimeLimit?: 60
-        }else{
-            this.questionCount = 0
-            this.answerTimeLimit = 0
-        }
     }
 
     return this
