@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.auth.screen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.theme.Hover
@@ -24,7 +26,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    // onKakaoLoginClick: () -> Unit
     navController: NavController,
     loginViewModel: LoginViewModel
 ) {
@@ -47,11 +48,8 @@ fun LoginScreen(
     val pagerState = rememberPagerState(initialPage = 0) { imageList.size }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-
-    // 로그인 및 로그인 상태
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
 
-    // 자동 슬라이딩
     LaunchedEffect(Unit) {
         while (true) {
             delay(3000L)
@@ -75,46 +73,49 @@ fun LoginScreen(
                 }
             }
     ) {
-        // logo + img + text
+        // 인디케이터
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .wrapContentHeight()
                 .align(Alignment.TopCenter)
         ) {
             LoginPagerContent(pagerState, imageList, textList)
+            Spacer(modifier = Modifier.height(140.dp))
         }
 
-        // indicator+button
+        // 로그인 버튼
         LoginBottomSection(
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 32.dp),
             currentPage = pagerState.currentPage,
             totalCount = imageList.size,
             onSelect = { scope.launch { pagerState.scrollToPage(it) } },
             onKakaoLoginClick = {
-
-                val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-                    if (token != null) {
-                        loginViewModel.onLoginClicked(token.accessToken)
-                    }
-                }
-
-                if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-                    UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-                        if (error != null) {
-
-                            if (error is ClientError && error.reason.name == "Cancelled") {
-                                return@loginWithKakaoTalk
-                            }
-
-                            UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
-                        } else if (token != null) {
-                            loginViewModel.onLoginClicked(token.accessToken)
-                        }
-                    }
-                } else {
-                    UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
-                }
+                handleKakaoLogin(context, loginViewModel)
             }
         )
+    }
+}
+
+private fun handleKakaoLogin(context: Context, loginViewModel: LoginViewModel) {
+    val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        if (token != null) {
+            loginViewModel.onLoginClicked(token.accessToken)
+        }
+    }
+
+    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+        UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+            if (error != null) {
+                if (error is ClientError && error.reason.name == "Cancelled") return@loginWithKakaoTalk
+                UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
+            } else if (token != null) {
+                loginViewModel.onLoginClicked(token.accessToken)
+            }
+        }
+    } else {
+        UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
     }
 }
