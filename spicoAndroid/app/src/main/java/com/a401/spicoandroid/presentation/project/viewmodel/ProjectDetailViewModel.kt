@@ -3,8 +3,10 @@ package com.a401.spicoandroid.presentation.project.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
+import com.a401.spicoandroid.domain.project.model.ProjectDetail
 import com.a401.spicoandroid.domain.project.usecase.GetProjectDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,5 +38,19 @@ class ProjectDetailViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    suspend fun fetchProjectDetailAndGet(projectId: Int): ProjectDetail {
+        // 상세 요청 실행
+        fetchProjectDetail(projectId)
+
+        // 최대 1초 동안 100ms 간격으로 polling (state 값이 채워질 때까지 기다림)
+        repeat(10) {
+            val current = state.value.project
+            if (current != null) return current
+            delay(100) // 0.1초 기다리기
+        }
+
+        throw IllegalStateException("❌ 프로젝트 상세 정보가 1초 내에 로드되지 않았습니다.")
     }
 }

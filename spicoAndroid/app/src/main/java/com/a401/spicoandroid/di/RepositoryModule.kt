@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.di
 
 import com.a401.spicoandroid.data.auth.repository.AuthRepositoryImpl
+import com.a401.spicoandroid.data.coachingmode.repository.CoachingModeRepositoryImpl
 import com.a401.spicoandroid.data.finalmode.repository.FinalModeRepositoryImpl
 import com.a401.spicoandroid.data.home.repository.HomeRepositoryImpl
 import com.a401.spicoandroid.data.practice.repository.PracticeRepositoryImpl
@@ -8,6 +9,7 @@ import com.a401.spicoandroid.data.project.repository.ProjectRepositoryImpl
 import com.a401.spicoandroid.data.randomspeech.repository.RandomSpeechRepositoryImpl
 import com.a401.spicoandroid.data.report.repository.ReportRepositoryImpl
 import com.a401.spicoandroid.domain.auth.AuthRepository
+import com.a401.spicoandroid.domain.coachingmode.repository.CoachingModeRepository
 import com.a401.spicoandroid.domain.finalmode.repository.FinalModeRepository
 import com.a401.spicoandroid.domain.home.repository.HomeRepository
 import com.a401.spicoandroid.domain.practice.repository.PracticeRepository
@@ -65,4 +67,10 @@ internal abstract class RepositoryModule {
     abstract fun bindFinalModeRepository(
         impl: FinalModeRepositoryImpl
     ): FinalModeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCoachingModeRepository(
+        impl: CoachingModeRepositoryImpl
+    ): CoachingModeRepository
 }
