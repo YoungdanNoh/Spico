@@ -2,23 +2,34 @@ package com.a401.spicoandroid.infrastructure.camera
 
 import android.content.ContentValues
 import android.content.Context
+import android.media.MediaCodec
+import android.media.MediaExtractor
+import android.media.MediaFormat
+import android.media.MediaMuxer
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.LifecycleOwner
+import com.a401.spicoandroid.common.utils.FileUtil
+import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.extractAudioFromMp4
+import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.m4aToPcmAndConvertToWav
 import java.text.SimpleDateFormat
 import java.util.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.nio.ByteBuffer
 
 class FinalRecordingCameraService(
     private val context: Context,
-    private val lifecycleOwner: LifecycleOwner
+    private val lifecycleOwner: LifecycleOwner,
+    private val script: String? = null
 ) {
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
@@ -85,6 +96,34 @@ class FinalRecordingCameraService(
                 if (event is VideoRecordEvent.Finalize) {
                     onFinished(event.outputResults.outputUri)
                     stopCallback?.invoke() // stopRecording에서 등록한 콜백 실행
+                    val videoUri = event.outputResults.outputUri
+                    Log.d("CameraX", "Video saved to: $videoUri")
+
+                    extractAudioFromMp4(
+                        context = context,
+                        inputUri = videoUri,
+                        onSuccess = { m4aPath ->
+                            Log.d("CameraX", "Audio extracted to: $m4aPath")
+
+                            // m4a -> pcm -> wav
+                            m4aToPcmAndConvertToWav(
+                                context = context,
+                                m4aPath = m4aPath,
+                                onSuccess = { wavPath ->
+                                    Log.d("CameraX", "Final WAV path: $wavPath")
+                                },
+                                onError = { e ->
+                                    Log.e("CameraX", "WAV convert error: ${e.message}")
+                                }
+                            )
+                        },
+                        onError = { e ->
+                            Log.e("CameraX", "Audio extract error: ${e.message}")
+                        }
+                    )
+
+
+                    onFinished(videoUri)
                     recording = null
                 }
             }
@@ -102,5 +141,4 @@ class FinalRecordingCameraService(
             recording?.stop()
         }
     }
-
 }
