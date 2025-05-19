@@ -105,36 +105,7 @@ fun FinalModeLoadingScreen(
                 )
 
                 Log.d("FinalFlow", "📦 전송 request = $request")
-
-                // 1. 결과 저장 요청
-                viewModel.submitFinalModeResult(projectId, request)
-
-                // 2. presignedUrl 수신 후 업로드
-                snapshotFlow { viewModel.finalResultState.value.presignedUrl }
-                    .filterNotNull()
-                    .collect { presignedUrl ->
-                        val uri = viewModel.recordedVideoUri
-                        if (uri == null) {
-                            Log.e("FinalFlow", "❌ recordedVideoUri가 null입니다.")
-                            return@collect
-                        }
-
-                        val file = uri.toFile(context)
-                        viewModel.uploadFinalVideo(presignedUrl, file) { success ->
-                            if (success) {
-                                Log.d("FinalFlow", "✅ 영상 업로드 성공")
-                            } else {
-                                Log.e("FinalFlow", "❌ 영상 업로드 실패")
-                            }
-
-                            parentNavController.navigate(
-                                NavRoutes.FinalReport.createRoute(
-                                    projectId = projectId,
-                                    practiceId = practiceId
-                                )
-                            )
-                        }
-                    }
+                
 
                 viewModel.submitFinalModeResult(
                     projectId = projectId,
