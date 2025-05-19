@@ -1,9 +1,14 @@
 package com.ssafy.spico.domain.project.service
 
+import com.ssafy.spico.domain.practice.dto.PracticeListResponseDto
+import com.ssafy.spico.domain.practice.dto.PracticeResponseDto
+import com.ssafy.spico.domain.practice.dto.toResponse
 import com.ssafy.spico.domain.practice.service.DeletePracticeService
 import com.ssafy.spico.domain.practice.entity.PracticeType
 import com.ssafy.spico.domain.practice.model.Practice
 import com.ssafy.spico.domain.practice.model.toModel
+import com.ssafy.spico.domain.practice.repository.CoachingReportsRepository
+import com.ssafy.spico.domain.practice.repository.FinalReportsRepository
 import com.ssafy.spico.domain.project.dto.ProjectViewType
 import com.ssafy.spico.domain.project.dto.UpdateProjectRequestDto
 import com.ssafy.spico.domain.project.dto.toCommand
@@ -21,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional
 class ProjectServiceImpl(
     private val projectRepository: ProjectRepository,
     private val userRepository: UserRepository,
-    private val deletePracticeService: DeletePracticeService
+    private val deletePracticeService: DeletePracticeService,
+    private val coachingReportsRepository: CoachingReportsRepository,
+    private val finalReportsRepository: FinalReportsRepository
 ): ProjectService {
     override fun getProjects(userId: Int, cursor: Int?, size: Int, type: ProjectViewType): List<Project> {
 
@@ -83,10 +90,12 @@ class ProjectServiceImpl(
         practiceFilter: PracticeType?,
         cursor: Int?,
         size: Int
-    ): List<Practice> {
+    ): List<PracticeResponseDto> {
         require(size >= 1) { throw ProjectException(ProjectError.INVALID_PAGE_SIZE) }
 
-        val entities = projectRepository.findPracticesByProjectIdWithPaging(userId, projectId, practiceFilter, cursor, size)
-        return entities.map { it.toModel() }
+        val practices = projectRepository.findPracticesByProjectIdWithPaging(userId, projectId, practiceFilter, cursor, size).map { it.toModel() }
+        return practices.map { practice ->
+            practice.toResponse(coachingReportsRepository, finalReportsRepository)
+        }
     }
 }
