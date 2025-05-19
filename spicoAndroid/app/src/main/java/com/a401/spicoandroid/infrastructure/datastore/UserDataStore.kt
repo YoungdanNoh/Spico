@@ -17,7 +17,10 @@ class UserDataStore @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     suspend fun setUserInfo(token: String, nickname: String, expiresIn: Long) {
-        val expiresAt = System.currentTimeMillis() + expiresIn
+        println("🐛 서버에서 받은 expiresIn = $expiresIn")
+        println("🐛 현재 시간(ms) = ${System.currentTimeMillis()}")
+        println("🐛 계산된 expiresAt(ms) = ${System.currentTimeMillis() + (expiresIn * 1000L)}")
+        val expiresAt = System.currentTimeMillis() + (expiresIn * 1000L)
         context.dataStore.edit {
             it[UserPreferences.ACCESS_TOKEN] = token
             it[UserPreferences.NICKNAME] = nickname
