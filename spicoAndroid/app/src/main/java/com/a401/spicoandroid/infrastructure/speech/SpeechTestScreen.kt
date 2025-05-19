@@ -87,10 +87,20 @@ fun SpeechTestScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // 실시간으로 발표 속도 피드백 줄 때 사용!!!!
                 googleStt.setOnSpeedFeedback { speed ->
                     speedResult = "발표 속도: ${speed.name}"
                     Log.d("Speed", "발표 속도: $speed")
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 실시간으로 휴지 구간 피드백 줄 때 사용!!!!
+                googleStt.setOnPauseDetected {
+                    pauseResult = "휴지 횟수: ${googleStt.getPauseCount()}"
+                    Log.d("PauseUI", pauseResult)
+                }
+
+                Text("휴지 횟수: $pauseResult")
                 Spacer(modifier = Modifier.height(16.dp))
 
 

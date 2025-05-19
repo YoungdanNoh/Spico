@@ -39,6 +39,7 @@ class GoogleStt(
     private var onSpeedFeedback: ((SpeedType) -> Unit)? = null
 
     /* 휴지 횟수 관련 필드 */
+    private var onPauseDetected: (() -> Unit)? = null
     private var isInPause: Boolean = false
     private var silenceStartTime: Long? = null
     private var pauseCount: Int = 0
@@ -150,6 +151,7 @@ class GoogleStt(
                                isInPause = true // 휴지 감지 상태 진입
                                silenceStartTime = null // 다시 감지되지 않도록 리셋
                                Log.d("Pause", "휴지 구간 감지됨! 현재 누적: $pauseCount")
+                               onPauseDetected?.invoke()
 
                            }
                        }
@@ -407,6 +409,10 @@ class GoogleStt(
     }
 
     /* 휴지 횟수를 불러오기 위한 함수 */
+    fun setOnPauseDetected(callback: () -> Unit) {
+        onPauseDetected = callback
+    }
+
     fun getPauseCount(): Int {
         return pauseCount
     }
