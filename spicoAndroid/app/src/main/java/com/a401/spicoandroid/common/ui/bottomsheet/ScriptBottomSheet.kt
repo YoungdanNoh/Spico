@@ -1,11 +1,18 @@
 package com.a401.spicoandroid.common.ui.bottomsheet
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -13,16 +20,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.theme.*
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ScriptBottomSheet(
     scripts: List<String>,
+    highlightedIndex: Int?,
     onScriptClick: (Int) -> Unit,
     onDismissRequest: () -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    // 🔁 자동 스크롤
+    LaunchedEffect(highlightedIndex) {
+        highlightedIndex?.let {
+            listState.animateScrollToItem(it)
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         containerColor = White,
@@ -44,29 +61,52 @@ fun ScriptBottomSheet(
             }
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 404.dp)
-                .padding(horizontal = 12.dp)
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 28.dp)
+                .fillMaxHeight() // ✅ 화면 전체를 덮도록 설정
         ) {
-            scripts.forEachIndexed { index, script ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(BackgroundPrimary)
-                        .clickable { onScriptClick(index) }
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = script,
-                        style = Typography.bodyLarge,
-                        color = TextPrimary
-                    )
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+            ) {
+                itemsIndexed(scripts) { index, script ->
+                    var showMenu by remember { mutableStateOf(false) }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (index == highlightedIndex) Action.copy(alpha = 0.12f) else BackgroundPrimary)
+                            .combinedClickable(
+                                onClick = { onScriptClick(index) },
+                                onLongClick = { showMenu = true }
+                            )
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = script,
+                            style = Typography.bodyLarge,
+                            color = TextPrimary
+                        )
+
+                        // 👇 롱프레스 메뉴
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false },
+                            offset = DpOffset(x = 0.dp, y = (-36).dp)
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("수정하기") },
+                                onClick = {
+                                    showMenu = false
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
