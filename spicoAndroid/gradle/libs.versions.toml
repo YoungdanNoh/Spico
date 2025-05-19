@@ -2,6 +2,7 @@
 accompanistPager = "0.32.0"
 agp = "8.9.2"
 desugar = "2.1.5"
+ffmpegKitFullVersion = "6.0-2"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 foundationPager = "1.7.0"
@@ -42,12 +43,15 @@ mpandroidchart = "3.1.0"
 cameraCore = "1.4.2"
 camera-version = "1.4.2"
 cameraView = "1.4.2"
+cameraVideo = "1.4.2"
+
 
 media3 = "1.6.1"
 v2User = "2.21.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+ffmpeg-kit-full-v602 = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFullVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -103,6 +107,8 @@ androidx-camera-core = { group = "androidx.camera", name = "camera-core", versio
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera-version" }
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera-version" }
+androidx-camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "cameraVideo" }
+
 
 media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }

@@ -36,6 +36,10 @@ fun SpeechTestScreen(navController: NavController) {
 
     var volumeJson by remember { mutableStateOf("") }
 
+    var volumeResult by remember { mutableStateOf("") } // 성량 점수
+    var speedResult by remember { mutableStateOf("") }  // 발표 속도
+    var pauseResult by remember { mutableStateOf("") } // 휴지 횟수 정보
+
     // 권한 요청 런처
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -98,14 +102,27 @@ fun SpeechTestScreen(navController: NavController) {
 
                     val records = googleStt.getVolumeRecordList()
                     val score = calculateVolumeScore(records)
-                    azureResult = "성량 점수: $score / 100"
+                    volumeResult = "성량 점수: $score / 100"
 
-                    googleStt.clearVolumeRecords()
+                    val speedType = googleStt.getOverallSpeed()
+                    speedResult = "발표 속도: ${speedType.name}" // MIDDLE / FAST / SLOW
+
+                    Log.d("Speed", "발표 속도: $speedType")
+
+                    val pauses = googleStt.getPauseCount()
+                    pauseResult = "휴지 횟수: ${pauses}"
+                    Log.d("PauseCount", "총 휴지 구간 수: $pauses")
+
+                    googleStt.clearAll()
                 })
 
                 if (volumeJson.isNotEmpty()) {
-                    Text("볼륨 기록: $volumeJson")
-                    Text("성량 점수: $azureResult")
+                    //Text("볼륨 기록: $volumeJson")
+                    Text("성량 점수: $volumeResult")
+
+                    Text("속도 점수: $speedResult")
+
+                    Text("휴지 횟수: $pauseResult")
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

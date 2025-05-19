@@ -54,32 +54,33 @@ fun FinalScreenCheckScreen(
                     text = "시작하기",
                     size = ButtonSize.LG,
                     onClick = {
-                        practiceViewModel.createPractice(
-                            onSuccess = {
-                                val practiceId = practiceViewModel.practiceId.value
-                                val projectId = practiceViewModel.selectedProject?.id
+                        val projectId = practiceViewModel.selectedProject?.id
+                        if (projectId == null) {
+                            Log.e("FinalFlow", "❌ projectId가 null입니다. 프로젝트 선택이 안 되어 있습니다.")
+                            return@CommonButton
+                        }
 
+                        practiceViewModel.createPractice(
+                            onSuccess = { practiceId ->
                                 Log.d("FinalFlow", "✅ createPractice 성공: projectId=$projectId, practiceId=$practiceId")
 
-                                if (practiceId != null && projectId != null) {
+                                finalModeViewModel.loadProjectScript(projectId) // 대본 요청
+                                finalModeViewModel.setPracticeId(practiceId)
+                                finalModeViewModel.setHasQnA(practiceViewModel.hasQnA)
 
-                                    if (practiceViewModel.hasAudience) {
-                                        navController.navigate(NavRoutes.FinalModeAudience.withArgs(projectId, practiceId))
-                                    } else {
-                                        navController.navigate(NavRoutes.FinalModeVoice.withArgs(projectId, practiceId))
-                                    }
-
-                                    finalModeViewModel.setPracticeId(practiceId)
-                                    finalModeViewModel.setHasQnA(practiceViewModel.hasQnA)
+                                val route = if (practiceViewModel.hasAudience) {
+                                    NavRoutes.FinalModeAudience.withArgs(projectId, practiceId)
+                                } else {
+                                    NavRoutes.FinalModeVoice.withArgs(projectId, practiceId)
                                 }
+
+                                navController.navigate(route)
                             },
                             onFailure = {
                                 Log.e("FinalFlow", "❌ createPractice 실패", it)
                             }
                         )
-
                     }
-
                 )
             }
         },

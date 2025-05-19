@@ -7,6 +7,7 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import com.a401.spicoandroid.infrastructure.speech.model.SpeedType
 import com.a401.spicoandroid.infrastructure.speech.model.VolumeLevel
 import com.a401.spicoandroid.infrastructure.speech.model.VolumeRecord
 
@@ -29,10 +30,20 @@ class GoogleStt(
     private val recentAvgList = mutableListOf<Float>()
     private val maxAvgWindowSize = 5  // 최근 5초 정도 관찰
 
+    /* 발표 속도 점수 관련 필드 */
+    private var totalCharCount = 0
+    private var speechCharCheckpoints = mutableListOf<Int>()
+    private var lastSpeedCheckTime: Long = 0L
+
+    /* 휴지 횟수 관련 필드 */
+    private var isInPause: Boolean = false
+    private var silenceStartTime: Long? = null
+    private var pauseCount: Int = 0
+
     fun start() {
         if (isListening) return // 중복 방지
         isListening = true
-        clearVolumeRecords()
+        clearAll()
         speechStartTimestamp = System.currentTimeMillis() // 시작 기준점
         listen()
     }
@@ -123,12 +134,32 @@ class GoogleStt(
                        }
                    }
 
+                   /* 휴지 구간 감지 로직 */
+                   Log.d("RMS_DEBUG", "rmsdB: $rmsdB")
+                   if (rmsdB < 5.0f) {
+                       if (!isInPause) {
+                           if (silenceStartTime == null) {
+                               silenceStartTime = currentTime
+
+                           } else if (currentTime - silenceStartTime!! >= 3000L) {
+                               pauseCount++
+                               isInPause = true // 휴지 감지 상태 진입
+                               silenceStartTime = null // 다시 감지되지 않도록 리셋
+                               Log.d("Pause", "휴지 구간 감지됨! 현재 누적: $pauseCount")
+
+                           }
+                       }
+                   } else {
+                       silenceStartTime = null // 음성 다시 시작되면 초기화
+                       isInPause = false
+                   }
+
                }
+
                override fun onBufferReceived(buffer: ByteArray?) {
-
                    // 녹음하기
-
                }
+
                override fun onEndOfSpeech() {
                }
 
@@ -151,6 +182,20 @@ class GoogleStt(
 
                        Log.d("SpeechRecognizer", "결과: $resultText")
                        onResult(resultText)
+
+                       /* 속도 측정용 */
+                       val currentTime = System.currentTimeMillis()
+                       totalCharCount += resultText.length // 현재까지 stt된 텍스트의 길이
+
+                       // 1분 경과 시마다 기록
+                       if (lastSpeedCheckTime == 0L) {
+                           lastSpeedCheckTime = currentTime
+                           speechCharCheckpoints.add(totalCharCount)
+                       } else if (currentTime - lastSpeedCheckTime >= 60_000L) {
+                           speechCharCheckpoints.add(totalCharCount)
+                           lastSpeedCheckTime = currentTime
+                       }
+
                    } else {
                        onError("결과 없음")
                    }
@@ -192,13 +237,23 @@ class GoogleStt(
         speechRecognizer = null
     }
 
-    fun clearVolumeRecords() {
+    fun clearAll() {
         volumeRecords.clear()
         volumeBuffer.clear()
         recentAvgList.clear()
         currentVolumeLevel = null
         currentStartTime = null
         lastRecordTime = 0L
+
+        /* 발표 속도 관련 변수 초기화 */
+        totalCharCount = 0
+        speechCharCheckpoints.clear()
+        lastSpeedCheckTime = 0L
+
+        /* 휴지 횟수 관련 변수 초기화 */
+        pauseCount = 0
+        silenceStartTime = null
+        isInPause = false
     }
 
     private fun getErrorMessage(errorCode: Int): String {
@@ -311,6 +366,32 @@ class GoogleStt(
     private var onVolumeFeedback: ((String) -> Unit)? = null
     fun setOnVolumeFeedback(callback: (String) -> Unit) {
         onVolumeFeedback = callback
+    }
+
+    /* 발표 속도 측정 함수 */
+    fun getOverallSpeed(): SpeedType {
+        if (speechCharCheckpoints.size < 2) return SpeedType.MIDDLE
+
+        Log.d("speed", speechCharCheckpoints.toString())
+
+        // 각 1분 단위 구간의 글자 수 차이 계산
+        val countsPerMinute = speechCharCheckpoints.zipWithNext { a, b -> b - a }
+
+        val results = countsPerMinute.map { count ->
+            when {
+                count < 240 -> SpeedType.SLOW
+                count > 280 -> SpeedType.FAST
+                else -> SpeedType.MIDDLE
+            }
+        }
+
+        // 최빈값 반환
+        return results.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: SpeedType.MIDDLE
+    }
+
+    /* 휴지 횟수를 불러오기 위한 함수 */
+    fun getPauseCount(): Int {
+        return pauseCount
     }
 
     private var onPartialResult: ((String) -> Unit)? = null

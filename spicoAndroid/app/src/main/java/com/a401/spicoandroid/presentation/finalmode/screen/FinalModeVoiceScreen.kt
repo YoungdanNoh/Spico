@@ -25,6 +25,12 @@ import com.a401.spicoandroid.infrastructure.camera.FinalRecordingCameraService
 import com.a401.spicoandroid.common.ui.component.AudioWaveformView
 import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
 fun FinalModeVoiceScreen(
@@ -48,17 +54,27 @@ fun FinalModeVoiceScreen(
     }
 
     // 🎙 마이크 권한 요청 및 오디오 분석 시작
+    val audioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                viewModel.startAudio()
+            } else {
+                Toast.makeText(context, "마이크 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
     LaunchedEffect(Unit) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                activity ?: return@LaunchedEffect,
-                arrayOf(Manifest.permission.RECORD_AUDIO),
-                1001
-            )
-        } else {
+        val isGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isGranted) {
             viewModel.startAudio()
+        } else {
+            audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
     }
 
@@ -91,9 +107,9 @@ fun FinalModeVoiceScreen(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(horizontal = 24.dp)
-                .height(160.dp)
+                .height(200.dp)
         ) {
-            AudioWaveformView(waveform = waveform, modifier = Modifier.fillMaxSize())
+            FinalAudioWaveformView(waveform = waveform, modifier = Modifier.fillMaxSize())
 
             if (countdown >= 0) {
                 Box(modifier = Modifier.align(Alignment.Center)) {
@@ -185,10 +201,23 @@ fun FinalModeVoiceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        parentNavController.navigate(NavRoutes.ProjectList.route) {
-                            popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
-                        }
+                        viewModel.deletePracticeAndExit(
+                            projectId = projectId,
+                            practiceId = practiceId,
+                            onSuccess = {
+                                parentNavController.navigate(NavRoutes.ProjectList.route) {
+                                    popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+                                }
+                            },
+                            onError = {
+                                Toast.makeText(context, "연습 삭제에 실패했어요", Toast.LENGTH_SHORT).show()
+                                parentNavController.navigate(NavRoutes.ProjectList.route) {
+                                    popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+                                }
+                            }
+                        )
                     }
+
                 },
                 onCancel = { viewModel.hideAllDialogs() },
                 onDismissRequest = { viewModel.hideAllDialogs() },

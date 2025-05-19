@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import java.util.Properties
 
 plugins {
@@ -153,6 +154,7 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.video)
 
     // kakao
     implementation(libs.v2.user)
@@ -160,4 +162,5 @@ dependencies {
     // Azure
     implementation("com.microsoft.cognitiveservices.speech:client-sdk:1.34.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // 비동기 처리
+
 }
