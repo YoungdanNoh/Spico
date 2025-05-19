@@ -71,7 +71,7 @@ fun MainNavGraph(
         NavHost(
             navController = navController,
             startDestination = NavRoutes.Home.route,
-                    modifier = modifier
+            modifier = modifier
         ) {
 
             //// 인증 접근 가능////
@@ -99,12 +99,12 @@ fun MainNavGraph(
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
                 val source = backStackEntry.arguments?.getString("source") ?: "home"
 
-                    CoachingReportScreen(
-                        navController = navController,
-                        projectId = projectId,
-                        practiceId = practiceId,
-                        source = source
-                    )
+                CoachingReportScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId,
+                    source = source
+                )
             }
 
             composable(
@@ -245,7 +245,7 @@ fun MainNavGraph(
                     navArgument("practiceId") { type = NavType.IntType }
                 )
             ){
-                backStackEntry ->
+                    backStackEntry ->
                 val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
                 val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
                 CoachingReportScreen(
@@ -301,6 +301,7 @@ fun MainNavGraph(
                         val args = it.arguments!!
                         FinalModeAudienceScreen(
                             navController = childNavController,
+                            parentNavController = navController,
                             projectId = args.getInt("projectId"),
                             practiceId = args.getInt("practiceId"),
                             viewModel = sharedViewModel
