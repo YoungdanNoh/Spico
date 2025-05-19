@@ -3,7 +3,8 @@ package com.a401.spicoandroid.presentation.randomspeech.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.magnifier
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +30,10 @@ fun RandomSpeechLandingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(BrokenWhite),
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ){
         // 상단 바
         CommonTopBar(centerText = "랜덤스피치")
 
@@ -75,19 +77,6 @@ fun RandomSpeechLandingScreen(
                 modifier = Modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(80.dp))
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun RandomSpeechLandingScreenPreview() {
-    SpeakoAndroidTheme {
-        RandomSpeechLandingScreen(
-            navController = rememberNavController(),
-            onStartClick = { println("시작 클릭됨") },
-            onProjectClick = { println("프로젝트 목록 클릭됨") }
-        )
+        Spacer(modifier = Modifier.height(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()))
     }
 }
