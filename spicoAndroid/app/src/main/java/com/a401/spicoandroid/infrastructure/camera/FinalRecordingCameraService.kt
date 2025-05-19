@@ -19,12 +19,19 @@ import androidx.lifecycle.LifecycleOwner
 import com.a401.spicoandroid.common.utils.FileUtil
 import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.extractAudioFromMp4
 import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.m4aToPcmAndConvertToWav
+import com.a401.spicoandroid.infrastructure.speech.AzurePronunciationEvaluator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
+import androidx.core.net.toUri
+import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.uriToFile
+import com.a401.spicoandroid.infrastructure.speech.evaluatePronunciationContinuous
 
 class FinalRecordingCameraService(
     private val context: Context,
@@ -34,6 +41,8 @@ class FinalRecordingCameraService(
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var stopCallback: (() -> Unit)? = null
+    private val azurePronunciationEvaluator: AzurePronunciationEvaluator =
+        AzurePronunciationEvaluator()
 
     fun startCamera(onReady: () -> Unit) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -115,6 +124,17 @@ class FinalRecordingCameraService(
                                 m4aPath = m4aPath,
                                 onSuccess = { wavPath ->
                                     Log.d("CameraX", "Final WAV path: $wavPath")
+
+                                    val wavFile = uriToFile(context, wavPath.toUri())
+
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        try {
+//                                            azurePronunciationEvaluator.evaluatePronunciation(wavFile, script?:"")
+                                            evaluatePronunciationContinuous(wavFile, "안녕하세요. 반갑습니다. 잘 지내시죠?")
+                                        } catch (e: Exception) {
+                                            Log.e("AzurePronunciation", "에러: ${e.message}")
+                                        }
+                                    }
                                 },
                                 onError = { e ->
                                     Log.e("CameraX", "WAV convert error: ${e.message}")

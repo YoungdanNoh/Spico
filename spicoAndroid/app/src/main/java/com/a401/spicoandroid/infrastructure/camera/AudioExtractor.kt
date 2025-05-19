@@ -255,4 +255,20 @@ object AudioExtractor {
         }
         return uri
     }
+
+    fun uriToFile(context: Context, uri: Uri): File {
+        val inputStream = context.contentResolver.openInputStream(uri)
+            ?: throw IllegalArgumentException("Cannot open input stream from URI: $uri")
+
+        val tempFile = File(context.cacheDir, "temp_audio.wav")
+        val outputStream = FileOutputStream(tempFile)
+
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return tempFile
+    }
 }
