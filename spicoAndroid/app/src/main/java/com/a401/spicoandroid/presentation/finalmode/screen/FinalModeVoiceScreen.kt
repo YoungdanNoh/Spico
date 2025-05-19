@@ -185,7 +185,9 @@ fun FinalModeVoiceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        navController.navigate(NavRoutes.ProjectList.route)
+                        parentNavController.navigate(NavRoutes.ProjectList.route) {
+                            popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+                        }
                     }
                 },
                 onCancel = { viewModel.hideAllDialogs() },

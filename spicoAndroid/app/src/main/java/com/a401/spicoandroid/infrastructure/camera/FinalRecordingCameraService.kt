@@ -28,6 +28,7 @@ class FinalRecordingCameraService(
 ) {
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
+    private var stopCallback: (() -> Unit)? = null
 
     fun startCamera(onReady: () -> Unit) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -88,6 +89,8 @@ class FinalRecordingCameraService(
             }
             .start(ContextCompat.getMainExecutor(context)) { event ->
                 if (event is VideoRecordEvent.Finalize) {
+                    onFinished(event.outputResults.outputUri)
+                    stopCallback?.invoke() // stopRecording에서 등록한 콜백 실행
                     val videoUri = event.outputResults.outputUri
                     Log.d("CameraX", "Video saved to: $videoUri")
 
@@ -110,9 +113,15 @@ class FinalRecordingCameraService(
     }
 
     fun stopRecording(onFinished: () -> Unit) {
-        recording?.stop()
-        recording = null
-        onFinished()
+        if (recording == null) {
+            onFinished()
+        } else {
+            stopCallback = {
+                onFinished()
+                stopCallback = null
+            }
+            recording?.stop()
+        }
     }
 
     fun extractAudioFromMp4(
