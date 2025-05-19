@@ -17,7 +17,10 @@ class UserDataStore @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     suspend fun setUserInfo(token: String, nickname: String, expiresIn: Long) {
-        val expiresAt = System.currentTimeMillis() + expiresIn
+        println("🐛 서버에서 받은 expiresIn = $expiresIn")
+        println("🐛 현재 시간(ms) = ${System.currentTimeMillis()}")
+        println("🐛 계산된 expiresAt(ms) = ${System.currentTimeMillis() + (expiresIn * 1000L)}")
+        val expiresAt = System.currentTimeMillis() + (expiresIn * 1000L)
         context.dataStore.edit {
             it[UserPreferences.ACCESS_TOKEN] = token
             it[UserPreferences.NICKNAME] = nickname
@@ -27,7 +30,12 @@ class UserDataStore @Inject constructor(
     }
 
     val accessToken: Flow<String?> = context.dataStore.data.map {
-        it[UserPreferences.ACCESS_TOKEN]
+        val expiresAt = it[UserPreferences.EXPIRES_AT] ?: 0L
+        if (System.currentTimeMillis() > expiresAt) {
+            null // 만료되었으면 null 반환
+        } else {
+            it[UserPreferences.ACCESS_TOKEN]
+        }
     }
 
     val nickname: Flow<String?> = context.dataStore.data.map {
@@ -67,4 +75,13 @@ class UserDataStore @Inject constructor(
     suspend fun clear() {
         context.dataStore.edit { it.clear() }
     }
+
+    suspend fun autoClearIfExpired() {
+        val expired = isTokenExpired()
+        if (expired) {
+            clear()
+            println("🧹 Token expired → UserDataStore cleared")
+        }
+    }
+
 }
