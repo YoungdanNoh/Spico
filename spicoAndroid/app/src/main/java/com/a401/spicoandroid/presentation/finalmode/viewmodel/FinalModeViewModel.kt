@@ -73,19 +73,25 @@ class FinalModeViewModel @Inject constructor(
         private set
 
     fun startCountdownAndRecording(onStartRecording: () -> Unit) {
+        Log.d("AudioDebug", "⏱️ startCountdownAndRecording 호출됨")
         viewModelScope.launch {
             for (i in 3 downTo 1) {
                 countdown = i
+                Log.d("AudioDebug", "⏱️ countdown: $i")
                 delay(1000)
             }
             countdown = 0
+            Log.d("AudioDebug", "🟡 countdown: 0")
             delay(1000)
             countdown = -1
             isRecording = true
+            Log.d("AudioDebug", "✅ 카운트다운 종료 → onStartRecording 호출")
             onStartRecording()
+            Log.d("AudioDebug", "▶️ onStartRecording 실행됨")
             startTimer()
         }
     }
+
 
     fun startTimer() {
         recordingStartMillis = System.currentTimeMillis()
