@@ -53,7 +53,7 @@ class CoachingPracticeServiceImpl (
         projectId: Int,
         practiceId: Int,
         endCoachingPractice: EndCoachingPractice,
-    ): EndCoachingPracticeResponseDto {
+    ) {
 
         // 1. projectEntity 의 last_final_cnt 값을 1 증가시키기
         val projectEntity = projectRepository.findById(projectId)
@@ -73,9 +73,9 @@ class CoachingPracticeServiceImpl (
         practiceEntity.setStatus(PracticeStatus.COMPLETED)
 
         // 3. minio에 영상 저장, url db에 넣기
-        if(endCoachingPractice.fileName.isNullOrBlank()) {
-            throw PracticeException(PracticeError.INVALID_FILENAME)
-        }
+//        if(endCoachingPractice.fileName.isNullOrBlank()) {
+//            throw PracticeException(PracticeError.INVALID_FILENAME)
+//        }
 
         if (endCoachingPractice.pronunciationScore != null && endCoachingPractice.pronunciationScore !in 0..100) {
             throw PracticeException(PracticeError.INVALID_PRONUNCIATION_SCORE)
@@ -93,8 +93,8 @@ class CoachingPracticeServiceImpl (
             throw PracticeException(PracticeError.INVALID_VOLUME_STATUS)
         }
 
-        val presignedUrl = minioService.generatePresignedUrl("record", endCoachingPractice.fileName)
-        val playbackUrl = "record/${endCoachingPractice.fileName}"
+        //val presignedUrl = minioService.generatePresignedUrl("record", endCoachingPractice.fileName)
+        //val playbackUrl = "record/${endCoachingPractice.fileName}"
 
         // 4. coachingReportsEntity의 coaching_practice_cnt 값을 projectEntity.lastCoachingCnt로 넣기
         //    해당 practiceId로 coachingReports에 데이터 새로 추가
@@ -105,16 +105,12 @@ class CoachingPracticeServiceImpl (
             endCoachingPractice.pauseCount,
             endCoachingPractice.speedStatus,
             endCoachingPractice.volumeStatus,
-            playbackUrl,
+            "url",
             projectEntity.lastCoachingCnt
         )
         coachingReportsRepository.save(coachingReport)
 
         //println(minioService.generatePresignedGetUrl("record", endCoachingPractice.fileName))
-
-        return PresignedUrl(
-            presignedUrl = presignedUrl
-        ).toEndCoachingResponse()
     }
 
 }
