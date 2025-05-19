@@ -60,8 +60,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = VERSION_17
-        targetCompatibility = VERSION_17
+        sourceCompatibility = VERSION_11
+        targetCompatibility = VERSION_11
         isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
@@ -134,6 +134,12 @@ dependencies {
     implementation(libs.media3.exoplayer.dash)
     implementation(libs.media3.ui)
     implementation(libs.media3.ui.compose)
+
+    // media transformer
+    implementation(libs.androidx.media3.transformer)
+    implementation(libs.androidx.media3.effect)
+    implementation(libs.androidx.media3.common)
+
 
     // DataStore
     implementation(libs.datastore.preferences)
