@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.report.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.rememberScrollState
@@ -31,11 +32,13 @@ fun RandomSpeechReportScreen(
     // 삭제 성공 시 화면 이동
     LaunchedEffect(viewModel.deleteSuccess) {
         if (viewModel.deleteSuccess) {
+            Toast.makeText(context, "리포트가 삭제되었습니다", Toast.LENGTH_SHORT).show()
             navController.navigate(NavRoutes.RandomSpeechList.route) {
                 popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = false }
             }
         }
     }
+
 
     LaunchedEffect(Unit) {
         viewModel.fetchReport(randomSpeechId)
