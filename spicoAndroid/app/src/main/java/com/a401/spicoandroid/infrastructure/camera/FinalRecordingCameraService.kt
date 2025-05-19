@@ -130,13 +130,14 @@ class FinalRecordingCameraService(
     }
 
     fun stopRecording(onFinished: () -> Unit) {
-        if (recording == null) {
+        stopCallback = {
             onFinished()
+            stopCallback = null
+        }
+
+        if (recording == null) {
+            stopCallback?.invoke()
         } else {
-            stopCallback = {
-                onFinished()
-                stopCallback = null
-            }
             recording?.stop()
         }
     }

@@ -47,15 +47,17 @@ fun RecentReportSection(
             }
         } else {
             reportList.forEachIndexed { index, report ->
-                val modeLabel = when (report.type) {
-                    PracticeType.COACHING -> "코칭모드"
-                    PracticeType.FINAL -> "파이널모드"
+                val modeShortLabel = when (report.type) {
+                    PracticeType.COACHING -> "코칭"
+                    PracticeType.FINAL -> "파이널"
                 }
-                val description = "$modeLabel | ${report.projectName}"
+
+                val title = "$modeShortLabel ${report.practiceName}"
+                val description = report.projectName
 
                 CommonList(
                     modifier = Modifier.dropShadow1(),
-                    title = report.practiceName,
+                    title = title,
                     description = description,
                     onClick = { onReportClick(report)}
                 )

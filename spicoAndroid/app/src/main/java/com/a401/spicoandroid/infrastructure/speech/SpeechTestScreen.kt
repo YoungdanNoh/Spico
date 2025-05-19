@@ -38,6 +38,7 @@ fun SpeechTestScreen(navController: NavController) {
 
     var volumeResult by remember { mutableStateOf("") } // 성량 점수
     var speedResult by remember { mutableStateOf("") }  // 발표 속도
+    var pauseResult by remember { mutableStateOf("") } // 휴지 횟수 정보
 
     // 권한 요청 런처
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -108,6 +109,10 @@ fun SpeechTestScreen(navController: NavController) {
 
                     Log.d("Speed", "발표 속도: $speedType")
 
+                    val pauses = googleStt.getPauseCount()
+                    pauseResult = "휴지 횟수: ${pauses}"
+                    Log.d("PauseCount", "총 휴지 구간 수: $pauses")
+
                     googleStt.clearAll()
                 })
 
@@ -116,6 +121,8 @@ fun SpeechTestScreen(navController: NavController) {
                     Text("성량 점수: $volumeResult")
 
                     Text("속도 점수: $speedResult")
+
+                    Text("휴지 횟수: $pauseResult")
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
