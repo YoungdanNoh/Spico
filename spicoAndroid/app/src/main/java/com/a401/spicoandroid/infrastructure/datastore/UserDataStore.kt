@@ -27,7 +27,12 @@ class UserDataStore @Inject constructor(
     }
 
     val accessToken: Flow<String?> = context.dataStore.data.map {
-        it[UserPreferences.ACCESS_TOKEN]
+        val expiresAt = it[UserPreferences.EXPIRES_AT] ?: 0L
+        if (System.currentTimeMillis() > expiresAt) {
+            null // 만료되었으면 null 반환
+        } else {
+            it[UserPreferences.ACCESS_TOKEN]
+        }
     }
 
     val nickname: Flow<String?> = context.dataStore.data.map {
@@ -67,4 +72,13 @@ class UserDataStore @Inject constructor(
     suspend fun clear() {
         context.dataStore.edit { it.clear() }
     }
+
+    suspend fun autoClearIfExpired() {
+        val expired = isTokenExpired()
+        if (expired) {
+            clear()
+            println("🧹 Token expired → UserDataStore cleared")
+        }
+    }
+
 }
