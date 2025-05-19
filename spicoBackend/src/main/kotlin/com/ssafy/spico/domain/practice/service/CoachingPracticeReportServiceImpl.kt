@@ -37,12 +37,12 @@ class CoachingPracticeReportServiceImpl(
 
         // 4. minio의 record url
         // practiceId로 coaching report 조회 -> record_url을 /로 구분하기
-        val fileName = coachingReportsEntity.recordUrl
-        val parts = fileName.split("/")
-        val recordUrl = minioService.generatePresignedGetUrl(
-            parts[0],
-            parts[1]
-        )
+//        val fileName = coachingReportsEntity.recordUrl
+//        val parts = fileName.split("/")
+//        val recordUrl = minioService.generatePresignedGetUrl(
+//            parts[0],
+//            parts[1]
+//        )
 
         // 5. 성량 정보, 속도 정보, 휴지 횟수, 발음 점수
         val volumeStatus = coachingReportsEntity.speechVolume
@@ -54,7 +54,6 @@ class CoachingPracticeReportServiceImpl(
             projectName = projectEntity.title,
             practiceName = "${coachingReportsEntity.coachingPracticeCnt}회차",
             date = practicesEntity.createdAt,
-            recordUrl = recordUrl,
             volumeStatus = volumeStatus,
             speedStatus = speedStatus,
             pauseCount = pauseCount,
