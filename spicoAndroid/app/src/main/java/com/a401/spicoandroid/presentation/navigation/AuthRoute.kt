@@ -1,9 +1,9 @@
 package com.a401.spicoandroid.presentation.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AuthRoute(
@@ -18,6 +18,3 @@ fun AuthRoute(
         content()
     }
 }
-
-
-
