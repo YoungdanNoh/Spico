@@ -35,6 +35,11 @@ class GoogleStt(
     private var speechCharCheckpoints = mutableListOf<Int>()
     private var lastSpeedCheckTime: Long = 0L
 
+    /* 휴지 횟수 관련 필드 */
+    private var isInPause: Boolean = false
+    private var silenceStartTime: Long? = null
+    private var pauseCount: Int = 0
+
     fun start() {
         if (isListening) return // 중복 방지
         isListening = true
@@ -128,6 +133,26 @@ class GoogleStt(
                            }
                        }
                    }
+
+                   /* 휴지 구간 감지 로직 */
+                   Log.d("RMS_DEBUG", "rmsdB: $rmsdB")
+                   if (rmsdB < 5.0f) {
+                       if (!isInPause) {
+                           if (silenceStartTime == null) {
+                               silenceStartTime = currentTime
+
+                           } else if (currentTime - silenceStartTime!! >= 3000L) {
+                               pauseCount++
+                               isInPause = true // 휴지 감지 상태 진입
+                               silenceStartTime = null // 다시 감지되지 않도록 리셋
+                               Log.d("Pause", "휴지 구간 감지됨! 현재 누적: $pauseCount")
+
+                           }
+                       }
+                   } else {
+                       silenceStartTime = null // 음성 다시 시작되면 초기화
+                       isInPause = false
+                   }
                    
                }
 
@@ -215,6 +240,11 @@ class GoogleStt(
         totalCharCount = 0
         speechCharCheckpoints.clear()
         lastSpeedCheckTime = 0L
+
+        /* 휴지 횟수 관련 변수 초기화 */
+        pauseCount = 0
+        silenceStartTime = null
+        isInPause = false
     }
 
     private fun getErrorMessage(errorCode: Int): String {
@@ -348,6 +378,11 @@ class GoogleStt(
 
         // 최빈값 반환
         return results.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: SpeedType.MIDDLE
+    }
+
+    /* 휴지 횟수를 불러오기 위한 함수 */
+    fun getPauseCount(): Int {
+        return pauseCount
     }
 
 }
