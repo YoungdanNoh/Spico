@@ -40,10 +40,6 @@ fun CoachingModeScreen(
     projectId: Int,
     practiceId: Int
 ) {
-    BackHandler(enabled = true) {
-        coachingModeViewModel.showConfirmDialog()
-    }
-
     val context = LocalContext.current
     val activity = context as? Activity
 
@@ -69,6 +65,13 @@ fun CoachingModeScreen(
             setOnPartialResult { partialText -> coachingModeViewModel.updateSpokenText(partialText) }
             setOnSpeedFeedback { speedType -> coachingModeViewModel.updateSpeedFeedback(speedType.name) }
             setOnVolumeFeedback { feedback -> coachingModeViewModel.updateVolumeFeedback(feedback) }
+        }
+    }
+
+    // 뒤로 가기
+    BackHandler(enabled = true) {
+        if (state.countdown < 0) {
+            coachingModeViewModel.showConfirmDialog()
         }
     }
 
@@ -209,11 +212,13 @@ fun CoachingModeScreen(
             }
         }
 
-        if (state.showStopConfirm) {
+        if (state.showStopConfirm && state.countdown < 0)  {
             val canStop = coachingModeViewModel.stopRecording()
             if (!canStop){
                 CommonAlert(
-                    title = "지금 종료하면 리포트가\n제공되지 않습니다.",
+                    title = "연습 시간이 짧아\n" +
+                            "리포트가 생성되지 않습니다.\n" +
+                            "정말 종료하시겠습니까?",
                     confirmText = "종료",
                     onConfirm = {
                         googleStt.stop()
