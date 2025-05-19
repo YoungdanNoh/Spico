@@ -1,6 +1,10 @@
 package com.a401.spicoandroid.presentation.report.component
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.CommonAlert
 import com.a401.spicoandroid.common.ui.theme.*
 

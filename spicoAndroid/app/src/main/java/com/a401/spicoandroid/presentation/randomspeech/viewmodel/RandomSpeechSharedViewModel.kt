@@ -1,6 +1,9 @@
 package com.a401.spicoandroid.presentation.randomspeech.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
@@ -9,7 +12,6 @@ import com.a401.spicoandroid.domain.randomspeech.model.RandomSpeechTopic
 import com.a401.spicoandroid.domain.randomspeech.usecase.CreateRandomSpeechUseCase
 import com.a401.spicoandroid.domain.randomspeech.usecase.SubmitRandomSpeechScriptUseCase
 import com.a401.spicoandroid.domain.report.usecase.DeleteRandomSpeechUseCase
-import com.kakao.sdk.auth.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,6 +26,15 @@ class RandomSpeechSharedViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(RandomSpeechState())
     val uiState: StateFlow<RandomSpeechState> = _uiState.asStateFlow()
+
+    // 종료 후, 로직
+    var shouldRedirectToReport by mutableStateOf(true)
+        private set
+
+    fun disableAutoRedirect() {
+        shouldRedirectToReport = false
+    }
+
 
     fun setTopic(topic: RandomSpeechTopic) {
         _uiState.update { it.copy(topic = topic) }
@@ -145,6 +156,7 @@ class RandomSpeechSharedViewModel @Inject constructor(
 
     fun reset() {
         _uiState.value = RandomSpeechState()
+        shouldRedirectToReport = true
     }
 
     fun getSpeechIdForReport(): Int? = uiState.value.speechId

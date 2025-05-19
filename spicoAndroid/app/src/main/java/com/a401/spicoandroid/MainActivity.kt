@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
                 NavRoutes.ProjectList.route,
                 NavRoutes.RandomSpeechLanding.route,
                 NavRoutes.RandomSpeechList.route,
+                NavRoutes.RandomSpeechReport.route,
                 NavRoutes.Profile.route,
                 "project_detail",
                 "coaching_report",
