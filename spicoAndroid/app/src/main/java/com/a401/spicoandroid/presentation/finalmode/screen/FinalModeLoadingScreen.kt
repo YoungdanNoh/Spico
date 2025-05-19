@@ -105,6 +105,7 @@ fun FinalModeLoadingScreen(
                 )
 
                 Log.d("FinalFlow", "📦 전송 request = $request")
+                
 
                 viewModel.submitFinalModeResult(
                     projectId = projectId,

@@ -82,8 +82,12 @@ fun FinalModeVoiceScreen(
     LaunchedEffect(Unit) {
         cameraService.startCamera {
             viewModel.startCountdownAndRecording {
-                cameraService.startRecording { uri ->
-                    Log.d("FinalRecording", "저장 완료: $uri")
+                cameraService.startRecording(
+                    projectId = projectId,
+                    practiceId = practiceId,
+                    fileTag = ""
+                ) { uri ->
+                    Log.d("FinalRecording", "메인 영상 저장 완료: $uri")
                 }
             }
         }
