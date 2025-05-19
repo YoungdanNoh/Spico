@@ -368,8 +368,6 @@ fun MainNavGraph(
                 )
             }
 
-            // ✅ MainNavGraph의 NavHost 바로 아래에 추가
-
             composable(
                 route = NavRoutes.VoiceScript.route,
                 arguments = listOf(
