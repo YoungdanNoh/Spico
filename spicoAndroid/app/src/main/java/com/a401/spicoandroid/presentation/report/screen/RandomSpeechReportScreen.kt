@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.report.screen
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -93,7 +94,8 @@ fun RandomSpeechReportScreen(
             RandomReportScriptButton(
                 onClick = {
                     navController.navigate(NavRoutes.VoiceScriptRandom.withId(randomSpeechId))
-                }
+                },
+                modifier = Modifier.padding(bottom = 32.dp)
             )
         }
 

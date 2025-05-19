@@ -148,7 +148,11 @@ fun RandomSpeechScreen(
         }
     }
 
-    BackHandler { handleExit() }
+    BackHandler {
+        if (prepCountdown <= 0) {
+            handleExit()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
