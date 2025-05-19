@@ -28,6 +28,9 @@ class RandomSpeechListViewModel @Inject constructor(
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
+    var deleteSuccess by mutableStateOf(false)
+        private set
+
     fun fetchList() {
         val launch = viewModelScope.launch {
             isLoading = true
@@ -51,6 +54,7 @@ class RandomSpeechListViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = deleteUseCase(id)) {
                 is DataResource.Success -> {
+                    deleteSuccess = true
                     fetchList() // 삭제 후 리스트 갱신
                 }
                 is DataResource.Error -> {
@@ -60,4 +64,9 @@ class RandomSpeechListViewModel @Inject constructor(
             }
         }
     }
+
+    fun resetDeleteSuccess() {
+        deleteSuccess = false
+    }
+
 }

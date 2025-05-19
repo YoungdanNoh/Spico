@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +28,11 @@ fun RandomSpeechTopicSelectScreen(
     viewModel: RandomSpeechSharedViewModel
 ) {
     val topics = RandomSpeechTopic.entries.toList()
+
+    // 진입 시 랜덤 스피치 상태 초기화
+    LaunchedEffect(Unit) {
+        viewModel.reset()
+    }
 
     Scaffold(
         topBar = {

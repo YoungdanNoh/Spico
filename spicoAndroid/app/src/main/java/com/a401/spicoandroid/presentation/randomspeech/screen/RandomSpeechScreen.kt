@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
+import android.widget.Toast
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.timer.rememberElapsedSeconds
 import com.a401.spicoandroid.common.ui.component.*
@@ -55,6 +56,7 @@ fun RandomSpeechScreen(
 
     var showExitAlert by remember { mutableStateOf(false) }
     var showExitConfirmDialog by remember { mutableStateOf(false) }
+    var showForceExitAlert by remember { mutableStateOf(false) }
 
     var prepCountdown by remember { mutableIntStateOf(3) }
     var startMainTimer by remember { mutableStateOf(false) }
@@ -148,7 +150,14 @@ fun RandomSpeechScreen(
         }
     }
 
-    BackHandler { handleExit() }
+    // 뒤로 가기
+    BackHandler {
+        if (uiState.isLoading) {
+            Toast.makeText(context, "저장 중입니다!", Toast.LENGTH_SHORT).show()
+        } else if (prepCountdown <= 0) {
+            handleExit()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -278,14 +287,15 @@ fun RandomSpeechScreen(
                                         script = transcript,
                                         onSuccess = {
                                             val id = viewModel.getSpeechIdForReport()
-                                            Log.d("ExitFlow", "✅ submitScript 성공, id = $id")
-                                            if (id != null) {
+                                            Log.d("ExitFlow", "✅ 리포트 저장 성공, id = $id, shouldRedirect = ${viewModel.shouldRedirectToReport}")
+
+                                            // 🎯 조건에 따라 네비게이션 결정
+                                            if (viewModel.shouldRedirectToReport && id != null) {
                                                 navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
                                             }
                                         },
                                         onError = {
-                                            val errorMessage = viewModel.uiState.value.errorMessage
-                                            Log.d("RandomSpeech", "❌ 종료 실패: $errorMessage")
+                                            Log.e("ExitFlow", "❌ 리포트 저장 실패")
                                             // TODO: 실패 처리
                                         }
                                     )
@@ -335,16 +345,7 @@ fun RandomSpeechScreen(
         if (uiState.isLoading) {
             LoadingInProgressView(
                 imageRes = R.drawable.character_home_5,
-                message = "리포트를 생성중이에요.\n잠시만 기다려주세요!",
-                homeLinkText = "리포트 목록으로 이동",
-                onHomeClick = {
-                    navController.navigate(
-                        route = NavRoutes.RandomSpeechList.route,
-                        navOptions = navOptions {
-                            popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
-                        }
-                    )
-                }
+                message = "리포트를 생성중이에요.\n잠시만 기다려주세요!"
             )
         }
     }
@@ -352,15 +353,6 @@ fun RandomSpeechScreen(
         LoadingInProgressView(
             imageRes = R.drawable.character_home_5,
             message = "스크립트를 저장 중이에요.\n잠시만 기다려주세요!",
-            homeLinkText = "리포트 목록으로 이동",
-            onHomeClick = {
-                navController.navigate(
-                    route = NavRoutes.RandomSpeechList.route,
-                    navOptions = navOptions {
-                        popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
-                    }
-                )
-            }
         )
     }
 }
