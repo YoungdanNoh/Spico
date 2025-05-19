@@ -22,6 +22,14 @@ import com.a401.spicoandroid.infrastructure.camera.FinalRecordingCameraService
 import com.a401.spicoandroid.presentation.finalmode.component.VideoBackgroundPlayer
 import com.a401.spicoandroid.presentation.finalmode.viewmodel.FinalModeViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun FinalModeAudienceScreen(
@@ -31,6 +39,7 @@ fun FinalModeAudienceScreen(
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel()
 ) {
+    Log.d("AudioDebug", "🟢 FinalModeAudienceScreen 진입됨")
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -44,6 +53,31 @@ fun FinalModeAudienceScreen(
 
     val navigateToProjectList = remember { mutableStateOf(false) }
 
+    val audioPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (!isGranted) {
+                Toast.makeText(context, "마이크 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                Log.d("AudioDebug", "🎤 마이크 권한 허용됨")
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        val isGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!isGranted) {
+            Log.d("AudioDebug", "🎤 RECORD_AUDIO 권한 없음 → 요청")
+            audioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        } else {
+            Log.d("AudioDebug", "🎤 RECORD_AUDIO 권한 이미 있음")
+        }
+    }
+
     LaunchedEffect(navigateToProjectList.value) {
         if (navigateToProjectList.value) {
             Log.d("FinalFlow", "➡️ 이동: ProjectList")
@@ -54,16 +88,18 @@ fun FinalModeAudienceScreen(
     }
 
     LaunchedEffect(Unit) {
+        Log.d("AudioDebug", "🚀 LaunchedEffect 진입")
         try {
             cameraService.startCamera {
+                Log.d("AudioDebug", "📷 startCamera 내부 콜백 진입")
                 viewModel.startCountdownAndRecording {
                     cameraService.startRecording { uri ->
-                        Log.d("FinalRecording", "저장 완료: $uri")
+                        Log.d("AudioDebug", "저장 완료: $uri")
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.e("FinalFlow", "❌ 카메라 실행 중 예외 발생", e)
+            Log.e("AudioDebug", "❌ 카메라 실행 중 예외 발생", e)
         }
     }
 
@@ -124,7 +160,7 @@ fun FinalModeAudienceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
 
-                    Log.d("FinalFlow", "🛑 녹화 종료. projectId=$projectId, practiceId=$practiceId")
+                    Log.d("AudioDebug", "🛑 녹화 종료. projectId=$projectId, practiceId=$practiceId")
 
                     // 종료 버튼 → 알럿 확인 이후
                     if (viewModel.getHasQnA()) {
