@@ -38,9 +38,16 @@ class AudioAnalyzer {
             while (isRecording) {
                 val read = audioRecord?.read(buffer, 0, buffer.size) ?: 0
                 if (read > 0) {
-                    val amplitudes = buffer.take(read)
-                        .map { it.toFloat().absoluteValue / Short.MAX_VALUE }
-                    onUpdate(amplitudes.takeLast(60)) // 최근 60개만 유지
+                    val raw = buffer.take(read)
+                    val debugSample = raw.take(10).joinToString()
+                    android.util.Log.d("AudioDebug", "🎙 rawShort: $debugSample")
+
+                    val amplitudes = buffer.take(read).map {
+                        val normalized = it.toFloat().absoluteValue / Short.MAX_VALUE
+                        val boosted = (normalized * 5f).coerceIn(0f, 1f)
+                        boosted
+                    }
+                    onUpdate(amplitudes.takeLast(60))
                 }
             }
         }
