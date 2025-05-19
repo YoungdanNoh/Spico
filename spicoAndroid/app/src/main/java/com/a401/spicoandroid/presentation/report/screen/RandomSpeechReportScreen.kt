@@ -32,7 +32,7 @@ fun RandomSpeechReportScreen(
     // 삭제 성공 시 화면 이동
     LaunchedEffect(viewModel.deleteSuccess) {
         if (viewModel.deleteSuccess) {
-            Toast.makeText(context, "리포트가 삭제되었습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "리포트를 삭제했어요", Toast.LENGTH_SHORT).show()
             navController.navigate(NavRoutes.RandomSpeechList.route) {
                 popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = false }
             }
