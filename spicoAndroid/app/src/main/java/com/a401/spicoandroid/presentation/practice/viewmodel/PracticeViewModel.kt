@@ -124,7 +124,12 @@ class PracticeViewModel @Inject constructor(
         onSuccess: (practiceId: Int) -> Unit,
         onFailure: (Throwable) -> Unit
     ) {
-        val projectId = selectedProject?.id ?: return
+        val projectId = selectedProject?.id
+        if (projectId == null) {
+            Log.e("PracticeViewModel", "❌ projectId가 null입니다. 프로젝트를 선택하지 않았습니다.")
+            onFailure(IllegalStateException("projectId is null"))
+            return
+        }
 
         viewModelScope.launch {
             when (selectedMode) {

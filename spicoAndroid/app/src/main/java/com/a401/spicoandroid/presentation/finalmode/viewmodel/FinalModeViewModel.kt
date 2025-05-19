@@ -16,6 +16,7 @@ import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
 import com.a401.spicoandroid.domain.finalmode.usecase.FinishFinalPracticeUseCase
 import com.a401.spicoandroid.domain.finalmode.usecase.GenerateFinalQuestionsUseCase
 import com.a401.spicoandroid.domain.practice.usecase.DeletePracticeUseCase
+import com.a401.spicoandroid.domain.project.usecase.GetProjectDetailUseCase
 import com.a401.spicoandroid.infrastructure.audio.AudioAnalyzer
 import com.a401.spicoandroid.infrastructure.camera.UploadManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,8 +30,10 @@ class FinalModeViewModel @Inject constructor(
     private val generateFinalQuestionsUseCase: GenerateFinalQuestionsUseCase,
     private val finishFinalPracticeUseCase: FinishFinalPracticeUseCase,
     private val uploadManager: UploadManager,
-    private val deletePracticeUseCase: DeletePracticeUseCase
-) : ViewModel() {
+    private val deletePracticeUseCase: DeletePracticeUseCase,
+    private val getProjectDetailUseCase: GetProjectDetailUseCase,
+
+    ) : ViewModel() {
 
     private var practiceId: Int? = null
 
@@ -266,6 +269,35 @@ class FinalModeViewModel @Inject constructor(
         return hasQnA
     }
 
+    // 대본
+    private val _scriptState = MutableStateFlow(FinalModeScriptState())
+    val scriptState: StateFlow<FinalModeScriptState> = _scriptState.asStateFlow()
 
+    fun setScriptLoading() {
+        _scriptState.value = FinalModeScriptState(isLoading = true)
+    }
+
+    fun setScript(script: String?) {
+        _scriptState.value = FinalModeScriptState(script = script)
+        Log.d("FinalFlow", "📝 대본 저장됨 → $script")
+    }
+
+    fun setScriptError(e: Throwable) {
+        _scriptState.value = FinalModeScriptState(error = e)
+        Log.e("FinalFlow", "❌ 대본 로딩 실패", e)
+    }
+
+    fun loadProjectScript(projectId: Int) {
+        viewModelScope.launch {
+            setScriptLoading()
+            when (val result = getProjectDetailUseCase(projectId)) {
+                is DataResource.Success -> setScript(result.data.script)
+                is DataResource.Error -> setScriptError(result.throwable)
+                is DataResource.Loading -> {
+                    Log.d("FinalFlow", "⏳ 파이널 모드에서 대본 불러오는 중")
+                }
+            }
+        }
+    }
 }
 
