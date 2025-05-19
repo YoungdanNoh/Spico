@@ -42,7 +42,7 @@ fun RandomSpeechListScreen(
 
     LaunchedEffect(viewModel.deleteSuccess) {
         if (viewModel.deleteSuccess) {
-            Toast.makeText(context, "리포트가 삭제되었습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "리포트를 삭제했어요", Toast.LENGTH_SHORT).show()
             viewModel.resetDeleteSuccess()
         }
     }
@@ -100,14 +100,6 @@ fun RandomSpeechListScreen(
     ) { innerPadding ->
 
         when {
-            isLoading -> {
-                LoadingInProgressView(
-                    imageRes = com.a401.spicoandroid.R.drawable.character_home_5,
-                    message = "로딩 중입니다...",
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
-
             speechList.isEmpty() -> {
                 EmptyStateView(
                     imageRes = com.a401.spicoandroid.R.drawable.character_home_1,
