@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 @Composable
 fun FinalModeAudienceScreen(
     navController: NavController,
+    parentNavController: NavController,
     projectId: Int,
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel()
@@ -38,6 +40,17 @@ fun FinalModeAudienceScreen(
 
     val cameraService = remember {
         FinalRecordingCameraService(context, lifecycleOwner)
+    }
+
+    val navigateToProjectList = remember { mutableStateOf(false) }
+
+    LaunchedEffect(navigateToProjectList.value) {
+        if (navigateToProjectList.value) {
+            Log.d("FinalFlow", "➡️ 이동: ProjectList")
+            navController.navigate(NavRoutes.ProjectList.route) {
+                popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+            }
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -151,8 +164,11 @@ fun FinalModeAudienceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        navController.navigate(NavRoutes.ProjectList.route)
+                        parentNavController.navigate(NavRoutes.ProjectList.route) {
+                            popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+                        }
                     }
+
                 },
                 onCancel = { viewModel.hideAllDialogs() },
                 onDismissRequest = { viewModel.hideAllDialogs() },
