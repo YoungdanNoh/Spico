@@ -1,6 +1,7 @@
 package com.a401.spicoandroid.presentation.coachingmode.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a401.spicoandroid.common.domain.DataResource
@@ -27,6 +28,73 @@ class CoachingModeViewModel @Inject constructor(
     private var timerJob: Job? = null
     private var recordingStartMillis: Long = 0L
 
+    // 대본 상태
+    private val _scriptTexts = mutableStateOf<List<String>>(emptyList())
+
+    fun initializeScript(paragraphs: List<String>) {
+        _scriptTexts.value = paragraphs
+    }
+
+    private fun levenshteinSimilarity(a: String, b: String): Float {
+        val distance = levenshteinDistance(a, b)
+        val maxLen = maxOf(a.length, b.length).takeIf { it > 0 } ?: 1
+        return 1f - (distance.toFloat() / maxLen)
+    }
+
+    private fun levenshteinDistance(a: String, b: String): Int {
+        val dp = Array(a.length + 1) { IntArray(b.length + 1) }
+        for (i in 0..a.length) dp[i][0] = i
+        for (j in 0..b.length) dp[0][j] = j
+
+        for (i in 1..a.length) {
+            for (j in 1..b.length) {
+                val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+                dp[i][j] = minOf(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                )
+            }
+        }
+
+        return dp[a.length][b.length]
+    }
+
+    //문단 추적
+    fun updateSpokenText(partialText: String) {
+        val paragraphList = _scriptTexts.value
+        val spoken = partialText.trim().lowercase()
+
+        if (spoken.split(" ").size < 2) return // 너무 짧은 발화는 무시
+
+        var bestParagraphIndex: Int? = null
+        var bestScore = 0f
+
+        paragraphList.forEachIndexed { pIndex, paragraph ->
+            val sentences = paragraph.split(Regex("[.!?]\\s+"))
+
+            sentences.forEach { sentence ->
+                val cleanSentence = sentence.trim().lowercase()
+                val startsWith = cleanSentence.startsWith(spoken.take(6))
+                val score = levenshteinSimilarity(cleanSentence, spoken)
+
+                if ((startsWith || score > 0.25f) && score > bestScore) {
+                    bestScore = score
+                    bestParagraphIndex = pIndex
+                }
+            }
+        }
+
+        bestParagraphIndex?.let { index ->
+            if (_coachingState.value.currentParagraphIndex != index) {
+                Log.d("ScriptTrack", "🔎 문장 기반 추적: 문단=$index, 유사도=$bestScore")
+                _coachingState.update { it.copy(currentParagraphIndex = index) }
+            }
+        }
+    }
+
+
+    // 음성인식
     fun pushWaveformValue(value: Float) {
         _coachingState.update { state ->
             val newList = state.waveform.toMutableList().apply {
@@ -37,8 +105,27 @@ class CoachingModeViewModel @Inject constructor(
         }
     }
 
+    private val _volumeFeedback = MutableStateFlow<String?>(null)
+    val volumeFeedback: StateFlow<String?> = _volumeFeedback
+
+    private val _speedFeedback = MutableStateFlow<String?>(null)
+    val speedFeedback: StateFlow<String?> = _speedFeedback
+
     fun updateVolumeFeedback(feedback: String) {
-        _coachingState.update { it.copy(volumeFeedback = feedback) }
+        _volumeFeedback.value = "🎤 $feedback"
+    }
+
+    fun updateSpeedFeedback(speed: String) {
+        val message = when (speed) {
+            "SLOW" -> "🏃 조금 더 빠르게 말해볼까요?"
+            "MIDDLE" -> "🏃 지금 속도 좋아요!"
+            "FAST" -> "🏃 조금 천천히 말해볼까요!"
+            else -> null
+        }
+
+        message?.let {
+            _speedFeedback.value = it
+        }
     }
 
     fun updatePauseCount(count: Int) {
@@ -75,12 +162,13 @@ class CoachingModeViewModel @Inject constructor(
 
     private fun volumeScoreToStatus(score: Int): String {
         return when (score) {
-            in 0..39 -> "QUIET"
-            in 40..69 -> "MIDDLE"
-            else -> "LOUD"
+            in 0..69 -> "MIDDLE"
+            in 70..89 -> "LOUD"
+            else -> "QUIET"
         }
     }
 
+    // 카운트 다운
     fun startCountdownAndRecording(onStartSTT: () -> Unit) {
         viewModelScope.launch {
             Log.d("Countdown", "⏳ 카운트다운 시작")
@@ -104,6 +192,7 @@ class CoachingModeViewModel @Inject constructor(
         }
     }
 
+    // 타이머
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (true) {
@@ -120,9 +209,10 @@ class CoachingModeViewModel @Inject constructor(
         }
     }
 
+    // 코칭 모드 중지
     fun stopRecording(): Boolean {
         val duration = System.currentTimeMillis() - recordingStartMillis
-        if (duration < 1000) return false
+        if (duration < 30000) return false
 
         timerJob?.cancel()
         return true
@@ -136,6 +226,8 @@ class CoachingModeViewModel @Inject constructor(
         _coachingState.update { it.copy(showStopConfirm = false) }
     }
 
+
+    // 코친모드 결과 전송
     fun postResult(projectId: Int, practiceId: Int) {
         viewModelScope.launch {
             _coachingState.update { it.copy(isLoading = true) }
@@ -146,7 +238,7 @@ class CoachingModeViewModel @Inject constructor(
                 projectId,
                 practiceId,
                 CoachingResultRequestDto(
-                    fileName = "audio1.mp3",
+                    fileName = "",
                     pronunciationScore = 0,
                     pauseCount = current.pauseCount,
                     volumeStatus = volumeScoreToStatus(current.volumeScore),

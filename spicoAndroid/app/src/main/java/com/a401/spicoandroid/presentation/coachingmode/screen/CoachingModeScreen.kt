@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -30,6 +29,7 @@ import com.a401.spicoandroid.presentation.coachingmode.component.CoachingFeedbac
 import com.a401.spicoandroid.presentation.coachingmode.viewmodel.CoachingModeViewModel
 import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.project.viewmodel.ProjectScriptViewModel
+import com.a401.spicoandroid.presentation.report.viewmodel.CoachingReportViewModel
 
 @Composable
 fun CoachingModeScreen(
@@ -50,10 +50,13 @@ fun CoachingModeScreen(
     val state by coachingModeViewModel.coachingState.collectAsState()
     val scriptState by scriptViewModel.scriptState.collectAsState()
 
+    val coachingReportViewModel: CoachingReportViewModel = hiltViewModel()
+
     val showScriptSheet = remember { mutableStateOf(false) }
     var permissionGranted by remember { mutableStateOf(false) }
 
-    val showEarlyExitConfirm = remember { mutableStateOf(false) }
+    val volumeFeedback by coachingModeViewModel.volumeFeedback.collectAsState()
+    val speedFeedback by coachingModeViewModel.speedFeedback.collectAsState()
 
     // STT 설정
     val googleStt = remember {
@@ -63,7 +66,9 @@ fun CoachingModeScreen(
             onError = { Log.e("STT", it) }
         ).apply {
             setOnWaveformUpdate { coachingModeViewModel.pushWaveformValue(it) }
-            setOnVolumeFeedback { coachingModeViewModel.updateVolumeFeedback(it) }
+            setOnPartialResult { partialText -> coachingModeViewModel.updateSpokenText(partialText) }
+            setOnSpeedFeedback { speedType -> coachingModeViewModel.updateSpeedFeedback(speedType.name) }
+            setOnVolumeFeedback { feedback -> coachingModeViewModel.updateVolumeFeedback(feedback) }
         }
     }
 
@@ -80,6 +85,11 @@ fun CoachingModeScreen(
         } else {
             permissionGranted = true
         }
+    }
+
+    LaunchedEffect(scriptState) {
+        val texts = scriptState.paragraphs.map { it.text }
+        coachingModeViewModel.initializeScript(texts)
     }
 
     LaunchedEffect(permissionGranted) {
@@ -119,7 +129,8 @@ fun CoachingModeScreen(
             CoachingFeedbackPanel(
                 modifier = Modifier.fillMaxWidth(),
                 characterPainter = painterResource(id = R.drawable.character_coaching),
-                latestFeedback = state.volumeFeedback ?: ""
+                volumeFeedback = volumeFeedback,
+                speedFeedback = speedFeedback,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -199,38 +210,74 @@ fun CoachingModeScreen(
         }
 
         if (state.showStopConfirm) {
-            CommonAlert(
-                title = "코칭 모드를 종료하시겠습니까?",
-                confirmText = "종료",
-                onConfirm = {
-                    val canStop = coachingModeViewModel.stopRecording()
-                    if (!canStop) {
-                        Toast.makeText(context, "너무 짧아요! 조금 더 진행해주세요.", Toast.LENGTH_SHORT).show()
-                    } else {
+            val canStop = coachingModeViewModel.stopRecording()
+            if (!canStop){
+                CommonAlert(
+                    title = "지금 종료하면 리포트가\n제공되지 않습니다.",
+                    confirmText = "종료",
+                    onConfirm = {
                         googleStt.stop()
+                        coachingReportViewModel.deleteReport(
+                            projectId = projectId,
+                            practiceId = practiceId,
+                            onSuccess = {
+                                navController.navigate(NavRoutes.ProjectDetail.withId(projectId)) {
+                                    popUpTo(NavRoutes.ProjectList.route) { inclusive = false }
+                                    launchSingleTop = true
+                                }
+                            },
+                            onError = {
+                                Log.d("Coaching", "❌ 삭제 실패")
+                            }
+                        )
+                        coachingModeViewModel.hideConfirmDialog()
+                    },
+                    cancelText = "취소",
+                    onCancel = { coachingModeViewModel.hideConfirmDialog() },
+                    onDismissRequest = { coachingModeViewModel.hideConfirmDialog() },
+                    confirmTextColor = White,
+                    confirmBackgroundColor = Error,
+                    confirmBorderColor = Error,
+                    cancelTextColor = TextTertiary,
+                    cancelBackgroundColor = BackgroundSecondary,
+                    cancelBorderColor = BackgroundSecondary,
+                    borderColor = White,
+                )
+            } else {
+                CommonAlert(
+                    title = "코칭 모드를 종료하시겠습니까?",
+                    confirmText = "종료",
+                    onConfirm = {
+                        googleStt.stop()
+                        //휴지
+                        coachingModeViewModel.updatePauseCount(googleStt.getPauseCount())
+                        //속도
+                        coachingModeViewModel.updateSpeedStatus(googleStt.getOverallSpeedByFullLog().name)
+                        //성량
                         coachingModeViewModel.calculateAndStoreVolumeScore(
                             records = googleStt.getVolumeRecordList()
                         )
                         coachingModeViewModel.postResult(projectId = projectId, practiceId = practiceId)
-                    }
-                    coachingModeViewModel.hideConfirmDialog()
-                },
-                cancelText = "취소",
-                onCancel = { coachingModeViewModel.hideConfirmDialog() },
-                onDismissRequest = { coachingModeViewModel.hideConfirmDialog() },
-                confirmTextColor = White,
-                confirmBackgroundColor = Error,
-                confirmBorderColor = Error,
-                cancelTextColor = TextTertiary,
-                cancelBackgroundColor = BackgroundSecondary,
-                cancelBorderColor = BackgroundSecondary,
-                borderColor = White,
-            )
+                        coachingModeViewModel.hideConfirmDialog()
+                    },
+                    cancelText = "취소",
+                    onCancel = { coachingModeViewModel.hideConfirmDialog() },
+                    onDismissRequest = { coachingModeViewModel.hideConfirmDialog() },
+                    confirmTextColor = White,
+                    confirmBackgroundColor = Error,
+                    confirmBorderColor = Error,
+                    cancelTextColor = TextTertiary,
+                    cancelBackgroundColor = BackgroundSecondary,
+                    cancelBorderColor = BackgroundSecondary,
+                    borderColor = White,
+                )
+            }
         }
 
         if (showScriptSheet.value) {
             ScriptBottomSheet(
                 scripts = scriptState.paragraphs.map { it.text },
+                highlightedIndex = state.currentParagraphIndex,
                 onScriptClick = { showScriptSheet.value = false },
                 onDismissRequest = { showScriptSheet.value = false }
             )
