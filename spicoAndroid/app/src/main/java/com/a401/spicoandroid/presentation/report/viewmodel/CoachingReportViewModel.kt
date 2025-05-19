@@ -42,15 +42,15 @@ class CoachingReportViewModel @Inject constructor(
                             projectName = report.projectName,
                             roundCount = report.practiceName.filter { ch -> ch.isDigit() }.toIntOrNull() ?: 0,
                             volumeStatus = when (report.volumeStatus) {
-                                "QUIET" -> "목소리가 작아요. 조금 더 크게 말해볼까요?"
-                                "MIDDLE" -> "좋아요! 지금 톤을 유지해요"
-                                "LOUD" -> "목소리가 커요! 조금 더 작게 말해요."
+                                "QUIET" -> "아주 적절하게 잘 말했어요!\n성량이 안정적입니다."
+                                "MIDDLE" -> "조금 더 톤 조절이 필요해 보여요.\n크거나 작은 구간이 있었어요."
+                                "LOUD" -> "전반적으로 괜찮았지만,\n목소리를 조금 더 일정하게 유지해보세요."
                                 else -> report.volumeStatus
                             },
                             speedStatus = when (report.speedStatus) {
-                                "SLOW" -> "말이 조금 느려요. 좀 더 빨리 말해볼까요?"
-                                "MIDDLE" -> "적당한 속도였어요. 딱 좋아요!"
-                                "FAST" -> "말의 속도가 빨라요. 조금 천천히 말해요."
+                                "SLOW" -> "말이 조금 느려요.\n좀 더 빨리 말해볼까요?"
+                                "MIDDLE" -> "딱 좋아요!\n적당한 속도였어요."
+                                "FAST" -> "말의 속도가 빨라요.\n조금 천천히 말해요."
                                 else -> report.speedStatus
                             },
                             pauseCount = report.pauseCount,

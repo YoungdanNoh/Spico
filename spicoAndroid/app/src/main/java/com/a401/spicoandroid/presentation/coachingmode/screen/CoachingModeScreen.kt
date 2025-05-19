@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -56,7 +55,8 @@ fun CoachingModeScreen(
     val showScriptSheet = remember { mutableStateOf(false) }
     var permissionGranted by remember { mutableStateOf(false) }
 
-    val showEarlyExitConfirm = remember { mutableStateOf(false) }
+    val volumeFeedback by coachingModeViewModel.volumeFeedback.collectAsState()
+    val speedFeedback by coachingModeViewModel.speedFeedback.collectAsState()
 
     // STT 설정
     val googleStt = remember {
@@ -66,10 +66,9 @@ fun CoachingModeScreen(
             onError = { Log.e("STT", it) }
         ).apply {
             setOnWaveformUpdate { coachingModeViewModel.pushWaveformValue(it) }
-            setOnVolumeFeedback { coachingModeViewModel.updateVolumeFeedback(it) }
-            setOnPartialResult { partialText ->
-                coachingModeViewModel.updateSpokenText(partialText)
-            }
+            setOnPartialResult { partialText -> coachingModeViewModel.updateSpokenText(partialText) }
+            setOnSpeedFeedback { speedType -> coachingModeViewModel.updateSpeedFeedback(speedType.name) }
+            setOnVolumeFeedback { feedback -> coachingModeViewModel.updateVolumeFeedback(feedback) }
         }
     }
 
@@ -130,7 +129,8 @@ fun CoachingModeScreen(
             CoachingFeedbackPanel(
                 modifier = Modifier.fillMaxWidth(),
                 characterPainter = painterResource(id = R.drawable.character_coaching),
-                latestFeedback = state.volumeFeedback ?: ""
+                volumeFeedback = volumeFeedback,
+                speedFeedback = speedFeedback,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -249,6 +249,11 @@ fun CoachingModeScreen(
                     confirmText = "종료",
                     onConfirm = {
                         googleStt.stop()
+                        //휴지
+                        coachingModeViewModel.updatePauseCount(googleStt.getPauseCount())
+                        //속도
+                        coachingModeViewModel.updateSpeedStatus(googleStt.getOverallSpeedByFullLog().name)
+                        //성량
                         coachingModeViewModel.calculateAndStoreVolumeScore(
                             records = googleStt.getVolumeRecordList()
                         )

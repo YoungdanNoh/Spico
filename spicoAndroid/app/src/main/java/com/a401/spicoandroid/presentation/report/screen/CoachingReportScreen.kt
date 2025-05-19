@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,9 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
 import com.a401.spicoandroid.R
 import com.a401.spicoandroid.common.ui.component.ButtonSize
 import com.a401.spicoandroid.common.ui.component.ChipType
@@ -144,7 +140,7 @@ fun CoachingReportScreen(
                     FeedbackCard(
                         imageResId = R.drawable.img_feedback_silence,
                         title = "휴지",
-                        description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요"
+                        description = "휴지 기간이 총\n${reportState.pauseCount}회 있었어요"
                     )
                 }
             }

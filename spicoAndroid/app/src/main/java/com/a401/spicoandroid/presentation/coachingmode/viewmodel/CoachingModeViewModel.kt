@@ -105,8 +105,27 @@ class CoachingModeViewModel @Inject constructor(
         }
     }
 
+    private val _volumeFeedback = MutableStateFlow<String?>(null)
+    val volumeFeedback: StateFlow<String?> = _volumeFeedback
+
+    private val _speedFeedback = MutableStateFlow<String?>(null)
+    val speedFeedback: StateFlow<String?> = _speedFeedback
+
     fun updateVolumeFeedback(feedback: String) {
-        _coachingState.update { it.copy(volumeFeedback = feedback) }
+        _volumeFeedback.value = "🎤 $feedback"
+    }
+
+    fun updateSpeedFeedback(speed: String) {
+        val message = when (speed) {
+            "SLOW" -> "🏃 조금 더 빠르게 말해볼까요?"
+            "MIDDLE" -> "🏃 지금 속도 좋아요!"
+            "FAST" -> "🏃 조금 천천히 말해볼까요!"
+            else -> null
+        }
+
+        message?.let {
+            _speedFeedback.value = it
+        }
     }
 
     fun updatePauseCount(count: Int) {
@@ -143,9 +162,9 @@ class CoachingModeViewModel @Inject constructor(
 
     private fun volumeScoreToStatus(score: Int): String {
         return when (score) {
-            in 0..39 -> "QUIET"
-            in 40..69 -> "MIDDLE"
-            else -> "LOUD"
+            in 0..69 -> "MIDDLE"
+            in 70..89 -> "LOUD"
+            else -> "QUIET"
         }
     }
 
