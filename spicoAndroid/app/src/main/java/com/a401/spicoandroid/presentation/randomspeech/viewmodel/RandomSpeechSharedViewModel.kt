@@ -68,13 +68,21 @@ class RandomSpeechSharedViewModel @Inject constructor(
             return
         }
 
+        // 🧼 Whisper 결과 정제 및 fallback 메시지 처리
+        val cleanedScript = script.trim()
+        val finalScript = if (cleanedScript.length < 5 || cleanedScript.contains("zeoranger", ignoreCase = true)) {
+            "음성 인식이 잘되지 않았어요. 다시 시도해 주세요."
+        } else {
+            cleanedScript
+        }
+
         Log.d("SubmitScript", "🚀 speechId: $speechId")
-        Log.d("SubmitScript", "📝 script: $script")
+        Log.d("SubmitScript", "📝 script: $finalScript")
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            when (val result = submitRandomSpeechScriptUseCase(speechId, script)) {
+            when (val result = submitRandomSpeechScriptUseCase(speechId, finalScript)) {
                 is DataResource.Success -> {
                     Log.d("SubmitScript", "✅ 성공: 리포트 저장 완료")
                     _uiState.update { it.copy(isLoading = false) }
@@ -82,7 +90,7 @@ class RandomSpeechSharedViewModel @Inject constructor(
                 }
 
                 is DataResource.Error -> {
-                    Log.e("SubmitScript", "❌ 실패: ${result.throwable.message}", result.throwable) // 전체 stack trace 포함
+                    Log.e("SubmitScript", "❌ 실패: ${result.throwable.message}", result.throwable)
                     Log.e("SubmitScript", "📛 throwable 클래스: ${result.throwable::class.java.simpleName}")
                     Log.e("SubmitScript", "📛 throwable 전체 내용: ${result.throwable}")
                     _uiState.update { it.copy(isLoading = false, errorMessage = result.throwable.message) }
