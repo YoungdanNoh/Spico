@@ -12,7 +12,9 @@ import androidx.camera.video.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.LifecycleOwner
-import com.a401.spicoandroid.infrastructure.speech.AzurePronunciationEvaluator
+import com.a401.spicoandroid.domain.finalmode.model.AssessmentResult
+import com.a401.spicoandroid.domain.finalmode.model.IssueDetails
+import com.a401.spicoandroid.domain.finalmode.model.TimeRange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,13 +24,12 @@ import java.io.FileOutputStream
 class FinalRecordingCameraService(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
-    private val script: String? = null
+    private val script: String? = null,
+    private val setAssessmentResult: (AssessmentResult) -> Unit
 ) {
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
     private var stopCallback: (() -> Unit)? = null
-    private val azurePronunciationEvaluator: AzurePronunciationEvaluator =
-        AzurePronunciationEvaluator()
 
     fun startCamera(onReady: () -> Unit) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -99,7 +100,6 @@ class FinalRecordingCameraService(
                     Log.d("CameraX", "Video saved to: $videoUri")
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        try {
                             val wavUri = Media3AudioExtractor.extractAudioFromMp4(
                                 context = context,
                                 inputVideoUri = videoUri,
@@ -107,14 +107,29 @@ class FinalRecordingCameraService(
                             )
                             Log.d("CameraX", "Audio extracted to WAV: $wavUri")
                             val wavFile = uriToFile(context, wavUri)
-                            try {
-                                pronunciationAssessmentContinuousWithFile(wavFile, script?:"")
-                            } catch (e: Exception) {
-                                Log.e("AzurePronunciation", "발음 평가 에러: ${e.message}")
-                            }
-                        } catch (e: Exception) {
-                            Log.e("CameraX", "Audio extraction error: ${e.message}")
-                        }
+
+                            val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(context, wavFile, script?:"")
+                            val result = AssessmentResult(
+                                transcribedText = resultMap["transcribedText"] as? String ?: "",
+                                accuracyScore = resultMap["accuracyScore"] as? Double ?: 0.0,
+                                completenessScore = resultMap["completenessScore"] as? Double ?: 0.0,
+                                fluencyScore = resultMap["fluencyScore"] as? Double ?: 0.0,
+                                pronunciationScore = resultMap["pronunciationScore"] as? Double ?: 0.0,
+                                pauseScore = resultMap["pauseScore"] as? Double ?: 0.0,
+                                volumeScore = resultMap["volumeScore"] as? Double ?: 0.0,
+                                speedScore = resultMap["speedScore"] as? Double ?: 0.0,
+                                issueDetails = (resultMap["issueDetails"] as? Map<String, List<Pair<String, String>>>)
+                                    ?.let { details ->
+                                        IssueDetails(
+                                            pauseIssues = details["pauseIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+                                            speedIssues = details["speedIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+                                            volumeIssues = details["volumeIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+                                            pronunciationIssues = details["pronunciationIssues"].orEmpty().map { TimeRange(it.first, it.second) }
+                                        )
+                                    } ?: IssueDetails(emptyList(), emptyList(), emptyList(), emptyList())
+                            )
+                            setAssessmentResult(result)
+
                     }
 
                     onFinished(videoUri)

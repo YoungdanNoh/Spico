@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
+import com.a401.spicoandroid.domain.finalmode.model.AssessmentResult
 import com.a401.spicoandroid.domain.finalmode.usecase.FinishFinalPracticeUseCase
 import com.a401.spicoandroid.domain.finalmode.usecase.GenerateFinalQuestionsUseCase
 import com.a401.spicoandroid.domain.practice.usecase.DeletePracticeUseCase
@@ -225,6 +226,13 @@ class FinalModeViewModel @Inject constructor(
 
     private val _finalResultState = MutableStateFlow(FinalModeResultState())
     val finalResultState: StateFlow<FinalModeResultState> = _finalResultState.asStateFlow()
+
+    private val _assessmentResult = MutableStateFlow<AssessmentResult?>(null)
+    val assessmentResult: StateFlow<AssessmentResult?> = _assessmentResult
+
+    fun setAssessmentResult(result: AssessmentResult) {
+        _assessmentResult.value = result
+    }
 
     fun submitFinalModeResult(
         projectId: Int,

@@ -51,7 +51,7 @@ fun FinalModeAudienceScreen(
     val scriptState by viewModel.scriptState.collectAsState()
 
     val cameraService = remember {
-        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script)
+        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script, viewModel::setAssessmentResult)
     }
 
     val navigateToProjectList = remember { mutableStateOf(false) }
@@ -103,7 +103,6 @@ fun FinalModeAudienceScreen(
                     ) { uri ->
                         Log.d("FinalRecording", "메인 영상 저장 완료: $uri")
                     }
-
                 }
             }
         } catch (e: Exception) {
