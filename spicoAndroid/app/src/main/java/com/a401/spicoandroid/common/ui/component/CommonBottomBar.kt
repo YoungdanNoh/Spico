@@ -56,7 +56,8 @@ fun CommonBottomBar(
             route = NavRoutes.RandomSpeechLanding.route,
             matchingRoutes = listOf(
                 NavRoutes.RandomSpeechLanding.route,
-                NavRoutes.RandomSpeechList.route
+                NavRoutes.RandomSpeechList.route,
+                NavRoutes.RandomSpeechReport.route
             ),
             iconRes = R.drawable.ic_random_line,
             selectedIconRes = R.drawable.ic_random_filled,
@@ -89,9 +90,19 @@ fun CommonBottomBar(
             navItems.take(2).forEach { item ->
                 BottomNavItem(
                     item = item,
-                    selected = item.matchingRoutes.any { match ->
-                        currentRoute?.split("/")?.firstOrNull() == match
-                    },
+                    selected =
+                        if (item.route == NavRoutes.Home.route) {
+                            // 홈 탭은 route가 정확히 "home"일 때만 포커싱
+                            currentRoute?.substringBefore("?") == NavRoutes.Home.route
+                        } else {
+                            // 나머지 탭은 기존 방식 유지
+                            item.matchingRoutes.any { match ->
+                                val sanitizedRoute = currentRoute?.substringBefore("?")
+                                val matchSanitized = match.substringBefore("?").substringBefore("/{")
+                                sanitizedRoute == match || sanitizedRoute?.startsWith(matchSanitized) == true
+                            }
+                        }
+                    ,
                     onClick = { navController.navigate(item.route) },
                     modifier = Modifier.weight(1f)
                 )
@@ -101,9 +112,19 @@ fun CommonBottomBar(
             navItems.takeLast(2).forEach { item ->
                 BottomNavItem(
                     item = item,
-                    selected = item.matchingRoutes.any { match ->
-                        currentRoute?.split("/")?.firstOrNull() == match
-                    },
+                    selected =
+                        if (item.route == NavRoutes.Home.route) {
+                            // 홈 탭은 route가 정확히 "home"일 때만 포커싱
+                            currentRoute?.substringBefore("?") == NavRoutes.Home.route
+                        } else {
+                            // 나머지 탭은 기존 방식 유지
+                            item.matchingRoutes.any { match ->
+                                val sanitizedRoute = currentRoute?.substringBefore("?")
+                                val matchSanitized = match.substringBefore("?").substringBefore("/{")
+                                sanitizedRoute == match || sanitizedRoute?.startsWith(matchSanitized) == true
+                            }
+                        }
+                    ,
                     onClick = { navController.navigate(item.route) },
                     modifier = Modifier.weight(1f)
                 )

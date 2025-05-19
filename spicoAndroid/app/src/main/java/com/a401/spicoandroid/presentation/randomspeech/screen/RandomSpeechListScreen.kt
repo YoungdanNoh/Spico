@@ -1,10 +1,12 @@
 package com.a401.spicoandroid.presentation.randomspeech.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.component.*
@@ -32,9 +34,17 @@ fun RandomSpeechListScreen(
     var selectedId by remember { mutableStateOf<Int?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showAlert by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchList()
+    }
+
+    LaunchedEffect(viewModel.deleteSuccess) {
+        if (viewModel.deleteSuccess) {
+            Toast.makeText(context, "리포트를 삭제했어요", Toast.LENGTH_SHORT).show()
+            viewModel.resetDeleteSuccess()
+        }
     }
 
     // 바텀시트
@@ -90,14 +100,6 @@ fun RandomSpeechListScreen(
     ) { innerPadding ->
 
         when {
-            isLoading -> {
-                LoadingInProgressView(
-                    imageRes = com.a401.spicoandroid.R.drawable.character_home_5,
-                    message = "로딩 중입니다...",
-                    modifier = Modifier.padding(innerPadding)
-                )
-            }
-
             speechList.isEmpty() -> {
                 EmptyStateView(
                     imageRes = com.a401.spicoandroid.R.drawable.character_home_1,

@@ -339,7 +339,7 @@ fun ProjectDetailScreen(
 
                 projectViewModel.updateProject(
                     projectId = projectId,
-                    name = title,
+                    name = tempTitle,
                     date = dateStr,
                     time = totalTime,
                     onSuccess = {

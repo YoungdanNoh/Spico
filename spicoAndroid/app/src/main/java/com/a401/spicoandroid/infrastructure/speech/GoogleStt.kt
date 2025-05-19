@@ -39,6 +39,7 @@ class GoogleStt(
     private var onSpeedFeedback: ((SpeedType) -> Unit)? = null
 
     /* 휴지 횟수 관련 필드 */
+    private var onPauseDetected: (() -> Unit)? = null
     private var isInPause: Boolean = false
     private var silenceStartTime: Long? = null
     private var pauseCount: Int = 0
@@ -87,11 +88,11 @@ class GoogleStt(
 
                    // 1초 주기 측정
                    if (currentTime - lastRecordTime >= 1000) {
-                       
+
                        lastRecordTime = currentTime
                        val avg = volumeBuffer.average().toFloat()
                        volumeBuffer.clear()
-                       
+
                        Log.d("SpeechRecognizer", "avg: ${avg}")
 
 
@@ -150,6 +151,7 @@ class GoogleStt(
                                isInPause = true // 휴지 감지 상태 진입
                                silenceStartTime = null // 다시 감지되지 않도록 리셋
                                Log.d("Pause", "휴지 구간 감지됨! 현재 누적: $pauseCount")
+                               onPauseDetected?.invoke()
 
                            }
                        }
@@ -157,7 +159,7 @@ class GoogleStt(
                        silenceStartTime = null // 음성 다시 시작되면 초기화
                        isInPause = false
                    }
-                   
+
                }
 
                override fun onBufferReceived(buffer: ByteArray?) {
@@ -221,6 +223,14 @@ class GoogleStt(
                }
 
                override fun onPartialResults(partialResults: Bundle?) {
+                   val interim = partialResults
+                       ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                       ?.firstOrNull()
+
+                   if (!interim.isNullOrEmpty()) {
+                       Log.d("SpeechRecognizer", "🔄 partial: $interim")
+                       onPartialResult?.invoke(interim)
+                   }
                }
 
                override fun onEvent(eventType: Int, params: Bundle?) {
@@ -231,6 +241,7 @@ class GoogleStt(
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
         }
 
@@ -407,8 +418,17 @@ class GoogleStt(
     }
 
     /* 휴지 횟수를 불러오기 위한 함수 */
+    fun setOnPauseDetected(callback: () -> Unit) {
+        onPauseDetected = callback
+    }
+
     fun getPauseCount(): Int {
         return pauseCount
+    }
+
+    private var onPartialResult: ((String) -> Unit)? = null
+    fun setOnPartialResult(callback: (String) -> Unit) {
+        onPartialResult = callback
     }
 
 }

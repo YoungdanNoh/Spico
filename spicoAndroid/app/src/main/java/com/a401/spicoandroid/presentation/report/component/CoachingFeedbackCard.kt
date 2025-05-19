@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.a401.spicoandroid.common.ui.theme.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -36,7 +37,7 @@ fun FeedbackCard(
         modifier = modifier
             .fillMaxWidth()
             .dropShadow1()
-            .height(180.dp),
+            .height(210.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = White)
     ) {
@@ -74,14 +75,16 @@ fun FeedbackCard(
             Box(
                 modifier = Modifier
                     .background(
-                        color = Hover,
-                        shape = RoundedCornerShape(50)
+                        color = Action,
+                        shape = RoundedCornerShape(30)
                     )
                     .padding(horizontal = 14.dp, vertical = 8.dp)
             ) {
                 Text(
                     text = description,
-                    style = Typography.bodyLarge.copy(color = White)
+                    style = Typography.bodyLarge.copy(color = White),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -103,7 +106,7 @@ fun FeedbackCardPreview() {
     FeedbackCard(
         imageResId = com.a401.spicoandroid.R.drawable.img_feedback_volume,
         title = "성량",
-        description = "목소리가 커요"
+        description = "전반적으로 괜찮았지만,\n좀 더 일정하게 유지해보세요"
     )
     }
 }
