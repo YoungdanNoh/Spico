@@ -93,9 +93,14 @@ fun FinalModeAudienceScreen(
             cameraService.startCamera {
                 Log.d("AudioDebug", "📷 startCamera 내부 콜백 진입")
                 viewModel.startCountdownAndRecording {
-                    cameraService.startRecording { uri ->
-                        Log.d("AudioDebug", "저장 완료: $uri")
+                    cameraService.startRecording(
+                        projectId = projectId,
+                        practiceId = practiceId,
+                        fileTag = ""
+                    ) { uri ->
+                        Log.d("FinalRecording", "메인 영상 저장 완료: $uri")
                     }
+
                 }
             }
         } catch (e: Exception) {

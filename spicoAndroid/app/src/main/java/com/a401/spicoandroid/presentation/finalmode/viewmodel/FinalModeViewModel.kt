@@ -236,7 +236,6 @@ class FinalModeViewModel @Inject constructor(
         }
 
         Log.d("FinalFlow", "📤 결과 저장 요청: projectId=$projectId, practiceId=$id")
-        Log.d("FinalFlow", "📤 결과 저장 요청: projectId=$projectId, practiceId=$id")
 
         viewModelScope.launch {
             _finalResultState.update { it.copy(isLoading = true, error = null) }
@@ -261,6 +260,7 @@ class FinalModeViewModel @Inject constructor(
             }
         }
     }
+
 
     fun uploadFinalVideo(presignedUrl: String, file: File, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
