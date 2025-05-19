@@ -72,11 +72,11 @@ class GoogleStt(
 
                    // 1초 주기 측정
                    if (currentTime - lastRecordTime >= 1000) {
-                       
+
                        lastRecordTime = currentTime
                        val avg = volumeBuffer.average().toFloat()
                        volumeBuffer.clear()
-                       
+
                        Log.d("SpeechRecognizer", "avg: ${avg}")
 
 
@@ -122,10 +122,10 @@ class GoogleStt(
                            }
                        }
                    }
-                   
+
                }
                override fun onBufferReceived(buffer: ByteArray?) {
-                   
+
                    // 녹음하기
 
                }
@@ -159,6 +159,14 @@ class GoogleStt(
                }
 
                override fun onPartialResults(partialResults: Bundle?) {
+                   val interim = partialResults
+                       ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                       ?.firstOrNull()
+
+                   if (!interim.isNullOrEmpty()) {
+                       Log.d("SpeechRecognizer", "🔄 partial: $interim")
+                       onPartialResult?.invoke(interim)
+                   }
                }
 
                override fun onEvent(eventType: Int, params: Bundle?) {
@@ -169,6 +177,7 @@ class GoogleStt(
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
         }
 
@@ -302,6 +311,11 @@ class GoogleStt(
     private var onVolumeFeedback: ((String) -> Unit)? = null
     fun setOnVolumeFeedback(callback: (String) -> Unit) {
         onVolumeFeedback = callback
+    }
+
+    private var onPartialResult: ((String) -> Unit)? = null
+    fun setOnPartialResult(callback: (String) -> Unit) {
+        onPartialResult = callback
     }
 
 }

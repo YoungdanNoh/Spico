@@ -41,17 +41,16 @@ class CoachingReportViewModel @Inject constructor(
                         it.copy(
                             projectName = report.projectName,
                             roundCount = report.practiceName.filter { ch -> ch.isDigit() }.toIntOrNull() ?: 0,
-                            recordUrl = report.recordUrl,
                             volumeStatus = when (report.volumeStatus) {
-                                "QUIET" -> "목소리가 작아요"
-                                "MIDDLE" -> "적당한 목소리였어요"
-                                "LOUD" -> "목소리가 커요"
+                                "QUIET" -> "목소리가 작아요. 조금 더 크게 말해볼까요?"
+                                "MIDDLE" -> "좋아요! 지금 톤을 유지해요"
+                                "LOUD" -> "목소리가 커요! 조금 더 작게 말해요."
                                 else -> report.volumeStatus
                             },
                             speedStatus = when (report.speedStatus) {
-                                "SLOW" -> "말의 속도가 느려요"
-                                "MIDDLE" -> "적당한 속도였어요"
-                                "FAST" -> "말의 속도가 빨라요"
+                                "SLOW" -> "말이 조금 느려요. 좀 더 빨리 말해볼까요?"
+                                "MIDDLE" -> "적당한 속도였어요. 딱 좋아요!"
+                                "FAST" -> "말의 속도가 빨라요. 조금 천천히 말해요."
                                 else -> report.speedStatus
                             },
                             pauseCount = report.pauseCount,

@@ -1,5 +1,7 @@
 package com.a401.spicoandroid.presentation.report.screen
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,14 +41,6 @@ import com.a401.spicoandroid.presentation.navigation.NavRoutes
 import com.a401.spicoandroid.presentation.report.component.FeedbackCard
 import com.a401.spicoandroid.presentation.report.component.ReportInfoHeader
 import com.a401.spicoandroid.presentation.report.viewmodel.CoachingReportViewModel
-import kotlinx.coroutines.delay
-
-fun millisToTimestamp(millis: Long): String {
-    val totalSeconds = millis / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d".format(minutes, seconds)
-}
 
 @Composable
 fun CoachingReportScreen(
@@ -63,39 +57,8 @@ fun CoachingReportScreen(
     val reportState by viewModel.state.collectAsState()
 
     val context = LocalContext.current
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            reportState.recordUrl.takeIf { it.isNotBlank() }?.let { url ->
-                setMediaItem(MediaItem.fromUri(url))
-                prepare()
-            }
-        }
-    }
-
-    var isPlaying by remember { mutableStateOf(false) }
-    var progress by remember { mutableFloatStateOf(0f) }
-    var currentTimeText by remember { mutableStateOf("00:00") }
-    var durationText by remember { mutableStateOf("00:00") }
-
     LaunchedEffect(projectId, practiceId) {
         viewModel.fetchCoachingReport(projectId, practiceId)
-    }
-
-    LaunchedEffect(Unit) {
-        while (exoPlayer.duration == C.TIME_UNSET) delay(100)
-        durationText = millisToTimestamp(exoPlayer.duration)
-    }
-
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            while (true) {
-                val current = exoPlayer.currentPosition
-                val total = exoPlayer.duration.takeIf { it > 0 } ?: 1L
-                progress = current / total.toFloat()
-                currentTimeText = millisToTimestamp(current)
-                delay(500)
-            }
-        }
     }
 
     Scaffold(
@@ -166,24 +129,6 @@ fun CoachingReportScreen(
                         chipText = "코칭모드",
                         chipType = ChipType.REPORT_ACTION
                     )
-
-//                    AudioPlayerCard(
-//                        title = reportState.projectName + " - " + reportState.roundCount + "회차",
-//                        currentPositionText = currentTimeText,
-//                        durationText = durationText,
-//                        isPlaying = isPlaying,
-//                        progress = progress,
-//                        onPlayPauseClick = {
-//                            if (isPlaying) exoPlayer.pause() else exoPlayer.play()
-//                            isPlaying = !isPlaying
-//                        },
-//                        onSeek = { newProgress ->
-//                            progress = newProgress
-//                            val total = exoPlayer.duration.takeIf { it > 0 } ?: 1L
-//                            val newPosition = (progress * total).toLong()
-//                            exoPlayer.seekTo(newPosition)
-//                        }
-//                    )
                     FeedbackCard(
                         imageResId = R.drawable.img_feedback_volume,
                         title = "성량",
@@ -201,49 +146,10 @@ fun CoachingReportScreen(
                         title = "휴지",
                         description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요"
                     )
-//                    CommonList(
-//                        imagePainter = painterResource(id = R.drawable.img_feedback_volume),
-//                        title = "성량",
-//                        titleStyle = Typography.headlineLarge.copy(color = Action),
-//                        description = reportState.volumeStatus,
-//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-//                        height = 88.dp
-//                    )
-//                    CommonList(
-//                        imagePainter = painterResource(id = R.drawable.img_feedback_speed),
-//                        title = "속도",
-//                        titleStyle = Typography.headlineLarge.copy(color = Action),
-//                        description = reportState.speedStatus,
-//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-//                        height = 88.dp
-//                    )
-//                    CommonList(
-//                        imagePainter = painterResource(id = R.drawable.img_feedback_silence),
-//                        title = "휴지",
-//                        titleStyle = Typography.headlineLarge.copy(color = Action),
-//                        description = "휴지 기간이 총 ${reportState.pauseCount}회 있었어요",
-//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-//                        height = 88.dp
-//                    )
-//                    CommonList(
-//                        imagePainter = painterResource(id = R.drawable.img_feedback_pronunciation),
-//                        title = "발음",
-//                        titleStyle = Typography.headlineLarge.copy(color = Action),
-//                        description = reportState.pronunciationStatus,
-//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-//                        height = 88.dp
-//                    )
-//                    CommonList(
-//                        imagePainter = painterResource(id = R.drawable.img_feedback_script_match),
-//                        title = "대본일치도",
-//                        titleStyle = Typography.headlineLarge.copy(color = Action),
-//                        description = reportState.pronunciationStatus,
-//                        descriptionStyle = Typography.titleLarge.copy(color = TextPrimary),
-//                        height = 88.dp
-//                    )
                 }
             }
         }
+
         if (isAlertVisible) {
             CommonAlert(
                 title = "리포트를 삭제하시겠습니까?",
@@ -253,8 +159,17 @@ fun CoachingReportScreen(
                     viewModel.deleteReport(
                         projectId = projectId,
                         practiceId = practiceId,
-                        onSuccess = { navController.popBackStack(NavRoutes.ProjectList.route, false)},
-                        onError = {}
+                        onSuccess = {
+                            Toast.makeText(context, "리포트를 삭제했어요", Toast.LENGTH_SHORT).show()
+                            navController.navigate(NavRoutes.ProjectDetail.withId(projectId)) {
+                                popUpTo(NavRoutes.ProjectList.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        },
+                        onError = {throwable ->
+                            Toast.makeText(context, "삭제에 실패했어요. 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+                            Log.e("CoachingReport", "❌ 삭제 실패: ${throwable.message}", throwable)
+                        }
                     )
                 },
                 confirmTextColor = White,

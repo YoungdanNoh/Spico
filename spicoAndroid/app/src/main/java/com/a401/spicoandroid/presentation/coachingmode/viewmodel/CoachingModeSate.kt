@@ -11,6 +11,7 @@ data class CoachingModeState(
     val volumeScore: Int = 100,
     val pauseCount: Int = 0,
     val speedStatus: String = "MIDDLE",
+    val currentParagraphIndex: Int? = null,
 
     val isSuccess: Boolean,
     override val isLoading: Boolean = false,

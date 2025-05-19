@@ -1,7 +1,7 @@
 package com.a401.spicoandroid.data.coachingmode.repository
 
 import android.util.Log
-import com.a401.spicoandroid.common.data.dto.getOrThrow
+import com.a401.spicoandroid.common.data.dto.getOrThrowNull
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.common.utils.safeApiCall
 import com.a401.spicoandroid.data.coachingmode.api.CoachingModeApi
@@ -23,6 +23,6 @@ class CoachingModeRepositoryImpl @Inject constructor(
         📦 Body: $request
         """.trimIndent()
         )
-        api.postCoachingResult(projectId, practiceId, request).getOrThrow { Unit }
+        api.postCoachingResult(projectId, practiceId, request).getOrThrowNull { Unit }
     }
 }
