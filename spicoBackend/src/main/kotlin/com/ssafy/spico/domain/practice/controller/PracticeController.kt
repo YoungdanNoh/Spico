@@ -126,6 +126,6 @@ class PracticeController(
         @RequestParam size: Int
     ): ApiResponse<PracticeListResponseDto> {
         val practices = projectService.getPractices(userId, projectId, practiceFilter, cursor, size)
-        return ApiResponse.success(PracticeListResponseDto(practices.map { it.toResponse()} ))
+        return ApiResponse.success(PracticeListResponseDto(practices))
     }
 }
