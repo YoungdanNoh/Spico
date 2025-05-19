@@ -50,10 +50,13 @@ class FinalModeViewModel @Inject constructor(
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     fun startAudio() {
+        Log.d("AudioDebug", "🎙️ startAudio 호출됨")
         audioAnalyzer.start(viewModelScope) { data ->
+            Log.d("AudioDebug", "📈 waveform 데이터 수신: ${data.size}")
             _waveform.value = data
         }
     }
+
 
     fun stopAudio() {
         audioAnalyzer.stop()
@@ -176,6 +179,7 @@ class FinalModeViewModel @Inject constructor(
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
+        Log.d("FinalFlow", "📤 연습 삭제 요청 전송: projectId=$projectId, practiceId=$practiceId")
         viewModelScope.launch {
             when (val result = deletePracticeUseCase(projectId, practiceId)) {
                 is DataResource.Success -> {
@@ -186,11 +190,12 @@ class FinalModeViewModel @Inject constructor(
                     Log.e("FinalFlow", "❌ 연습 삭제 실패", result.throwable)
                     onError()
                 }
-                else -> {}
+                else -> {
+                    Log.w("FinalFlow", "⚠️ 연습 삭제 응답 없음")
+                }
             }
         }
     }
-
 
     fun generateFinalQuestions(projectId: Int, practiceId: Int, speechContent: String) {
         viewModelScope.launch {

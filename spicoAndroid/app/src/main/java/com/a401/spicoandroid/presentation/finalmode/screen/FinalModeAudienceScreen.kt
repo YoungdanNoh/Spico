@@ -200,11 +200,22 @@ fun FinalModeAudienceScreen(
                     viewModel.stopRecording()
                     viewModel.stopAudio()
                     cameraService.stopRecording {
-                        parentNavController.navigate(NavRoutes.ProjectList.route) {
-                            popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
-                        }
+                        viewModel.deletePracticeAndExit(
+                            projectId = projectId,
+                            practiceId = practiceId,
+                            onSuccess = {
+                                parentNavController.navigate(NavRoutes.ProjectList.route) {
+                                    popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+                                }
+                            },
+                            onError = {
+                                Toast.makeText(context, "연습 삭제에 실패했어요", Toast.LENGTH_SHORT).show()
+                                parentNavController.navigate(NavRoutes.ProjectList.route) {
+                                    popUpTo(NavRoutes.ProjectList.route) { inclusive = true }
+                                }
+                            }
+                        )
                     }
-
                 },
                 onCancel = { viewModel.hideAllDialogs() },
                 onDismissRequest = { viewModel.hideAllDialogs() },
