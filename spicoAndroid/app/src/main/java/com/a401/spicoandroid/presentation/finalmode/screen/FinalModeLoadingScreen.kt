@@ -60,11 +60,6 @@ fun FinalModeLoadingScreen(
 
                 val questions = viewModel.finalQuestionState.value.questions
 
-                if (questions.isEmpty()) {
-                    Log.w("FinalFlow", "⚠️ 질문 리스트가 비어 있음 - 0.5초 대기 후 재시도")
-                    delay(500) // 잠깐 기다림
-                }
-
                 val freshQuestions = viewModel.finalQuestionState.value.questions
 
                 val answers = if (!viewModel.getHasQnA()) {
