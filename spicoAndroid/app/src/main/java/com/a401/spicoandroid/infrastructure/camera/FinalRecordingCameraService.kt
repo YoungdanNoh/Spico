@@ -51,11 +51,15 @@ class FinalRecordingCameraService(
         }, ContextCompat.getMainExecutor(context))
     }
 
-    fun startRecording(onFinished: (uri: Uri?) -> Unit) {
+    fun startRecording(
+        projectId: Int,
+        practiceId: Int,
+        fileTag: String = "", // 예: "", "qna1", "qna2"
+        onFinished: (uri: Uri?) -> Unit
+    ) {
         val videoCapture = this.videoCapture ?: return
 
-        val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-            .format(System.currentTimeMillis())
+        val name = "finalmode_${fileTag}_p${projectId}_r${practiceId}"
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -84,7 +88,7 @@ class FinalRecordingCameraService(
             .start(ContextCompat.getMainExecutor(context)) { event ->
                 if (event is VideoRecordEvent.Finalize) {
                     onFinished(event.outputResults.outputUri)
-                    stopCallback?.invoke() // stopRecording에서 등록한 콜백 실행
+                    stopCallback?.invoke()
                     recording = null
                 }
             }

@@ -40,24 +40,28 @@ fun FinalModeQnAScreen(
         FinalRecordingCameraService(context, lifecycleOwner)
     }
 
-    // TODO: STT 결과로 대체 예정
-    val dummySpeechContent = "Hello everyone, my name is John."
-
     LaunchedEffect(Unit) {
-//        viewModel.generateFinalQuestions(
-//            projectId = projectId,
-//            practiceId = practiceId,
-//            speechContent = dummySpeechContent
-//        )
-
         cameraService.startCamera {
-            viewModel.startCountdownAndRecording {
-                cameraService.startRecording { uri ->
-                    Log.d("FinalRecording", "저장 완료: $uri")
+            Log.d("FinalFlow", "🎥 QnA 카메라 준비 완료")
+        }
+    }
+
+    LaunchedEffect(currentIndex) {
+        if (questionState.questions.isNotEmpty()) {
+            cameraService.stopRecording {
+                viewModel.startCountdownAndRecording {
+                    cameraService.startRecording(
+                        projectId = projectId,
+                        practiceId = practiceId,
+                        fileTag = "qna${currentIndex + 1}"
+                    ) { uri ->
+                        Log.d("FinalRecording", "질문 ${currentIndex + 1} 저장 완료: $uri")
+                    }
                 }
             }
         }
     }
+
 
     // 뒤로 가기 막기
     BackHandler(enabled = true) {
