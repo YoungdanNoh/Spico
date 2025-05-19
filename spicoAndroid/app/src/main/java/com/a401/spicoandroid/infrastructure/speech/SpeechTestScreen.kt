@@ -87,6 +87,23 @@ fun SpeechTestScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // 실시간으로 발표 속도 피드백 줄 때 사용!!!!
+                googleStt.setOnSpeedFeedback { speed ->
+                    speedResult = "발표 속도: ${speed.name}"
+                    Log.d("Speed", "발표 속도: $speed")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 실시간으로 휴지 구간 피드백 줄 때 사용!!!!
+                googleStt.setOnPauseDetected {
+                    pauseResult = "휴지 횟수: ${googleStt.getPauseCount()}"
+                    Log.d("PauseUI", pauseResult)
+                }
+
+                Text("휴지 횟수: $pauseResult")
+                Spacer(modifier = Modifier.height(16.dp))
+
+
                 Text("결과: $sttResult")
                 if (errorMessage.isNotEmpty()) {
                     Text("에러: $errorMessage", color = MaterialTheme.colorScheme.error)
@@ -104,14 +121,18 @@ fun SpeechTestScreen(navController: NavController) {
                     val score = calculateVolumeScore(records)
                     volumeResult = "성량 점수: $score / 100"
 
-                    val speedType = googleStt.getOverallSpeed()
-                    speedResult = "발표 속도: ${speedType.name}" // MIDDLE / FAST / SLOW
+//                    val speedType = googleStt.getOverallSpeed()
+//                    speedResult = "발표 속도: ${speedType.name}" // MIDDLE / FAST / SLOW
 
-                    Log.d("Speed", "발표 속도: $speedType")
+//                    Log.d("Speed", "발표 속도: $speedType")
 
                     val pauses = googleStt.getPauseCount()
                     pauseResult = "휴지 횟수: ${pauses}"
                     Log.d("PauseCount", "총 휴지 구간 수: $pauses")
+
+                    val overallSpeed = googleStt.getOverallSpeedByFullLog()
+                    speedResult = "전체 발표 속도: ${overallSpeed.name}"
+                    Log.d("OverallSpeed", "전체 발표 속도: $overallSpeed")
 
                     googleStt.clearAll()
                 })
