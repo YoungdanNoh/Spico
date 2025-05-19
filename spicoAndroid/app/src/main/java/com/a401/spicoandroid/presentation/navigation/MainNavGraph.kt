@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.a401.spicoandroid.infrastructure.datastore.UserDataStore
+import com.a401.spicoandroid.infrastructure.speech.SpeechTestScreen
 import com.a401.spicoandroid.presentation.coachingmode.screen.CoachingModeScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeAudienceScreen
 import com.a401.spicoandroid.presentation.finalmode.screen.FinalModeLoadingScreen
@@ -443,6 +444,12 @@ fun MainNavGraph(
                     randomSpeechId = randomSpeechId
                 )
             }
+
+            // stt 테스트 스크린
+            composable(NavRoutes.SpeechTest.route) {
+                SpeechTestScreen(navController)
+            }
+
         }
     }
 }

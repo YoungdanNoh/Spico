@@ -117,16 +117,16 @@ fun GreetingSection(
                             }
                         )
 
-//                        CommonButton(
-//                            text = "STT 테스트",
-//                            size = ButtonSize.MD,
-//                            backgroundColor = Action,
-//                            borderColor = Action,
-//                            textColor = White,
-//                            onClick = {
-//                                navController.navigate(NavRoutes.SpeechTest.route)
-//                            }
-//                        )
+                        CommonButton(
+                            text = "STT 테스트",
+                            size = ButtonSize.MD,
+                            backgroundColor = Action,
+                            borderColor = Action,
+                            textColor = White,
+                            onClick = {
+                                navController.navigate(NavRoutes.SpeechTest.route)
+                            }
+                        )
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))

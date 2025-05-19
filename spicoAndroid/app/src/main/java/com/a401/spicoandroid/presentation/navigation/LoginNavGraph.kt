@@ -36,9 +36,5 @@ fun LoginNavGraph(
             NotFoundScreen(navController)
         }
 
-        // stt 테스트 스크린
-        composable(NavRoutes.SpeechTest.route) {
-            SpeechTestScreen(navController)
-        }
     }
 }
