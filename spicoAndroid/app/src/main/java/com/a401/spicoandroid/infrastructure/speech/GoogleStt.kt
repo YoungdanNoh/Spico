@@ -31,14 +31,18 @@ class GoogleStt(
     private val maxAvgWindowSize = 5  // 최근 5초 정도 관찰
 
     /* 발표 속도 점수 관련 필드 */
-    private var totalCharCount = 0
-    private var speechCharCheckpoints = mutableListOf<Int>()
-    private var lastSpeedCheckTime: Long = 0L
+    //private var totalCharCount = 0
+    //private var speechCharCheckpoints = mutableListOf<Int>()
+    //private var lastSpeedCheckTime: Long = 0L
+    private val recentSpeechLog = mutableListOf<Pair<Long, Int>>()  // (timestamp, length), 실시간 판단용
+    private val fullSpeechLog = mutableListOf<Pair<Long, Int>>()    // 전체 판단용
+    private var onSpeedFeedback: ((SpeedType) -> Unit)? = null
 
     /* 휴지 횟수 관련 필드 */
     private var isInPause: Boolean = false
     private var silenceStartTime: Long? = null
     private var pauseCount: Int = 0
+
 
     fun start() {
         if (isListening) return // 중복 방지
@@ -185,16 +189,29 @@ class GoogleStt(
 
                        /* 속도 측정용 */
                        val currentTime = System.currentTimeMillis()
-                       totalCharCount += resultText.length // 현재까지 stt된 텍스트의 길이
+                       //totalCharCount += resultText.length // 현재까지 stt된 텍스트의 길이
 
-                       // 1분 경과 시마다 기록
-                       if (lastSpeedCheckTime == 0L) {
-                           lastSpeedCheckTime = currentTime
-                           speechCharCheckpoints.add(totalCharCount)
-                       } else if (currentTime - lastSpeedCheckTime >= 60_000L) {
-                           speechCharCheckpoints.add(totalCharCount)
-                           lastSpeedCheckTime = currentTime
+                       // 최근 발화 기록 저장
+                       val charCount = resultText.replace(" ", "").length  // 공백 제외
+                       recentSpeechLog.add(currentTime to charCount)
+                       fullSpeechLog.add(currentTime to charCount)
+
+                       // 10초를 초과한 기록 제거
+                       recentSpeechLog.removeIf { it.first < currentTime - 10_000L }
+
+                       // 최근 10초간 글자 수 계산
+                       val charCountLast10Sec = recentSpeechLog.sumOf { it.second }
+
+                       val speed = when {
+                           charCountLast10Sec < 30 -> SpeedType.SLOW
+                           charCountLast10Sec > 47 -> SpeedType.FAST
+                           else -> SpeedType.MIDDLE
                        }
+
+                       Log.d("SpeechSpeed", "최근 1분간 글자 수: $charCountLast10Sec → $speed")
+
+                       // 피드백 콜백 사용 가능
+                       onSpeedFeedback?.invoke(speed)
 
                    } else {
                        onError("결과 없음")
@@ -237,9 +254,8 @@ class GoogleStt(
         lastRecordTime = 0L
 
         /* 발표 속도 관련 변수 초기화 */
-        totalCharCount = 0
-        speechCharCheckpoints.clear()
-        lastSpeedCheckTime = 0L
+        recentSpeechLog.clear()
+        fullSpeechLog.clear()
 
         /* 휴지 횟수 관련 변수 초기화 */
         pauseCount = 0
@@ -359,25 +375,35 @@ class GoogleStt(
         onVolumeFeedback = callback
     }
 
-    /* 발표 속도 측정 함수 */
-    fun getOverallSpeed(): SpeedType {
-        if (speechCharCheckpoints.size < 2) return SpeedType.MIDDLE
+    /* 발표 속도를 가져오기 위한 함수 */
+    fun setOnSpeedFeedback(callback: (SpeedType) -> Unit) {
+        onSpeedFeedback = callback
+    }
 
-        Log.d("speed", speechCharCheckpoints.toString())
+    fun getOverallSpeedByFullLog(): SpeedType {
+        if (fullSpeechLog.isEmpty()) return SpeedType.MIDDLE
 
-        // 각 1분 단위 구간의 글자 수 차이 계산
-        val countsPerMinute = speechCharCheckpoints.zipWithNext { a, b -> b - a }
+        val sorted = fullSpeechLog.sortedBy { it.first }
+        val baseTime = sorted.first().first
 
-        val results = countsPerMinute.map { count ->
+        val grouped = sorted.groupBy { (timestamp, _) ->
+            ((timestamp - baseTime) / 10_000L).toInt()
+        }
+
+        val speedList = grouped.values.map { group ->
+            val sum = group.sumOf { it.second }
             when {
-                count < 240 -> SpeedType.SLOW
-                count > 280 -> SpeedType.FAST
+                sum < 30 -> SpeedType.SLOW
+                sum > 47 -> SpeedType.FAST
                 else -> SpeedType.MIDDLE
             }
         }
 
-        // 최빈값 반환
-        return results.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: SpeedType.MIDDLE
+        return speedList
+            .groupingBy { it }
+            .eachCount()
+            .maxByOrNull { it.value }
+            ?.key ?: SpeedType.MIDDLE
     }
 
     /* 휴지 횟수를 불러오기 위한 함수 */
