@@ -48,7 +48,9 @@ import com.a401.spicoandroid.presentation.randomspeech.viewmodel.RandomSpeechSha
 import com.a401.spicoandroid.presentation.report.screen.CoachingReportScreen
 import com.a401.spicoandroid.presentation.report.screen.FinalReportScreen
 import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
+import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.VoiceScriptRandomScreen
+import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
 import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 
 @Composable
@@ -364,6 +366,40 @@ fun MainNavGraph(
                     source = source
                 )
             }
+
+            // ✅ MainNavGraph의 NavHost 바로 아래에 추가
+
+            composable(
+                route = NavRoutes.VoiceScript.route,
+                arguments = listOf(
+                    navArgument("projectId") { type = NavType.IntType },
+                    navArgument("practiceId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                val projectId = backStackEntry.arguments?.getInt("projectId") ?: return@composable
+                val practiceId = backStackEntry.arguments?.getInt("practiceId") ?: return@composable
+
+                VoiceScriptScreen(
+                    navController = navController,
+                    projectId = projectId,
+                    practiceId = practiceId
+                )
+            }
+
+            composable(
+                route = NavRoutes.VideoReplay.route,
+                arguments = listOf(
+                    navArgument("encodedUrl") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val videoUrl = backStackEntry.arguments?.getString("encodedUrl") ?: return@composable
+
+                VideoReplayScreen(
+                    navController = navController,
+                    videoUrl = videoUrl
+                )
+            }
+
 
             // 랜덤 스피치
             composable(NavRoutes.RandomSpeechLanding.route) {
