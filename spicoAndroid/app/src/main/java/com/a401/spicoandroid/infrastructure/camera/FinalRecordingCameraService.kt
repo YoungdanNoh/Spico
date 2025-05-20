@@ -25,7 +25,9 @@ class FinalRecordingCameraService(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val script: String? = null,
-    private val setAssessmentResult: (AssessmentResult) -> Unit
+    private val isQuestionMode: Boolean = false,
+    private val setAssessmentResult: ((AssessmentResult) -> Unit)? = null,
+    private val onSttResult: ((String) -> Unit)? = null,
 ) {
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
@@ -108,7 +110,16 @@ class FinalRecordingCameraService(
                             Log.d("CameraX", "Audio extracted to WAV: $wavUri")
                             val wavFile = uriToFile(context, wavUri)
 
-                            val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(context, wavFile, script?:"")
+                        if (isQuestionMode) {
+                            // ✅ Whisper STT
+                            val transcript = WhisperApiHelper.transcribeWavFile(wavFile)
+                            onSttResult?.invoke(transcript)
+                            Log.d("질문 답변: ", transcript)
+                        } else {
+                            // ✅ Azure 발음 평가
+                            val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(
+                                context, wavFile, script ?: ""
+                            )
                             val result = AssessmentResult(
                                 transcribedText = resultMap["transcribedText"] as? String ?: "",
                                 accuracyScore = resultMap["accuracyScore"] as? Double ?: 0.0,
@@ -128,8 +139,8 @@ class FinalRecordingCameraService(
                                         )
                                     } ?: IssueDetails(emptyList(), emptyList(), emptyList(), emptyList())
                             )
-                            setAssessmentResult(result)
-
+                            setAssessmentResult?.invoke(result)
+                        }
                     }
 
                     onFinished(videoUri)

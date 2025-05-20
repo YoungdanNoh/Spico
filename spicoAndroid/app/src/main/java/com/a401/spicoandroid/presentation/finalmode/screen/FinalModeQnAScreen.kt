@@ -38,7 +38,21 @@ fun FinalModeQnAScreen(
     val scriptState by viewModel.scriptState.collectAsState()
 
     val cameraService = remember {
-        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script, viewModel::setAssessmentResult)
+        FinalRecordingCameraService(
+            context = context,
+            lifecycleOwner = lifecycleOwner,
+            script = "읽어야 하는 스크립트",
+            isQuestionMode = true,
+            onSttResult = { text ->
+                // 현재 질문의 ID를 가져와서 updateAnswer 호출
+                val currentQuestion = questionState.questions.getOrNull(currentIndex)
+                currentQuestion?.let { question ->
+                    viewModel.updateAnswer(questionId = question.id, answer = text)
+                    Log.d("FinalFlow", "답변 업데이트: 질문 ID=${question.id}, 답변=$text")
+                }
+            }
+        )
+
     }
 
     LaunchedEffect(Unit) {
