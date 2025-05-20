@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.report.screen
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -194,9 +195,11 @@ fun FinalReportScreen(
                         CommonButton(
                             text = "발표 영상 다시 보기",
                             onClick = {
-                                state.videoUrl?.let { url ->
-                                    navController.navigate(NavRoutes.VideoReplay.withEncodedUrl(url))
+                                val intent = Intent(Intent.ACTION_MAIN).apply {
+                                    addCategory(Intent.CATEGORY_APP_GALLERY)
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 }
+                                context.startActivity(intent)
                             },
                             modifier = Modifier.fillMaxWidth(),
                             backgroundColor = White,
