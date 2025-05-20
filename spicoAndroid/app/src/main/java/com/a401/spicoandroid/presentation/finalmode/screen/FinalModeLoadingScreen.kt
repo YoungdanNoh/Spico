@@ -17,6 +17,7 @@ import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
 import com.a401.spicoandroid.data.finalmode.dto.PauseRecordDto
 import com.a401.spicoandroid.data.finalmode.dto.SpeedRecordDto
 import com.a401.spicoandroid.data.finalmode.dto.VolumeRecordDto
+import com.a401.spicoandroid.domain.finalmode.model.toFinalModeResultRequestDto
 import com.a401.spicoandroid.presentation.practice.viewmodel.PracticeViewModel
 
 enum class FinalModeLoadingType {
@@ -34,6 +35,7 @@ fun FinalModeLoadingScreen(
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
+    val result by viewModel.assessmentResult.collectAsState()
 
     // 뒤로 가기 막기
     BackHandler(enabled = true){}
@@ -82,35 +84,41 @@ fun FinalModeLoadingScreen(
                     }
                 }
 
-                val request = FinalModeResultRequestDto(
-                    fileName = "temp_video.mp4",
-                    speechContent = "Today, I will talk about the importance of communication skills in public speaking.",
-                    pronunciationScore = 85,
-                    pauseCount = 2,
-                    pauseScore = 80,
-                    speedScore = 90,
-                    speedStatus = "FAST",
-                    volumeScore = 88,
-                    volumeStatus = "LOUD",
-                    volumeRecords = listOf(
-                        VolumeRecordDto("2025-05-17T15:00:00Z", "2025-05-17T15:00:05Z", "LOUD")
-                    ),
-                    speedRecords = listOf(
-                        SpeedRecordDto("2025-05-17T15:00:06Z", "2025-05-17T15:00:10Z", "FAST")
-                    ),
-                    pauseRecords = listOf(
-                        PauseRecordDto("2025-05-17T15:00:11Z", "2025-05-17T15:00:12Z")
-                    ),
-                    answers = answers
-                )
+//                val request = FinalModeResultRequestDto(
+//                    fileName = "temp_video.mp4",
+//                    speechContent = "Today, I will talk about the importance of communication skills in public speaking.",
+//                    pronunciationScore = 85,
+//                    pauseCount = 2,
+//                    pauseScore = 80,
+//                    speedScore = 90,
+//                    speedStatus = "FAST",
+//                    volumeScore = 88,
+//                    volumeStatus = "LOUD",
+//                    volumeRecords = listOf(
+//                        VolumeRecordDto("2025-05-17T15:00:00Z", "2025-05-17T15:00:05Z", "LOUD")
+//                    ),
+//                    speedRecords = listOf(
+//                        SpeedRecordDto("2025-05-17T15:00:06Z", "2025-05-17T15:00:10Z", "FAST")
+//                    ),
+//                    pauseRecords = listOf(
+//                        PauseRecordDto("2025-05-17T15:00:11Z", "2025-05-17T15:00:12Z")
+//                    ),
+//                    answers = answers
+//                )
 
-                Log.d("FinalFlow", "📦 전송 request = $request")
-                
+//                Log.d("FinalFlow", "📦 전송 request = $request")
 
-                viewModel.submitFinalModeResult(
-                    projectId = projectId,
-                    request = request
-                )
+
+                result?.let { result ->
+                    viewModel.submitFinalModeResult(
+                        projectId = projectId,
+                        request = result.toFinalModeResultRequestDto(
+                            answers = answers
+                        )
+                    )
+                } ?: run {
+                    Log.e("FinalFlow", "❌ AssessmentResult is null")
+                }
 
                 delay(2000)
                 parentNavController.navigate(

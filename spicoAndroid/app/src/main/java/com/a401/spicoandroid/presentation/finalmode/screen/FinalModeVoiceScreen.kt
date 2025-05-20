@@ -48,9 +48,10 @@ fun FinalModeVoiceScreen(
     val elapsedTime = viewModel.elapsedTime
     val waveform by viewModel.waveform.collectAsState()
     val elapsedSeconds = rememberElapsedSeconds(isRunning = countdown < 0)
+    val scriptState by viewModel.scriptState.collectAsState()
 
     val cameraService = remember {
-        FinalRecordingCameraService(context, lifecycleOwner)
+        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script, viewModel::setAssessmentResult)
     }
 
     // 🎙 마이크 권한 요청 및 오디오 분석 시작
