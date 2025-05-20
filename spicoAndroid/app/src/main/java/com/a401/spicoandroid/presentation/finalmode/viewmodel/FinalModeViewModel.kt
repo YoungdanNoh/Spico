@@ -65,6 +65,49 @@ class FinalModeViewModel @Inject constructor(
     }
 
     // 2. 타이머 관련
+    private var answerTimeLimit: Int = 10
+
+    fun setAnswerTimeLimit(value: Int) {
+        Log.d("TimerDebug", "🛠️ answerTimeLimit 설정됨: $value")
+        answerTimeLimit = value
+    }
+
+    var isFirstQuestionStarted by mutableStateOf(false)
+        private set
+
+    fun markFirstQuestionStarted() {
+        isFirstQuestionStarted = true
+    }
+
+    private var perQuestionTimerJob: Job? = null
+
+    private fun startPerQuestionTimer() {
+        Log.d("TimerDebug", "⏳ perQuestionTimer 시작: $answerTimeLimit 초 대기")
+        perQuestionTimerJob?.cancel()
+        perQuestionTimerJob = viewModelScope.launch {
+            Log.d("TimerDebug", "⏳ perQuestionTimer 시작: $answerTimeLimit 초 대기")
+            delay(answerTimeLimit * 1000L)
+            val nextIndex = _currentQuestionIndex.value + 1
+            Log.d("TimerDebug", "⏭️ 타이머 완료 → nextIndex=$nextIndex, 질문 개수=${_finalQuestionState.value.questions.size}")
+            if (nextIndex < _finalQuestionState.value.questions.size) {
+                _currentQuestionIndex.value = nextIndex
+            } else {
+                Log.d("TimerDebug", "✅ 모든 질문 완료 → isAnswerCompleted=true")
+                _isAnswerCompleted.value = true
+            }
+        }
+    }
+
+
+    fun onQuestionStarted() {
+        Log.d("TimerDebug", "✅ onQuestionStarted() 호출됨 - 타이머 초기화 시작")
+        Log.d("TimerDebug", "💬 현재 answerTimeLimit: $answerTimeLimit")
+        elapsedTime = "00:00"
+        recordingStartMillis = System.currentTimeMillis()
+        startTimer()
+        startPerQuestionTimer()
+    }
+
     var countdown by mutableStateOf(3)
         private set
 
@@ -99,6 +142,7 @@ class FinalModeViewModel @Inject constructor(
 
 
     fun startTimer() {
+        Log.d("TimerDebug", "▶️ startTimer() 시작됨")
         recordingStartMillis = System.currentTimeMillis()
         timerJob = viewModelScope.launch {
             while (isRecording) {
@@ -106,6 +150,7 @@ class FinalModeViewModel @Inject constructor(
                 val minutes = elapsedSec / 60
                 val seconds = elapsedSec % 60
                 elapsedTime = "%02d:%02d".format(minutes, seconds)
+                Log.d("TimerDebug", "🕒 elapsedTime: $elapsedTime")
                 delay(1000)
             }
         }
@@ -155,13 +200,11 @@ class FinalModeViewModel @Inject constructor(
     val currentQuestionIndex: StateFlow<Int> = _currentQuestionIndex.asStateFlow()
 
     private var questionTimerJob: Job? = null
-    private val questionDisplayDurationMillis = 5000L // 질문 전환 시간(5초)
 
     private fun startAutoQuestionCycle() {
         questionTimerJob?.cancel() // 이전 타이머 취소
         questionTimerJob = viewModelScope.launch {
             while (true) {
-                delay(questionDisplayDurationMillis)
                 _finalQuestionState.update { state ->
                     val nextIndex = _currentQuestionIndex.value + 1
                     if (nextIndex < state.questions.size) {
@@ -210,7 +253,6 @@ class FinalModeViewModel @Inject constructor(
                         it.copy(questions = result.data, isLoading = false)
                     }
                     _currentQuestionIndex.value = 0
-                    startAutoQuestionCycle()
                 }
                 is DataResource.Error -> {
                     Log.e("FinalFlow", "❌ 질문 생성 실패: ${result.throwable}")
@@ -225,7 +267,7 @@ class FinalModeViewModel @Inject constructor(
         }
     }
 
-    private var answerCount = 1
+    private var answerCount = 0
     private val _isAnswerCompleted = MutableStateFlow(false)
     val isAnswerCompleted: StateFlow<Boolean> get() = _isAnswerCompleted
 

@@ -61,16 +61,58 @@ fun FinalModeQnAScreen(
         }
     }
 
-    LaunchedEffect(currentIndex) {
-        if (questionState.questions.isNotEmpty()) {
+    // 초기 질문 수동 트리거
+    LaunchedEffect(questionState.questions) {
+        if (questionState.questions.isNotEmpty() &&
+            viewModel.currentQuestionIndex.value == 0 &&
+            !viewModel.isFirstQuestionStarted) {
+
+            Log.d("TimerDebug", "🔥 초기 질문 0 수동 트리거 (질문 로드 이후)")
+            viewModel.markFirstQuestionStarted()
+
+            val fixedIndex = currentIndex
+
             cameraService.stopRecording {
                 viewModel.startCountdownAndRecording {
+                    viewModel.onQuestionStarted()
+                    Log.d("FinalRecording", "📹 질문 ${fixedIndex + 1} 녹화 시작")
                     cameraService.startRecording(
                         projectId = projectId,
                         practiceId = practiceId,
-                        fileTag = "qna${currentIndex + 1}"
+                        fileTag = "qna${fixedIndex + 1}"
                     ) { uri ->
-                        Log.d("FinalRecording", "질문 ${currentIndex + 1} 저장 완료: $uri")
+                        Log.d("FinalRecording", "✅ 질문 ${fixedIndex + 1} 저장 완료: $uri")
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(currentIndex) {
+        Log.d("TimerDebug", "🎯 LaunchedEffect(currentIndex=$currentIndex) 실행됨")
+
+        if (questionState.questions.isNotEmpty()) {
+            val isFirst = currentIndex == 0 && !viewModel.isFirstQuestionStarted
+            Log.d("TimerDebug", "⏸ 카메라 중지 시도")
+
+            val fixedIndex = currentIndex
+
+            cameraService.stopRecording {
+                Log.d("TimerDebug", "▶️ startCountdownAndRecording 호출됨")
+                viewModel.startCountdownAndRecording {
+                    Log.d("TimerDebug", "⏱️ countdown 끝나고 onStartRecording 내부 진입")
+
+                    if (isFirst) viewModel.markFirstQuestionStarted()
+                    viewModel.onQuestionStarted()
+
+                    Log.d("FinalRecording", "📹 질문 ${fixedIndex + 1} 녹화 시작")
+
+                    cameraService.startRecording(
+                        projectId = projectId,
+                        practiceId = practiceId,
+                        fileTag = "qna${fixedIndex + 1}"
+                    ) { uri ->
+                        Log.d("FinalRecording", "✅ 질문 ${fixedIndex + 1} 저장 완료: $uri")
                     }
                 }
             }
