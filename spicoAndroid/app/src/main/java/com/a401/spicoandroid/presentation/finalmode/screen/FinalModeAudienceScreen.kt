@@ -27,11 +27,9 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.content.ContextCompat
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun FinalModeAudienceScreen(
@@ -51,7 +49,7 @@ fun FinalModeAudienceScreen(
     val scriptState by viewModel.scriptState.collectAsState()
 
     val cameraService = remember {
-        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script, viewModel::setAssessmentResult)
+        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script, setAssessmentResult = viewModel::setAssessmentResult)
     }
 
     val navigateToProjectList = remember { mutableStateOf(false) }

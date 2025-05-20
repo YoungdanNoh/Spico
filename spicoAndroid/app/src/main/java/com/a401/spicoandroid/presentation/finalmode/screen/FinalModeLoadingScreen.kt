@@ -36,89 +36,49 @@ fun FinalModeLoadingScreen(
 ) {
     val context = LocalContext.current
     val result by viewModel.assessmentResult.collectAsState()
+    val questionState by viewModel.finalQuestionState.collectAsState()
+    val isAnswerCompleted by viewModel.isAnswerCompleted.collectAsState()
 
     // 뒤로 가기 막기
     BackHandler(enabled = true){}
 
-    LaunchedEffect(Unit) {
-        Log.d("FinalFlow", "⏳ FinalModeLoadingScreen 진입: type=$type, projectId=$projectId, practiceId=$practiceId")
-
-        when (type) {
-            FinalModeLoadingType.QUESTION -> {
+// 질문 생성용 LaunchedEffect
+    if (type == FinalModeLoadingType.QUESTION) {
+        LaunchedEffect(result) {
+            result?.let {
                 Log.d("FinalFlow", "🚀 질문 생성 시작")
                 viewModel.generateFinalQuestions(
                     projectId = projectId,
                     practiceId = practiceId,
-                    speechContent = "Today, I will talk about the importance of communication skills in public speaking." // TODO: 실제 STT 결과로 교체
+                    speechContent = it.transcribedText
                 )
                 delay(1500)
                 navController.navigate(NavRoutes.FinalModeQnA.withArgs(projectId, practiceId))
             }
+        }
+    }
 
-            FinalModeLoadingType.REPORT -> {
+    // 결과 전송용 LaunchedEffect
+    if (type == FinalModeLoadingType.REPORT) {
+        LaunchedEffect(isAnswerCompleted) {
+            if (isAnswerCompleted) {
                 Log.d("FinalFlow", "📤 결과 전송 시작")
 
                 viewModel.setPracticeId(practiceId)
 
-                val questions = viewModel.finalQuestionState.value.questions
-
-                val freshQuestions = viewModel.finalQuestionState.value.questions
-
-                val answers = if (!viewModel.getHasQnA()) {
-                    emptyList()
-                } else if (freshQuestions.isEmpty()) {
-                    listOf(
-                        AnswerDto(questionId = 1, answer = "This is a default answer."),
-                        AnswerDto(questionId = 2, answer = "Another default answer.")
+                val answers: List<AnswerDto> = questionState.questions.map { question ->
+                    AnswerDto(
+                        questionId = question.id,
+                        answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
                     )
-                } else {
-                    freshQuestions.mapIndexed { index, question ->
-                        AnswerDto(
-                            questionId = question.id,
-                            answer = when (index) {
-                                0 -> "That's a good question."
-                                1 -> "Here's my second answer."
-                                else -> "Thank you for asking."
-                            }
-                        )
-                    }
                 }
 
-//                val request = FinalModeResultRequestDto(
-//                    fileName = "temp_video.mp4",
-//                    speechContent = "Today, I will talk about the importance of communication skills in public speaking.",
-//                    pronunciationScore = 85,
-//                    pauseCount = 2,
-//                    pauseScore = 80,
-//                    speedScore = 90,
-//                    speedStatus = "FAST",
-//                    volumeScore = 88,
-//                    volumeStatus = "LOUD",
-//                    volumeRecords = listOf(
-//                        VolumeRecordDto("2025-05-17T15:00:00Z", "2025-05-17T15:00:05Z", "LOUD")
-//                    ),
-//                    speedRecords = listOf(
-//                        SpeedRecordDto("2025-05-17T15:00:06Z", "2025-05-17T15:00:10Z", "FAST")
-//                    ),
-//                    pauseRecords = listOf(
-//                        PauseRecordDto("2025-05-17T15:00:11Z", "2025-05-17T15:00:12Z")
-//                    ),
-//                    answers = answers
-//                )
+                viewModel.submitFinalModeResult(
+                    projectId = projectId,
+                    request = result!!.toFinalModeResultRequestDto(answers = answers)
+                )
 
-//                Log.d("FinalFlow", "📦 전송 request = $request")
-
-
-                result?.let { result ->
-                    viewModel.submitFinalModeResult(
-                        projectId = projectId,
-                        request = result.toFinalModeResultRequestDto(
-                            answers = answers
-                        )
-                    )
-                } ?: run {
-                    Log.e("FinalFlow", "❌ AssessmentResult is null")
-                }
+                Log.d("FinalFlow", "📦 전송 request = ${result!!.toFinalModeResultRequestDto(answers)}")
 
                 delay(2000)
                 parentNavController.navigate(
@@ -130,6 +90,9 @@ fun FinalModeLoadingScreen(
             }
         }
     }
+
+
+
 
     val (imageRes, message) = when (type) {
         FinalModeLoadingType.QUESTION -> R.drawable.character_home_1 to
