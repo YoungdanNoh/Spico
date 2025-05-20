@@ -47,12 +47,16 @@ fun FinalModeQnAScreen(
                 // 현재 질문의 ID를 가져와서 updateAnswer 호출
                 val currentQuestion = questionState.questions.getOrNull(currentIndex)
                 currentQuestion?.let { question ->
-                    viewModel.updateAnswer(questionId = question.id, answer = text)
-                    Log.d("FinalFlow", "답변 업데이트: 질문 ID=${question.id}, 답변=$text")
+                    Log.d("FinalFlow", "🎤 STT 결과 수신: questionId=${question.id}, text=$text")
+                    if (text.isNotBlank()) {
+                        viewModel.updateAnswer(questionId = question.id, answer = text)
+                        Log.d("FinalFlow", "✅ STT 결과 저장 완료: questionId=${question.id}")
+                    } else {
+                        Log.d("FinalFlow", "⚠️ 빈 STT 결과 무시: questionId=${question.id}")
+                    }
                 }
             }
         )
-
     }
 
     LaunchedEffect(Unit) {
@@ -71,17 +75,20 @@ fun FinalModeQnAScreen(
             viewModel.markFirstQuestionStarted()
 
             val fixedIndex = currentIndex
+            val currentQuestion = questionState.questions.getOrNull(fixedIndex)
+            Log.d("FinalFlow", "🎥 첫 번째 질문 녹화 준비 (ID: ${currentQuestion?.id})")
 
             cameraService.stopRecording {
                 viewModel.startCountdownAndRecording {
                     viewModel.onQuestionStarted()
-                    Log.d("FinalRecording", "📹 질문 ${fixedIndex + 1} 녹화 시작")
+                    Log.d("FinalRecording", "📹 첫 번째 질문 녹화 시작 (ID: ${currentQuestion?.id})")
                     cameraService.startRecording(
                         projectId = projectId,
                         practiceId = practiceId,
                         fileTag = "qna${fixedIndex + 1}"
                     ) { uri ->
-                        Log.d("FinalRecording", "✅ 질문 ${fixedIndex + 1} 저장 완료: $uri")
+                        Log.d("FinalRecording", "✅ 첫 번째 질문 저장 완료: $uri")
+                        Log.d("FinalFlow", "🎤 첫 번째 질문 STT 처리 시작 (ID: ${currentQuestion?.id})")
                     }
                 }
             }
@@ -91,21 +98,20 @@ fun FinalModeQnAScreen(
     LaunchedEffect(currentIndex) {
         Log.d("TimerDebug", "🎯 LaunchedEffect(currentIndex=$currentIndex) 실행됨")
 
-        if (questionState.questions.isNotEmpty()) {
-            val isFirst = currentIndex == 0 && !viewModel.isFirstQuestionStarted
+        if (questionState.questions.isNotEmpty() && currentIndex > 0) {
             Log.d("TimerDebug", "⏸ 카메라 중지 시도")
 
             val fixedIndex = currentIndex
+            val currentQuestion = questionState.questions.getOrNull(fixedIndex)
+            Log.d("FinalFlow", "🎥 질문 ${fixedIndex + 1} 녹화 준비 (ID: ${currentQuestion?.id})")
 
             cameraService.stopRecording {
                 Log.d("TimerDebug", "▶️ startCountdownAndRecording 호출됨")
                 viewModel.startCountdownAndRecording {
                     Log.d("TimerDebug", "⏱️ countdown 끝나고 onStartRecording 내부 진입")
-
-                    if (isFirst) viewModel.markFirstQuestionStarted()
                     viewModel.onQuestionStarted()
 
-                    Log.d("FinalRecording", "📹 질문 ${fixedIndex + 1} 녹화 시작")
+                    Log.d("FinalRecording", "📹 질문 ${fixedIndex + 1} 녹화 시작 (ID: ${currentQuestion?.id})")
 
                     cameraService.startRecording(
                         projectId = projectId,
@@ -113,12 +119,12 @@ fun FinalModeQnAScreen(
                         fileTag = "qna${fixedIndex + 1}"
                     ) { uri ->
                         Log.d("FinalRecording", "✅ 질문 ${fixedIndex + 1} 저장 완료: $uri")
+                        Log.d("FinalFlow", "🎤 질문 ${fixedIndex + 1} STT 처리 시작 (ID: ${currentQuestion?.id})")
                     }
                 }
             }
         }
     }
-
 
     // 뒤로 가기 막기
     BackHandler(enabled = true) {
@@ -180,7 +186,10 @@ fun FinalModeQnAScreen(
                 borderColor = Error,
                 textColor = White,
                 size = ButtonSize.SM,
-                onClick = { viewModel.showConfirmDialog() },
+                onClick = { 
+                    viewModel.stopRecording()
+                    viewModel.showConfirmDialog() 
+                },
                 enabled = countdown < 0
             )
         }
