@@ -87,11 +87,20 @@ fun SpeechTestScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // 실시간으로 성량 피드백 줄 때 사용!!
+                googleStt.setOnVolumeFeedback { volume ->
+                    volumeResult = "성량 피드백: ${volume}"
+                    Log.d("Volume", "성량 피드백: $volume")
+                }
+                Text("성량 피드백: $volumeResult")
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // 실시간으로 발표 속도 피드백 줄 때 사용!!!!
                 googleStt.setOnSpeedFeedback { speed ->
                     speedResult = "발표 속도: ${speed.name}"
                     Log.d("Speed", "발표 속도: $speed")
                 }
+                Text("발표 속도: $speedResult")
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // 실시간으로 휴지 구간 피드백 줄 때 사용!!!!

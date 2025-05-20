@@ -36,7 +36,6 @@ class GoogleStt(
     //private var lastSpeedCheckTime: Long = 0L
     private val recentSpeechLog = mutableListOf<Pair<Long, Int>>()  // (timestamp, length), 실시간 판단용
     private val fullSpeechLog = mutableListOf<Pair<Long, Int>>()    // 전체 판단용
-    private var onSpeedFeedback: ((SpeedType) -> Unit)? = null
 
     /* 휴지 횟수 관련 필드 */
     private var onPauseDetected: (() -> Unit)? = null
@@ -107,17 +106,11 @@ class GoogleStt(
                            val trend = secondHalf - firstHalf
                            val trendLevel = classifyVolume(trend)
 
-                           val feedback = when (trendLevel) {
-                               VolumeLevel.LOUD -> "목소리가 커요!"
-                               VolumeLevel.QUIET -> "조금 더 크게 말해볼까요?"
-                               VolumeLevel.MIDDLE -> "좋아요! 지금 톤을 유지해요"
-                           }
-                           onVolumeFeedback?.invoke(feedback)
-
                            val timeOffset = currentTime - speechStartTimestamp
                            val timeStr = formatElapsedTime(timeOffset)
 
                            if (currentVolumeLevel == null || currentVolumeLevel != trendLevel) {
+
                                currentStartTime?.let { start ->
                                    currentVolumeLevel?.let { level ->
                                        volumeRecords.add(
@@ -129,12 +122,22 @@ class GoogleStt(
                                        )
                                    }
                                }
+
+                               val feedback = when (trendLevel) {
+                                   VolumeLevel.LOUD -> "목소리가 커요!"
+                                   VolumeLevel.QUIET -> "조금 더 크게 말해볼까요?"
+                                   VolumeLevel.MIDDLE -> "좋아요! 지금 톤을 유지해요"
+                               }
+                               onVolumeFeedback?.invoke(feedback)
+
                                currentVolumeLevel = trendLevel
                                currentStartTime = timeStr
 
                                recentAvgList.clear()
+
                            } else {
                                volumeRecords.lastOrNull()?.endTime = timeStr
+
                            }
                        }
                    }
@@ -142,7 +145,9 @@ class GoogleStt(
                    /* 휴지 구간 감지 로직 */
                    Log.d("RMS_DEBUG", "rmsdB: $rmsdB")
                    if (rmsdB < 5.0f) {
+
                        if (!isInPause) {
+
                            if (silenceStartTime == null) {
                                silenceStartTime = currentTime
 
@@ -155,9 +160,12 @@ class GoogleStt(
 
                            }
                        }
+
                    } else {
+
                        silenceStartTime = null // 음성 다시 시작되면 초기화
                        isInPause = false
+
                    }
                    
                }
@@ -378,6 +386,7 @@ class GoogleStt(
     }
 
     /* 발표 속도를 가져오기 위한 함수 */
+    private var onSpeedFeedback: ((SpeedType) -> Unit)? = null
     fun setOnSpeedFeedback(callback: (SpeedType) -> Unit) {
         onSpeedFeedback = callback
     }
