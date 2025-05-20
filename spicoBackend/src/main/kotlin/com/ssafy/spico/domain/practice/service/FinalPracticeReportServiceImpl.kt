@@ -100,6 +100,7 @@ class FinalPracticeReportServiceImpl (
             practiceName = "${finalReportsEntity.finalPracticeCnt}회차",
             date = practicesEntity.createdAt,
             videoUrl = videoUrl,
+            voiceScript = finalReportsEntity.script,
             totalScore = finalReportsEntity.totalScore,
             volumeScore = finalReportsEntity.volumeScore,
             speedScore = finalReportsEntity.speedScore,
