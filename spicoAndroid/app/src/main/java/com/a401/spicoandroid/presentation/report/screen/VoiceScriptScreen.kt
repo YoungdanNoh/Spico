@@ -46,7 +46,7 @@ fun VoiceScriptScreen(
                 centerText = "음성 스크립트",
                 leftContent = {
                     IconButton(
-                        iconResId = R.drawable.arrow_left,
+                        iconResId = R.drawable.ic_arrow_left_black,
                         contentDescription = "뒤로 가기",
                         onClick = {
                             navController.navigate(NavRoutes.FinalReport.createRoute(projectId, practiceId))
