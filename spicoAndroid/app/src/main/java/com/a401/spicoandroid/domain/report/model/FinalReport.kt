@@ -17,7 +17,8 @@ data class FinalReport(
     val volumeRecords: List<VolumeRecord>,
     val speedRecords: List<SpeedRecord>,
     val pauseRecords: List<PauseRecord>,
-    val qaRecord: List<QaRecord>
+    val qaRecord: List<QaRecord>,
+    val voiceScript: String
 )
 
 data class VolumeRecord(val startTime: String, val endTime: String, val volumeLevel: String)
