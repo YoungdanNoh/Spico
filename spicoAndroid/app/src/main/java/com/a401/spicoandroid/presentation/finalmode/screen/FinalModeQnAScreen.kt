@@ -35,9 +35,10 @@ fun FinalModeQnAScreen(
 
     val questionState by viewModel.finalQuestionState.collectAsState()
     val currentIndex by viewModel.currentQuestionIndex.collectAsState()
+    val scriptState by viewModel.scriptState.collectAsState()
 
     val cameraService = remember {
-        FinalRecordingCameraService(context, lifecycleOwner)
+        FinalRecordingCameraService(context, lifecycleOwner, scriptState.script, viewModel::setAssessmentResult)
     }
 
     LaunchedEffect(Unit) {

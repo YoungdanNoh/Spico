@@ -174,15 +174,13 @@ fun SpeechTestScreen(navController: NavController) {
                         errorMessage = ""
 
                         val azureService = AzurePronunciationEvaluator(
-                            subscriptionKey = BuildConfig.AZURE_KEY,
-                            region = BuildConfig.AZURE_REGION
                         )
 
                         coroutineScope.launch {
                             try {
 
                                 val wavFile = WavDownloader.downloadWavFile(presignedUrl)
-                                val result = azureService.evaluatePronunciation(wavFile, referenceText, context)
+                                val result = azureService.evaluatePronunciation(wavFile, referenceText)
 
                                 val json = JSONObject(result)
                                 val nBestArray = json.getJSONArray("NBest")

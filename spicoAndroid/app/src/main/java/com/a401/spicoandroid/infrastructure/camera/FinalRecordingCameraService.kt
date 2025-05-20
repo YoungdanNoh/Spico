@@ -2,10 +2,6 @@ package com.a401.spicoandroid.infrastructure.camera
 
 import android.content.ContentValues
 import android.content.Context
-import android.media.MediaCodec
-import android.media.MediaExtractor
-import android.media.MediaFormat
-import android.media.MediaMuxer
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -16,20 +12,20 @@ import androidx.camera.video.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.lifecycle.LifecycleOwner
-import com.a401.spicoandroid.common.utils.FileUtil
-import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.extractAudioFromMp4
-import com.a401.spicoandroid.infrastructure.camera.AudioExtractor.m4aToPcmAndConvertToWav
-import java.text.SimpleDateFormat
-import java.util.*
+import com.a401.spicoandroid.domain.finalmode.model.AssessmentResult
+import com.a401.spicoandroid.domain.finalmode.model.IssueDetails
+import com.a401.spicoandroid.domain.finalmode.model.TimeRange
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.nio.ByteBuffer
 
 class FinalRecordingCameraService(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
-    private val script: String? = null
+    private val script: String? = null,
+    private val setAssessmentResult: (AssessmentResult) -> Unit
 ) {
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
@@ -103,29 +99,38 @@ class FinalRecordingCameraService(
                     val videoUri = event.outputResults.outputUri
                     Log.d("CameraX", "Video saved to: $videoUri")
 
-                    extractAudioFromMp4(
-                        context = context,
-                        inputUri = videoUri,
-                        onSuccess = { m4aPath ->
-                            Log.d("CameraX", "Audio extracted to: $m4aPath")
-
-                            // m4a -> pcm -> wav
-                            m4aToPcmAndConvertToWav(
+                    CoroutineScope(Dispatchers.IO).launch {
+                            val wavUri = Media3AudioExtractor.extractAudioFromMp4(
                                 context = context,
-                                m4aPath = m4aPath,
-                                onSuccess = { wavPath ->
-                                    Log.d("CameraX", "Final WAV path: $wavPath")
-                                },
-                                onError = { e ->
-                                    Log.e("CameraX", "WAV convert error: ${e.message}")
-                                }
+                                inputVideoUri = videoUri,
+                                outputFileName = "${name}_audio.wav"
                             )
-                        },
-                        onError = { e ->
-                            Log.e("CameraX", "Audio extract error: ${e.message}")
-                        }
-                    )
+                            Log.d("CameraX", "Audio extracted to WAV: $wavUri")
+                            val wavFile = uriToFile(context, wavUri)
 
+                            val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(context, wavFile, script?:"")
+                            val result = AssessmentResult(
+                                transcribedText = resultMap["transcribedText"] as? String ?: "",
+                                accuracyScore = resultMap["accuracyScore"] as? Double ?: 0.0,
+                                completenessScore = resultMap["completenessScore"] as? Double ?: 0.0,
+                                fluencyScore = resultMap["fluencyScore"] as? Double ?: 0.0,
+                                pronunciationScore = resultMap["pronunciationScore"] as? Double ?: 0.0,
+                                pauseScore = resultMap["pauseScore"] as? Double ?: 0.0,
+                                volumeScore = resultMap["volumeScore"] as? Double ?: 0.0,
+                                speedScore = resultMap["speedScore"] as? Double ?: 0.0,
+                                issueDetails = (resultMap["issueDetails"] as? Map<String, List<Pair<String, String>>>)
+                                    ?.let { details ->
+                                        IssueDetails(
+                                            pauseIssues = details["pauseIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+                                            speedIssues = details["speedIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+                                            volumeIssues = details["volumeIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+                                            pronunciationIssues = details["pronunciationIssues"].orEmpty().map { TimeRange(it.first, it.second) }
+                                        )
+                                    } ?: IssueDetails(emptyList(), emptyList(), emptyList(), emptyList())
+                            )
+                            setAssessmentResult(result)
+
+                    }
 
                     onFinished(videoUri)
                     recording = null
@@ -144,5 +149,21 @@ class FinalRecordingCameraService(
         } else {
             recording?.stop()
         }
+    }
+
+    fun uriToFile(context: Context, uri: Uri): File {
+        val inputStream = context.contentResolver.openInputStream(uri)
+            ?: throw IllegalArgumentException("Cannot open input stream from URI: $uri")
+
+        val tempFile = File(context.cacheDir, "temp_audio.wav")
+        val outputStream = FileOutputStream(tempFile)
+
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return tempFile
     }
 }

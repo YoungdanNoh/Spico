@@ -1,7 +1,8 @@
 package com.a401.spicoandroid.infrastructure.speech
 
-import android.content.Context
 import android.util.Log
+import com.a401.spicoandroid.BuildConfig.AZURE_KEY
+import com.a401.spicoandroid.BuildConfig.AZURE_REGION
 import com.microsoft.cognitiveservices.speech.PronunciationAssessmentConfig
 import com.microsoft.cognitiveservices.speech.PronunciationAssessmentGradingSystem
 import com.microsoft.cognitiveservices.speech.PronunciationAssessmentGranularity
@@ -14,17 +15,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class AzurePronunciationEvaluator(
-    private val subscriptionKey: String,
-    private val region: String
-) {
-
+class AzurePronunciationEvaluator {
     suspend fun evaluatePronunciation(
         wavFile: File,
         referenceText: String, // 기준이 되는 문장
-        context: Context
     ): String = withContext(Dispatchers.IO) {
-        val speechConfig = SpeechConfig.fromSubscription(subscriptionKey, region)
+        val speechConfig = SpeechConfig.fromSubscription(AZURE_KEY, AZURE_REGION)
         speechConfig.speechRecognitionLanguage = "ko-KR"
 
         val audioConfig = AudioConfig.fromWavFileInput(wavFile.absolutePath)
