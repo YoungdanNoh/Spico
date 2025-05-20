@@ -30,9 +30,9 @@ fun ReportQnAItem(
             .background(color = White, shape = RoundedCornerShape(8.dp))
             .padding(16.dp)
     ) {
-        Text(text = question, style = Typography.headlineMedium, color = TextPrimary)
+        Text(text = question, style = Typography.headlineMedium, color = TextSecondary)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = answer, style = Typography.labelSmall, color = TextPrimary)
+        Text(text = answer, style = Typography.labelSmall, color = TextSecondary)
     }
 }
 
