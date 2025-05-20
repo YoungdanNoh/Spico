@@ -32,12 +32,14 @@ fun FinalModeLoadingScreen(
     projectId: Int,
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel(),
+    practiceViewModel: PracticeViewModel = hiltViewModel(),
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
     val result by viewModel.assessmentResult.collectAsState()
     val questionState by viewModel.finalQuestionState.collectAsState()
     val isAnswerCompleted by viewModel.isAnswerCompleted.collectAsState()
+    val answerTimeLimit = practiceViewModel.answerTimeLimit
 
     // 뒤로 가기 막기
     BackHandler(enabled = true){}
@@ -47,6 +49,9 @@ fun FinalModeLoadingScreen(
         LaunchedEffect(result) {
             result?.let {
                 Log.d("FinalFlow", "🚀 질문 생성 시작")
+                Log.d("TimerDebug", "📥 LoadingScreen에서 answerTimeLimit 주입 전 값: ${practiceViewModel.answerTimeLimit}")
+                viewModel.setAnswerTimeLimit(practiceViewModel.answerTimeLimit)
+
                 viewModel.generateFinalQuestions(
                     projectId = projectId,
                     practiceId = practiceId,

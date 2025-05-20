@@ -39,11 +39,11 @@ class PracticeViewModel @Inject constructor(
     var hasAudience: Boolean = true
     var hasQnA: Boolean = true
     var questionCount: Int = 1
-    var answerTimeLimit: Int = 90 // 단위: 초
+    var answerTimeLimit: Int = 30 // 단위: 초
 
     // QnA 관련 설정값 백업용
     var lastQnAQuestionCount: Int = 1
-    var lastQnAAnswerTimeLimit: Int = 90
+    var lastQnAAnswerTimeLimit: Int = 30
 
     // 파이널 모드 설정 시, ViewModel 갱신
     fun updateQuestionCount(value: Int) {
@@ -54,6 +54,7 @@ class PracticeViewModel @Inject constructor(
 
     fun updateAnswerTimeLimit(value: Int) {
         val safeValue = maxOf(value, 30)
+        Log.d("TimerDebug", "✅ updateAnswerTimeLimit 호출됨: 입력=$value, 적용=$safeValue")
         answerTimeLimit = safeValue
         lastQnAAnswerTimeLimit = safeValue
     }
@@ -112,7 +113,7 @@ class PracticeViewModel @Inject constructor(
         hasAudience = true
         hasQnA = false
         questionCount = 1
-        answerTimeLimit = 90
+        answerTimeLimit = 30
         _practiceId.value = null
     }
 
