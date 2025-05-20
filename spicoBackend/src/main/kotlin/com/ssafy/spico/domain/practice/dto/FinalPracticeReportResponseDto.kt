@@ -10,6 +10,7 @@ data class FinalPracticeReportResponseDto(
     val practiceName: String,
     val date: LocalDateTime,
     val videoUrl: String,
+    val voiceScript: String,
     val totalScore: Int,
     val volumeScore: Int,
     val speedScore: Int,
@@ -23,7 +24,6 @@ data class FinalPracticeReportResponseDto(
     val speedRecords: List<FeedbackSpeedRecord>,
     val pauseRecords: List<PauseRecord>,
     val qaRecord: List<QaRecord>
-
 )
 
 fun FinalPracticeReport.toResponse(): FinalPracticeReportResponseDto {
@@ -32,6 +32,7 @@ fun FinalPracticeReport.toResponse(): FinalPracticeReportResponseDto {
         practiceName = this.practiceName,
         date = this.date,
         videoUrl = this.videoUrl,
+        voiceScript = this.voiceScript,
         totalScore = this.totalScore,
         volumeScore = this.volumeScore,
         speedScore = this.speedScore,
