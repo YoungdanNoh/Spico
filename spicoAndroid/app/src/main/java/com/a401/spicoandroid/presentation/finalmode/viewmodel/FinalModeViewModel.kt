@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import com.a401.spicoandroid.common.domain.DataResource
 import com.a401.spicoandroid.data.finalmode.dto.FinalModeResultRequestDto
 import com.a401.spicoandroid.domain.finalmode.model.AssessmentResult
+import com.a401.spicoandroid.domain.finalmode.model.FinalAnswer
 import com.a401.spicoandroid.domain.finalmode.usecase.FinishFinalPracticeUseCase
 import com.a401.spicoandroid.domain.finalmode.usecase.GenerateFinalQuestionsUseCase
 import com.a401.spicoandroid.domain.practice.usecase.DeletePracticeUseCase
@@ -221,6 +222,21 @@ class FinalModeViewModel @Inject constructor(
                     _finalQuestionState.update { it.copy(isLoading = true) }
                 }
             }
+        }
+    }
+
+    private var answerCount = 1
+    private val _isAnswerCompleted = MutableStateFlow(false)
+    val isAnswerCompleted: StateFlow<Boolean> get() = _isAnswerCompleted
+
+    fun updateAnswer(questionId: Int, answer: String) {
+        val newAnswers = finalQuestionState.value.answers
+            .filterNot { it.questionId == questionId } + FinalAnswer(questionId, answer)
+
+        _finalQuestionState.value = finalQuestionState.value.copy(answers = newAnswers)
+        answerCount += 1
+        if (answerCount == finalQuestionState.value.questions.size) {
+            _isAnswerCompleted.value = true
         }
     }
 

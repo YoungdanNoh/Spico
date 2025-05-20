@@ -1,6 +1,8 @@
 package com.a401.spicoandroid.data.finalmode.dto
 
 import com.a401.spicoandroid.domain.finalmode.model.FinalModeResult
+import com.a401.spicoandroid.infrastructure.speech.model.SpeedType
+import com.a401.spicoandroid.infrastructure.speech.model.VolumeLevel
 
 data class FinalModeResultRequestDto(
     val fileName: String,
@@ -9,9 +11,9 @@ data class FinalModeResultRequestDto(
     val pauseCount: Int,
     val pauseScore: Int,
     val speedScore: Int,
-    val speedStatus: String,
+    val speedStatus: SpeedType,
     val volumeScore: Int,
-    val volumeStatus: String,
+    val volumeStatus: VolumeLevel,
     val volumeRecords: List<VolumeRecordDto>,
     val speedRecords: List<SpeedRecordDto>,
     val pauseRecords: List<PauseRecordDto>,
@@ -25,13 +27,13 @@ data class FinalModeResultResponseDto(
 data class VolumeRecordDto(
     val startTime: String,
     val endTime: String,
-    val volumeLevel: String
+    val volumeLevel: VolumeLevel
 )
 
 data class SpeedRecordDto(
     val startTime: String,
     val endTime: String,
-    val speedLevel: String
+    val speedLevel: SpeedType
 )
 
 data class PauseRecordDto(

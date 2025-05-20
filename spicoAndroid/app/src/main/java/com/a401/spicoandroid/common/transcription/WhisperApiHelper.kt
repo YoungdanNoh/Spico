@@ -1,3 +1,4 @@
+import android.util.Log
 import com.a401.spicoandroid.BuildConfig.OPENAI_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
