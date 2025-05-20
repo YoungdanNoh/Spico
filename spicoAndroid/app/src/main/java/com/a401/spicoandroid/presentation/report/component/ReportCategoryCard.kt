@@ -83,11 +83,11 @@ fun ReportCategoryCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = timeRangeText,
-                style = Typography.bodySmall,
-                color = TextTertiary
-            )
+//            Text(
+//                text = timeRangeText,
+//                style = Typography.bodySmall,
+//                color = TextTertiary
+//            )
         }
 }
 
