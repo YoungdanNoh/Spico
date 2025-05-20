@@ -9,6 +9,7 @@ data class FinalPracticeReport(
     val practiceName: String,
     val date: LocalDateTime,
     val videoUrl: String,
+    val voiceScript: String,
     val totalScore: Int,
     val volumeScore: Int,
     val speedScore: Int,
