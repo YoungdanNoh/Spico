@@ -52,6 +52,7 @@ import com.a401.spicoandroid.presentation.report.screen.RandomSpeechReportScreen
 import com.a401.spicoandroid.presentation.report.screen.VideoReplayScreen
 import com.a401.spicoandroid.presentation.report.screen.VoiceScriptRandomScreen
 import com.a401.spicoandroid.presentation.report.screen.VoiceScriptScreen
+import com.a401.spicoandroid.presentation.report.viewmodel.FinalReportViewModel
 import com.a401.spicoandroid.presentation.report.viewmodel.RandomReportViewModel
 
 @Composable
@@ -70,6 +71,8 @@ fun MainNavGraph(
         val randomSpeechListViewModel: RandomSpeechListViewModel = hiltViewModel()
         val projectDetailViewModel: ProjectDetailViewModel = hiltViewModel()
         val projectScriptViewModel: ProjectScriptViewModel = hiltViewModel()
+        val finalModeViewModel: FinalModeViewModel = hiltViewModel()
+        val finalReportViewModel: FinalReportViewModel = hiltViewModel()
 
         NavHost(
             navController = navController,
@@ -381,7 +384,9 @@ fun MainNavGraph(
                 VoiceScriptScreen(
                     navController = navController,
                     projectId = projectId,
-                    practiceId = practiceId
+                    practiceId = practiceId,
+                    finalModeViewModel = finalModeViewModel,
+                    finalReportViewModel = finalReportViewModel
                 )
             }
 

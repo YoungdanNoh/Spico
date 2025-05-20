@@ -16,7 +16,8 @@ data class FinalReportState(
     val reportItems: List<ReportCategoryData> = emptyList(),
     val videoUrl: String? = null,
     val isLoading: Boolean = false,
-    val error: Throwable? = null
+    val error: Throwable? = null,
+    val voiceScript: String? = null
 )
 
 data class ReportCategoryData(
@@ -108,7 +109,8 @@ fun FinalReport.toUiState(): FinalReportState {
         ),
         qnaList = qaRecord.map { it.question to it.answer },
         reportItems = reportItems,
-        videoUrl = videoUrl
+        videoUrl = videoUrl,
+        voiceScript = voiceScript
     )
 }
 

@@ -23,7 +23,8 @@ data class FinalReportDto(
     val volumeRecords: List<VolumeRecordDto>,
     val speedRecords: List<SpeedRecordDto>,
     val pauseRecords: List<PauseRecordDto>,
-    val qaRecord: List<QaRecordDto>
+    val qaRecord: List<QaRecordDto>,
+    val script: String
 )
 
 data class VolumeRecordDto(val startTime: String, val endTime: String, val volumeLevel: String)
@@ -48,5 +49,6 @@ fun FinalReportDto.toDomain(): FinalReport = FinalReport(
     volumeRecords = volumeRecords.map { VolumeRecord(it.startTime, it.endTime, it.volumeLevel) },
     speedRecords = speedRecords.map { SpeedRecord(it.startTime, it.endTime, it.speedLevel) },
     pauseRecords = pauseRecords.map { PauseRecord(it.startTime, it.endTime) },
-    qaRecord = qaRecord.map { QaRecord(it.question, it.answer) }
+    qaRecord = qaRecord.map { QaRecord(it.question, it.answer) },
+    voiceScript = script
 )
