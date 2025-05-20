@@ -218,7 +218,7 @@ fun RandomSpeechScreen(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // 실시간 음성 파형
-                AudioWaveformView(
+                RandomSpeechWaveformView(
                     waveform = waveform.value,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -300,9 +300,25 @@ fun RandomSpeechScreen(
                                         }
                                     )
                                 } catch (e: Exception) {
-                                    Log.e("RandomSpeech", "❌ Whisper STT 실패: ${e.message}")
-                                    // 예외 처리 필요 (e.g. 토스트 or fallback)
+                                    Log.e("ExitFlow", "❌ 제한시간 STT 실패: ${e.message}")
+
+                                    Toast.makeText(context, "음성 인식에 실패했어요.\n다시 시도해주세요.", Toast.LENGTH_LONG).show()
+
+                                    viewModel.deleteSpeech(
+                                        onSuccess = {
+                                            navController.navigate(
+                                                route = NavRoutes.RandomSpeechLanding.route,
+                                                navOptions = navOptions {
+                                                    popUpTo(NavRoutes.RandomSpeechLanding.route) { inclusive = true }
+                                                }
+                                            )
+                                        },
+                                        onError = {
+                                            Toast.makeText(context, "연습 데이터 삭제에 실패했어요.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
                                 }
+
                             }
                         }
                     }
