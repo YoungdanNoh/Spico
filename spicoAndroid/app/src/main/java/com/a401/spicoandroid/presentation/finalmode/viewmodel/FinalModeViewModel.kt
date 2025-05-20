@@ -89,10 +89,16 @@ class FinalModeViewModel @Inject constructor(
             delay(answerTimeLimit * 1000L)
             val nextIndex = _currentQuestionIndex.value + 1
             Log.d("TimerDebug", "⏭️ 타이머 완료 → nextIndex=$nextIndex, 질문 개수=${_finalQuestionState.value.questions.size}")
+
+            // 현재 질문의 STT 결과 저장
+            val currentQuestion = _finalQuestionState.value.questions.getOrNull(_currentQuestionIndex.value)
+            currentQuestion?.let { question ->
+                Log.d("FinalFlow", "📝 질문 ${question.id}의 STT 결과 저장 완료")
+            }
+
             if (nextIndex < _finalQuestionState.value.questions.size) {
                 _currentQuestionIndex.value = nextIndex
             } else {
-                Log.d("TimerDebug", "✅ 모든 질문 완료 → isAnswerCompleted=true")
                 _isAnswerCompleted.value = true
             }
         }
@@ -159,6 +165,13 @@ class FinalModeViewModel @Inject constructor(
     fun stopRecording() {
         isRecording = false
         timerJob?.cancel()
+        perQuestionTimerJob?.cancel()
+
+        // 현재 질문의 STT 결과 저장
+        val currentQuestion = _finalQuestionState.value.questions.getOrNull(_currentQuestionIndex.value)
+        currentQuestion?.let { question ->
+            Log.d("FinalFlow", "📝 질문 ${question.id}의 STT 결과 저장 완료")
+        }
     }
 
     // 3. 다이얼로그
@@ -272,12 +285,32 @@ class FinalModeViewModel @Inject constructor(
     val isAnswerCompleted: StateFlow<Boolean> get() = _isAnswerCompleted
 
     fun updateAnswer(questionId: Int, answer: String) {
-        val newAnswers = finalQuestionState.value.answers
-            .filterNot { it.questionId == questionId } + FinalAnswer(questionId, answer)
+        Log.d("FinalFlow", "📝 답변 업데이트: questionId=$questionId, answer=$answer")
+        
+        // 현재 질문이 이미 답변 목록에 있는지 확인
+        val currentAnswers = finalQuestionState.value.answers
+        val existingAnswer = currentAnswers.find { it.questionId == questionId }
+        
+        if (existingAnswer != null) {
+            // 기존 답변이 있으면 업데이트
+            val newAnswers = currentAnswers.map { 
+                if (it.questionId == questionId) FinalAnswer(questionId, answer) else it 
+            }
+            _finalQuestionState.update { it.copy(answers = newAnswers) }
+            Log.d("FinalFlow", "✅ 기존 답변 업데이트 완료: ${newAnswers.size}개")
+        } else {
+            // 새로운 답변이면 추가
+            val newAnswers = currentAnswers + FinalAnswer(questionId, answer)
+            _finalQuestionState.update { it.copy(answers = newAnswers) }
+            Log.d("FinalFlow", "✅ 새로운 답변 추가 완료: ${newAnswers.size}개")
+        }
 
-        _finalQuestionState.value = finalQuestionState.value.copy(answers = newAnswers)
-        answerCount += 1
-        if (answerCount == finalQuestionState.value.questions.size) {
+        // 모든 질문에 답변했는지 확인
+        val answeredQuestionIds = _finalQuestionState.value.answers.map { it.questionId }.toSet()
+        val allQuestionIds = _finalQuestionState.value.questions.map { it.id }.toSet()
+
+        if (answeredQuestionIds.containsAll(allQuestionIds)) {
+            Log.d("FinalFlow", "✅ 모든 질문 답변 완료")
             _isAnswerCompleted.value = true
         }
     }
@@ -302,6 +335,7 @@ class FinalModeViewModel @Inject constructor(
         }
 
         Log.d("FinalFlow", "📤 결과 저장 요청: projectId=$projectId, practiceId=$id")
+        Log.d("FinalFlow", "📝 저장할 답변 목록: ${finalQuestionState.value.answers}")
 
         viewModelScope.launch {
             _finalResultState.update { it.copy(isLoading = true, error = null) }

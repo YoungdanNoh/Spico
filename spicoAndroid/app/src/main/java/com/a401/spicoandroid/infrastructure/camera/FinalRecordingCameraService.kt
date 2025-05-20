@@ -111,10 +111,30 @@ class FinalRecordingCameraService(
                             val wavFile = uriToFile(context, wavUri)
 
                         if (isQuestionMode) {
-                            // ✅ Whisper STT
-                            val transcript = WhisperApiHelper.transcribeWavFile(wavFile)
-                            onSttResult?.invoke(transcript)
-                            Log.d("질문 답변: ", transcript)
+                            try {
+                                // ✅ Whisper STT
+                                Log.d("CameraX", "STT 처리 시작: ${name}")
+                                val transcript = WhisperApiHelper.transcribeWavFile(wavFile)
+                                Log.d("CameraX", "STT 결과: $transcript")
+                                
+                                // STT 결과가 비어있지 않으면 콜백 호출
+                                if (transcript.isNotBlank()) {
+                                    onSttResult?.invoke(transcript)
+                                    Log.d("CameraX", "STT 결과 전달 완료")
+                                } else {
+                                    Log.d("CameraX", "빈 STT 결과 무시")
+                                }
+                            } catch (e: Exception) {
+                                Log.e("CameraX", "STT 처리 실패", e)
+                            } finally {
+                                // 임시 파일 정리
+                                try {
+                                    wavFile.delete()
+                                    Log.d("CameraX", "임시 WAV 파일 삭제 완료")
+                                } catch (e: Exception) {
+                                    Log.e("CameraX", "임시 파일 삭제 실패", e)
+                                }
+                            }
                         } else {
                             // ✅ Azure 발음 평가
                             val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(
