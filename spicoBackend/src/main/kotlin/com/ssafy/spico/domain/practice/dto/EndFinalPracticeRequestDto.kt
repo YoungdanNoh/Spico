@@ -8,6 +8,7 @@ data class EndFinalPracticeRequestDto (
 
     val fileName: String?,
     val speechContent : String?,
+    val completenessScore: Int?,
     val pronunciationScore : Int?,
     val pauseCount: Int?,
     val pauseScore: Int?,
@@ -25,6 +26,7 @@ fun EndFinalPracticeRequestDto.toModel(): EndFinalPractice {
     return EndFinalPractice(
         fileName = fileName,
         speechContent = this.speechContent,
+        completenessScore = this.completenessScore,
         pronunciationScore = this.pronunciationScore,
         pauseCount = this.pauseCount,
         pauseScore = this.pauseScore,
@@ -35,6 +37,6 @@ fun EndFinalPracticeRequestDto.toModel(): EndFinalPractice {
         volumeRecords = this.volumeRecords,
         speedRecords = this.speedRecords,
         pauseRecords = this.pauseRecords,
-        answers = this.answers
+        answers = this.answers,
     )
 }

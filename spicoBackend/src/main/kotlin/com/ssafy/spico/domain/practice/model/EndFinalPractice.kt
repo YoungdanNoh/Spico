@@ -6,6 +6,7 @@ import com.ssafy.spico.domain.practice.entity.VolumeType
 data class EndFinalPractice (
     val fileName: String?,
     val speechContent : String?,
+    val completenessScore: Int?,
     val pronunciationScore : Int?,
     val pauseCount: Int?,
     val pauseScore: Int?,
