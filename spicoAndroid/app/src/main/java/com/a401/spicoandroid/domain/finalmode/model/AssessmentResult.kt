@@ -26,10 +26,7 @@ data class AssessmentResult(
     val volumeScore: Double,
     val speedScore: Double,
     val issueDetails: IssueDetails
-) {
-    val overallScore: Double
-        get() = (accuracyScore + completenessScore + pauseScore + volumeScore + speedScore) / 5
-}
+)
 
 data class IssueDetails(
     val pauseIssues: List<TimeRange>,
@@ -44,7 +41,7 @@ fun AssessmentResult.toFinalModeResultRequestDto(
 
     fun generateFileName(): String {
         val timestamp = SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.getDefault()).format(Date())
-        return "video/final_result_$timestamp.mp4"
+        return "final_result_$timestamp.mp4"
     }
 
     fun String.toIsoTimeStub(): String {
