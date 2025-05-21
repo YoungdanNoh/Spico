@@ -174,7 +174,7 @@ fun FinalModeVoiceScreen(
                             )
                         )
                     } else {
-                        parentNavController.navigate(
+                        navController.navigate(
                             NavRoutes.FinalModeLoading.withArgs(
                                 FinalModeLoadingType.REPORT,
                                 projectId,

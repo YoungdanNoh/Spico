@@ -78,8 +78,18 @@ fun CustomMonthCalendar(
     }
 
     // 요일
+    val daysOfWeek = listOf(
+        DayOfWeek.SUNDAY,
+        DayOfWeek.MONDAY,
+        DayOfWeek.TUESDAY,
+        DayOfWeek.WEDNESDAY,
+        DayOfWeek.THURSDAY,
+        DayOfWeek.FRIDAY,
+        DayOfWeek.SATURDAY
+    )
+
     Row(Modifier.fillMaxWidth()) {
-        DayOfWeek.entries.forEach { day ->
+        daysOfWeek.forEach { day ->
             Text(
                 text = day.getDisplayName(TextStyle.SHORT, Locale.KOREAN),
                 modifier = Modifier
@@ -91,6 +101,7 @@ fun CustomMonthCalendar(
             )
         }
     }
+
 
     // 날짜
     Column {
