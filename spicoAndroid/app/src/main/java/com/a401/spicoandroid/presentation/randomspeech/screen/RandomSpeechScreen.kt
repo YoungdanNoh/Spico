@@ -99,6 +99,7 @@ fun RandomSpeechScreen(
                 },
                 onComplete = { file ->
                     Log.d("ExitFlow", "✅ onComplete 진입, 파일: ${file.name}")
+                    recordedFile.value = file
                     coroutineScope.launch {
                         try {
                             viewModel.setLoading(true)
@@ -112,12 +113,18 @@ fun RandomSpeechScreen(
                                     if (id != null) {
                                         coroutineScope.launch {
                                             delay(300)
-                                            navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                                            navController.navigate(
+                                                route = NavRoutes.RandomSpeechReport.withId(id),
+                                                navOptions = navOptions {
+                                                    popUpTo(NavRoutes.RandomSpeech.route) { inclusive = true }
+                                                }
+                                            )
                                         }
                                     } else {
                                         Log.e("ExitFlow", "❌ id가 null이라 이동할 수 없습니다.")
                                     }
-                                }, onError = {
+                                },
+                                onError = {
                                     Log.e("ExitFlow", "❌ 리포트 저장 실패")
                                 }
                             )
@@ -147,7 +154,6 @@ fun RandomSpeechScreen(
     val elapsedSeconds by rememberElapsedSeconds(isRunning = startMainTimer)
 
     fun handleExit() {
-        audioRecorderService.stop()
         if (elapsedSeconds < 30) {
             showExitConfirmDialog = true
         } else {
@@ -268,6 +274,32 @@ fun RandomSpeechScreen(
 
                 Spacer(modifier = Modifier.height(48.dp))
             }
+
+            fun handleConfirmedExit() {
+                val file = recordedFile.value ?: return
+
+                coroutineScope.launch {
+                    viewModel.setLoading(true)
+                    try {
+                        val transcript = WhisperApiHelper.transcribeWavFile(file)
+                        viewModel.submitScript(
+                            script = transcript,
+                            onSuccess = {
+                                val id = viewModel.getSpeechIdForReport()
+                                if (viewModel.shouldRedirectToReport && id != null) {
+                                    navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                                }
+                            },
+                            onError = {
+                                Toast.makeText(context, "스크립트 저장 실패", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "음성 인식 실패", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
             // 30초 이상 종료 다이얼로그
             if (showExitAlert) {
                 RandomSpeechExitAlert(
@@ -277,6 +309,7 @@ fun RandomSpeechScreen(
                         showExitAlert = false
                         viewModel.setLoading(true)
                         audioRecorderService.stop()
+                        handleConfirmedExit()
 
                         Log.d("ExitFlow", "🎤 audioRecorderService stop")
 
