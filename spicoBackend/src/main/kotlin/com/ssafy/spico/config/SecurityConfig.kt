@@ -34,10 +34,9 @@ class SecurityConfig(
 
             // authorize rules
             .authorizeHttpRequests {
-//                개발 끝나면 주석 해제
-//                it.requestMatchers("/auth/login", "/actuator/prometheus").permitAll()
-//                    .anyRequest().authenticated()
-                it.anyRequest().permitAll()
+                it.requestMatchers("/auth/login", "/actuator/prometheus").permitAll()
+                    .anyRequest().authenticated()
+//                it.anyRequest().permitAll()
             }
 
             // add jwt filter
