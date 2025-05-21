@@ -24,7 +24,7 @@ data class FinalReportDto(
     val speedRecords: List<SpeedRecordDto>,
     val pauseRecords: List<PauseRecordDto>,
     val qaRecord: List<QaRecordDto>,
-    val script: String?
+    val voiceScript: String?
 )
 
 data class VolumeRecordDto(val startTime: String, val endTime: String, val volumeLevel: String)
@@ -50,5 +50,5 @@ fun FinalReportDto.toDomain(): FinalReport = FinalReport(
     speedRecords = speedRecords.map { SpeedRecord(it.startTime, it.endTime, it.speedLevel) },
     pauseRecords = pauseRecords.map { PauseRecord(it.startTime, it.endTime) },
     qaRecord = qaRecord.map { QaRecord(it.question, it.answer) },
-    voiceScript = script ?: ""
+    voiceScript = voiceScript ?: ""
 )

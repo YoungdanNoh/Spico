@@ -1,5 +1,6 @@
 package com.a401.spicoandroid.presentation.finalmode.screen
 
+import android.R.attr.enabled
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
@@ -43,17 +44,10 @@ fun FinalModeQnAScreen(
             lifecycleOwner = lifecycleOwner,
             script = "읽어야 하는 스크립트",
             isQuestionMode = true,
-            onSttResult = { text ->
-                // 현재 질문의 ID를 가져와서 updateAnswer 호출
-                val currentQuestion = questionState.questions.getOrNull(currentIndex)
-                currentQuestion?.let { question ->
-                    Log.d("FinalFlow", "🎤 STT 결과 수신: questionId=${question.id}, text=$text")
-                    if (text.isNotBlank()) {
-                        viewModel.updateAnswer(questionId = question.id, answer = text)
-                        Log.d("FinalFlow", "✅ STT 결과 저장 완료: questionId=${question.id}")
-                    } else {
-                        Log.d("FinalFlow", "⚠️ 빈 STT 결과 무시: questionId=${question.id}")
-                    }
+            onSttResult = { questionId, text ->
+                if (text.isNotBlank()) {
+                    Log.d("FinalFlow", "🎤 STT 결과 수신: questionId=$questionId, text=$text")
+                    viewModel.updateAnswer(questionId = questionId, answer = text)
                 }
             }
         )
@@ -85,7 +79,8 @@ fun FinalModeQnAScreen(
                     cameraService.startRecording(
                         projectId = projectId,
                         practiceId = practiceId,
-                        fileTag = "qna${fixedIndex + 1}"
+                        fileTag = "qna${fixedIndex + 1}",
+                        questionId = currentQuestion?.id
                     ) { uri ->
                         Log.d("FinalRecording", "✅ 첫 번째 질문 저장 완료: $uri")
                         Log.d("FinalFlow", "🎤 첫 번째 질문 STT 처리 시작 (ID: ${currentQuestion?.id})")
@@ -116,7 +111,8 @@ fun FinalModeQnAScreen(
                     cameraService.startRecording(
                         projectId = projectId,
                         practiceId = practiceId,
-                        fileTag = "qna${fixedIndex + 1}"
+                        fileTag = "qna${fixedIndex + 1}",
+                        questionId = currentQuestion?.id
                     ) { uri ->
                         Log.d("FinalRecording", "✅ 질문 ${fixedIndex + 1} 저장 완료: $uri")
                         Log.d("FinalFlow", "🎤 질문 ${fixedIndex + 1} STT 처리 시작 (ID: ${currentQuestion?.id})")
