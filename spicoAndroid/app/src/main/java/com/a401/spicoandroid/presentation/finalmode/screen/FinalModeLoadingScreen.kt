@@ -32,14 +32,12 @@ fun FinalModeLoadingScreen(
     projectId: Int,
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel(),
-    practiceViewModel: PracticeViewModel = hiltViewModel(),
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
     val result by viewModel.assessmentResult.collectAsState()
     val questionState by viewModel.finalQuestionState.collectAsState()
     val isAnswerCompleted by viewModel.isAnswerCompleted.collectAsState()
-    val answerTimeLimit = practiceViewModel.answerTimeLimit
 
     // 뒤로 가기 막기
     BackHandler(enabled = true){}
@@ -49,9 +47,6 @@ fun FinalModeLoadingScreen(
         LaunchedEffect(result) {
             result?.let {
                 Log.d("FinalFlow", "🚀 질문 생성 시작")
-                Log.d("TimerDebug", "📥 LoadingScreen에서 answerTimeLimit 주입 전 값: ${practiceViewModel.answerTimeLimit}")
-                viewModel.setAnswerTimeLimit(practiceViewModel.answerTimeLimit)
-
                 viewModel.generateFinalQuestions(
                     projectId = projectId,
                     practiceId = practiceId,
@@ -65,35 +60,34 @@ fun FinalModeLoadingScreen(
 
     // 결과 전송용 LaunchedEffect
     if (type == FinalModeLoadingType.REPORT) {
-        LaunchedEffect(Unit) {
-            Log.d("FinalFlow", "📤 결과 전송 시작")
-            Log.d("FinalFlow", "📝 현재 저장된 답변: ${questionState.answers}")
+        LaunchedEffect(isAnswerCompleted) {
+            if (isAnswerCompleted) {
+                Log.d("FinalFlow", "📤 결과 전송 시작")
 
-            viewModel.setPracticeId(practiceId)
+                viewModel.setPracticeId(practiceId)
 
-            val answers: List<AnswerDto> = questionState.questions.map { question ->
-                val answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
-                Log.d("FinalFlow", "📝 질문 ${question.id}의 답변: $answer")
-                AnswerDto(
-                    questionId = question.id,
-                    answer = answer
+                val answers: List<AnswerDto> = questionState.questions.map { question ->
+                    AnswerDto(
+                        questionId = question.id,
+                        answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
+                    )
+                }
+
+                viewModel.submitFinalModeResult(
+                    projectId = projectId,
+                    request = result!!.toFinalModeResultRequestDto(answers = answers)
+                )
+
+                Log.d("FinalFlow", "📦 전송 request = ${result!!.toFinalModeResultRequestDto(answers)}")
+
+                delay(2000)
+                parentNavController.navigate(
+                    NavRoutes.FinalReport.createRoute(
+                        projectId = projectId,
+                        practiceId = practiceId
+                    )
                 )
             }
-
-            Log.d("FinalFlow", "📦 전송할 답변 목록: $answers")
-
-            viewModel.submitFinalModeResult(
-                projectId = projectId,
-                request = result!!.toFinalModeResultRequestDto(answers = answers)
-            )
-
-            delay(2000)
-            parentNavController.navigate(
-                NavRoutes.FinalReport.createRoute(
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
-            )
         }
     }
 
@@ -112,5 +106,8 @@ fun FinalModeLoadingScreen(
         message = message
     )
 }
+
+
+
 
 

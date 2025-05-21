@@ -27,7 +27,7 @@ class FinalRecordingCameraService(
     private val script: String? = null,
     private val isQuestionMode: Boolean = false,
     private val setAssessmentResult: ((AssessmentResult) -> Unit)? = null,
-    private val onSttResult: ((String) -> Unit)? = null,
+    private val onSttResult: ((questionId: Int, transcript: String) -> Unit)? = null
 ) {
     private var recording: Recording? = null
     private var videoCapture: VideoCapture<Recorder>? = null
@@ -63,6 +63,7 @@ class FinalRecordingCameraService(
     fun startRecording(
         projectId: Int,
         practiceId: Int,
+        questionId: Int? = null,
         fileTag: String = "", // 예: "", "qna1", "qna2"
         onFinished: (uri: Uri?) -> Unit
     ) {
@@ -111,30 +112,15 @@ class FinalRecordingCameraService(
                             val wavFile = uriToFile(context, wavUri)
 
                         if (isQuestionMode) {
-                            try {
                                 // ✅ Whisper STT
                                 Log.d("CameraX", "STT 처리 시작: ${name}")
                                 val transcript = WhisperApiHelper.transcribeWavFile(wavFile)
                                 Log.d("CameraX", "STT 결과: $transcript")
-                                
-                                // STT 결과가 비어있지 않으면 콜백 호출
-                                if (transcript.isNotBlank()) {
-                                    onSttResult?.invoke(transcript)
+
+                                questionId?.let {
+                                    onSttResult?.invoke(questionId, transcript)
                                     Log.d("CameraX", "STT 결과 전달 완료")
-                                } else {
-                                    Log.d("CameraX", "빈 STT 결과 무시")
                                 }
-                            } catch (e: Exception) {
-                                Log.e("CameraX", "STT 처리 실패", e)
-                            } finally {
-                                // 임시 파일 정리
-                                try {
-                                    wavFile.delete()
-                                    Log.d("CameraX", "임시 WAV 파일 삭제 완료")
-                                } catch (e: Exception) {
-                                    Log.e("CameraX", "임시 파일 삭제 실패", e)
-                                }
-                            }
                         } else {
                             // ✅ Azure 발음 평가
                             val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(

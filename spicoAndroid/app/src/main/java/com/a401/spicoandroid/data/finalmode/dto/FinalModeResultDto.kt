@@ -7,6 +7,7 @@ import com.a401.spicoandroid.infrastructure.speech.model.VolumeLevel
 data class FinalModeResultRequestDto(
     val fileName: String,
     val speechContent: String,
+    val completenessScore: Int,
     val pronunciationScore: Int,
     val pauseCount: Int,
     val pauseScore: Int,
