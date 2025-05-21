@@ -11,8 +11,11 @@ import android.util.Log
 import com.a401.spicoandroid.BuildConfig.AZURE_KEY
 import com.a401.spicoandroid.BuildConfig.AZURE_REGION
 import androidx.core.net.toUri
+import com.a401.spicoandroid.domain.finalmode.model.IssueDetails
+import com.a401.spicoandroid.domain.finalmode.model.TimeRange
 import java.io.File
 import java.io.RandomAccessFile
+import java.time.Duration
 import kotlin.math.log10
 import kotlin.math.sqrt
 
@@ -58,6 +61,7 @@ fun pronunciationAssessmentContinuousWithFile(
     var fluencyTotal = 0.0
     var pronunciationTotal = 0.0
     var wordCount = 0
+    var assessmentCount = 0
 
     recognizer.sessionStopped.addEventListener { _, _ ->
         done = true
@@ -65,6 +69,7 @@ fun pronunciationAssessmentContinuousWithFile(
 
     recognizer.recognized.addEventListener { _, e ->
         fullText += e.result.text + " "
+        assessmentCount += 1
         Log.d("AzurePronunciation", "🎤 인식됨: ${e.result.text}")
 
         val pronResult = PronunciationAssessmentResult.fromResult(e.result)
@@ -91,7 +96,7 @@ fun pronunciationAssessmentContinuousWithFile(
 
             if (prevOffset != null) {
                 val pause = offset - (prevOffset!! + duration)
-                if (pause > 3000000) {
+                if (pause > 15000000) { // 1.5초 (15,000,000 = 1.5s in 100ns 단위)
                     pauseIssues.add(prevOffset!! to offset)
                 }
             }
@@ -193,34 +198,46 @@ fun pronunciationAssessmentContinuousWithFile(
         }
     }
 
+
+// 볼륨 점수 계산시 상대적 기준 적용
+// 노이즈 플로어를 측정하고 그 위에 얼마나 있는지를 기준으로 평가
+    val volumeScore = when {
+        avgVolumeLevel >= -25.0 -> 100  // 적정 볼륨
+        avgVolumeLevel >= -35.0 -> 90   // 약간 낮음
+        avgVolumeLevel >= -45.0 -> 80   // 낮음
+        avgVolumeLevel >= -55.0 -> 70   // 매우 낮음
+        else -> 60  // 거의 들리지 않음
+    }
+
+    val wordCountInScript = script.split("\\s+".toRegex()).size
+    val expectedDuration = wordCountInScript * 0.5 // 평균 단어당 0.5초로 예상
+    val durationInSeconds = duration / 1000.0
+    val speedRatio = durationInSeconds / expectedDuration
+
+    val speedScore = when {
+        speedRatio in 0.8..1.3 -> 100 // 예상 시간의 80%~130% 사이는 적정 속도
+        speedRatio < 0.8 -> 90.also { speedIssues.add(0L to duration) } // 예상보다 빠름
+        speedRatio < 0.6 -> 80.also { speedIssues.add(0L to duration) } // 너무 빠름
+        speedRatio > 1.3 -> 85.also { speedIssues.add(0L to duration) } // 예상보다 느림
+        speedRatio > 1.6 -> 70.also { speedIssues.add(0L to duration) } // 너무 느림
+        else -> 60.also { speedIssues.add(0L to duration) }
+    }
+
+    val accuracyAvg = accuracyTotal / assessmentCount
+    val completenessAvg = completenessTotal / assessmentCount
+    val fluencyAvg = fluencyTotal / assessmentCount
+    val pronunciationAvg = pronunciationTotal / assessmentCount
+    Log.d("AzurePronunciation", "accuracyAvg: $accuracyAvg, completnessAvg: $completenessAvg")
+
+
     var totalPauseTime = 0L
     pauseIssues.forEach { (start, end) ->
         totalPauseTime += end - start
     }
-    val penalty = totalPauseTime / 100L // 예: 1초당 10점 감점
-    val pauseScore = (100 - penalty).coerceIn(60, 100)
+    val penalty = totalPauseTime / 100
+    val pauseScore = (100 - penalty.toLong()).coerceIn(60, 100)
 
-
-    // 볼륨 점수: -60dB ~ -10dB 범위에서 점수 매기기
-    val volumeScore = when {
-        avgVolumeLevel >= -20.0 -> 100  // 적정 볼륨
-        avgVolumeLevel >= -30.0 -> 85   // 조금 낮음
-        avgVolumeLevel >= -40.0 -> 70   // 낮음
-        avgVolumeLevel >= -50.0 -> 60   // 매우 낮음
-        else -> 40  // 거의 들리지 않음
-    }
-
-    val speechRate = recognizedWords.size / (duration / 1000.0)
-    val speedScore = when {
-        speechRate in 1.5..3.0 -> 100
-        speechRate < 1.5 -> 80.also { speedIssues.add(0L to duration) }
-        else -> 70.also { speedIssues.add(0L to duration) }
-    }
-
-    val accuracyAvg = accuracyTotal / wordCount
-    val completenessAvg = completenessTotal / wordCount
-    val fluencyAvg = fluencyTotal / wordCount
-    val pronunciationAvg = pronunciationTotal / wordCount
+    Log.d("AzurePronunciation", "totalPauseTime=$totalPauseTime, penalty=$penalty, pauseScore=$pauseScore")
 
     fun formatTime(tick: Long): String {
         val ms = tick / 10_000 // 100ns -> ms
@@ -229,15 +246,19 @@ fun pronunciationAssessmentContinuousWithFile(
         return String.format("%02d:%02d", minutes, seconds)
     }
 
-    val issueDetails = mapOf(
-        "pauseIssues" to pauseIssues.map { formatTime(it.first) to formatTime(it.second) },
-        "speedIssues" to speedIssues.map { formatTime(it.first) to formatTime(it.second) },
-        "volumeIssues" to volumeIssues.map { formatTime(it.first) to formatTime(it.second) },
-        "pronunciationIssues" to pronunciationIssues.map { formatTime(it.first) to formatTime(it.second) }
+    fun parseToTimeRangeList(list: List<Pair<String, String>>): List<TimeRange> {
+        return list.map { (start, end) -> TimeRange(start, end) }
+    }
+
+// 이미 있는 리스트들: pauseIssues, speedIssues, ...
+    val issueDetails = IssueDetails(
+        pauseIssues = parseToTimeRangeList(pauseIssues.map { formatTime(it.first) to formatTime(it.second) }),
+        speedIssues = parseToTimeRangeList(speedIssues.map { formatTime(it.first) to formatTime(it.second) }),
+        volumeIssues = parseToTimeRangeList(volumeIssues.map { formatTime(it.first) to formatTime(it.second) }),
+        pronunciationIssues = parseToTimeRangeList(pronunciationIssues.map { formatTime(it.first) to formatTime(it.second) })
     )
 
     Log.d("AzurePronunciation", "📝 최종 분석 결과: $issueDetails")
-
 
     return mapOf(
         "transcribedText" to fullText.trim(),
@@ -248,8 +269,9 @@ fun pronunciationAssessmentContinuousWithFile(
         "pauseScore" to pauseScore,
         "volumeScore" to volumeScore,
         "speedScore" to speedScore,
-        "issueDetails" to issueDetails
+        "issueDetails" to issueDetails // ✅ 이제 이건 실제 IssueDetails 객체임
     )
+
 }
 
 /**
@@ -288,13 +310,23 @@ private fun measureVolumeFromWavFile(file: File): Double {
     return -60.0 // 기본값 (매우 조용함)
 }
 
-/**
- * 바이트 배열에서 RMS (Root Mean Square) 값을 계산하는 함수
- */
+// 볼륨 점수 계산 로직 개선
+// 기존: 절대적인 dB 값을 기준으로 채점
+// 개선: 마이크 특성을 고려한 상대적 볼륨 평가
+// WAV 파일 분석시 RMS 계산 개선
 private fun calculateRMS(bytes: ByteArray): Double {
+    if (bytes.isEmpty()) return 0.0
+
     var sum = 0.0
-    for (byte in bytes) {
-        sum += (byte.toInt() and 0xFF - 128).let { it * it }
+    // 16비트 오디오 데이터로 가정하고 계산
+    for (i in bytes.indices step 2) {
+        if (i + 1 < bytes.size) {
+            val sample = (bytes[i + 1].toInt() shl 8) or (bytes[i].toInt() and 0xFF)
+            // 16비트 signed 값의 범위는 -32768 ~ 32767
+            val normalizedSample = sample / 32768.0
+            sum += normalizedSample * normalizedSample
+        }
     }
-    return sqrt(sum / bytes.size)
+
+    return sqrt(sum / (bytes.size / 2))
 }
