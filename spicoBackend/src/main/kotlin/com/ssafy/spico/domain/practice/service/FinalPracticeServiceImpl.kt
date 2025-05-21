@@ -252,12 +252,14 @@ class FinalPracticeServiceImpl (
         finalReportsEntity.speechVolume = endFinalPractice.volumeStatus
 
         // 대본 일치율 계산
-        val matchRate = scriptSimilarityService.calculateLevenshteinSimilarity(
-            finalReportsEntity.script ?: "",
-            endFinalPractice.speechContent ?: ""
-        )
-        println("scriptMatchRate: $matchRate for practiceId=$practiceId")
-        finalReportsEntity.scriptMatchRate = matchRate
+//        val projectEntity = projectRepository.findById(projectId)
+//            .orElseThrow { PracticeException(PracticeError.PROJECT_NOT_FOUND) }
+//        val matchRate = scriptSimilarityService.calculateLevenshteinSimilarity(
+//            projectEntity.script ?: "",
+//            endFinalPractice.speechContent ?: ""
+//        )
+//        println("scriptMatchRate: $matchRate for practiceId=$practiceId, script=${finalReportsEntity.script}")
+        finalReportsEntity.scriptMatchRate = endFinalPractice.completenessScore
 
 
         // 평균 점수 계산
@@ -279,5 +281,4 @@ class FinalPracticeServiceImpl (
         ).toEndFinalResponse()
 
     }
-
 }
