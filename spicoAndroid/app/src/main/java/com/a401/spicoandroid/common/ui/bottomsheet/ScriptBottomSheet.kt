@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,8 @@ fun ScriptBottomSheet(
                         .background(LineTertiary)
                 )
             }
-        }
+        },
+        scrimColor = Color.Transparent
     ) {
         Box(
             modifier = Modifier

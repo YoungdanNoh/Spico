@@ -65,35 +65,37 @@ fun FinalModeLoadingScreen(
 
     // 결과 전송용 LaunchedEffect
     if (type == FinalModeLoadingType.REPORT) {
-        LaunchedEffect(Unit) {
-            Log.d("FinalFlow", "📤 결과 전송 시작")
-            Log.d("FinalFlow", "📝 현재 저장된 답변: ${questionState.answers}")
+        LaunchedEffect(result) {
+            result?.let {
+                Log.d("FinalFlow", "📤 결과 전송 시작")
+                Log.d("FinalFlow", "📝 현재 저장된 답변: ${questionState.answers}")
 
-            viewModel.setPracticeId(practiceId)
+                viewModel.setPracticeId(practiceId)
 
-            val answers: List<AnswerDto> = questionState.questions.map { question ->
-                val answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
-                Log.d("FinalFlow", "📝 질문 ${question.id}의 답변: $answer")
-                AnswerDto(
-                    questionId = question.id,
-                    answer = answer
+                val answers: List<AnswerDto> = questionState.questions.map { question ->
+                    val answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
+                    Log.d("FinalFlow", "📝 질문 ${question.id}의 답변: $answer")
+                    AnswerDto(
+                        questionId = question.id,
+                        answer = answer
+                    )
+                }
+
+                Log.d("FinalFlow", "📦 전송할 답변 목록: $answers")
+
+                viewModel.submitFinalModeResult(
+                    projectId = projectId,
+                    request = it.toFinalModeResultRequestDto(answers = answers)
+                )
+
+                delay(2000)
+                parentNavController.navigate(
+                    NavRoutes.FinalReport.createRoute(
+                        projectId = projectId,
+                        practiceId = practiceId
+                    )
                 )
             }
-
-            Log.d("FinalFlow", "📦 전송할 답변 목록: $answers")
-
-            viewModel.submitFinalModeResult(
-                projectId = projectId,
-                request = result!!.toFinalModeResultRequestDto(answers = answers)
-            )
-
-            delay(2000)
-            parentNavController.navigate(
-                NavRoutes.FinalReport.createRoute(
-                    projectId = projectId,
-                    practiceId = practiceId
-                )
-            )
         }
     }
 
