@@ -103,8 +103,8 @@ fun FinalReport.toUiState(): FinalReportState {
         scores = listOf(
             pronunciationScore.toFloat(),
             speedScore.toFloat(),
-            pauseScore.toFloat(),
             volumeScore.toFloat(),
+            pauseScore.toFloat(),
             scriptMatchRate.toFloat()
         ),
         qnaList = qaRecord.map { it.question to it.answer },
