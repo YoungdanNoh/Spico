@@ -47,7 +47,7 @@ fun RandomSpeechLandingScreen(
                 contentDescription = "랜덤스피치 아이콘 이미지",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(560.dp)
+                    .height(512.dp)
                     .padding(start = 16.dp, end = 16.dp)
             )
 

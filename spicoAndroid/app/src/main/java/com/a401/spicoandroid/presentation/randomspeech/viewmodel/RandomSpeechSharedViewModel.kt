@@ -47,6 +47,12 @@ class RandomSpeechSharedViewModel @Inject constructor(
     fun createSpeech(onSuccess: () -> Unit, onError: (String?) -> Unit) {
         val topic = _uiState.value.topic ?: return handleError("주제가 설정되지 않았습니다.", onError)
 
+        val prepTime = _uiState.value.prepTime
+        val speakTime = _uiState.value.speakTime
+
+        Log.d("CreateSpeech", "🚀 createSpeech 호출됨")
+        Log.d("CreateSpeech", "📌 topic: ${topic.name}, prepTime: $prepTime, speakTime: $speakTime")
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
