@@ -98,7 +98,33 @@ fun RandomSpeechScreen(
                     waveform.value = amps
                 },
                 onComplete = { file ->
-                    recordedFile.value = file
+                    Log.d("ExitFlow", "✅ onComplete 진입, 파일: ${file.name}")
+                    coroutineScope.launch {
+                        try {
+                            viewModel.setLoading(true)
+                            val transcript = WhisperApiHelper.transcribeWavFile(file)
+                            Log.d("ExitFlow", "📝 Whisper 변환 완료")
+
+                            viewModel.submitScript(
+                                script = transcript,
+                                onSuccess = {
+                                    val id = viewModel.getSpeechIdForReport()
+                                    if (id != null) {
+                                        coroutineScope.launch {
+                                            delay(300)
+                                            navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
+                                        }
+                                    } else {
+                                        Log.e("ExitFlow", "❌ id가 null이라 이동할 수 없습니다.")
+                                    }
+                                }, onError = {
+                                    Log.e("ExitFlow", "❌ 리포트 저장 실패")
+                                }
+                            )
+                        } catch (e: Exception) {
+                            Log.e("ExitFlow", "❌ STT 실패: ${e.message}")
+                        }
+                    }
                 }
             )
         }
@@ -110,31 +136,10 @@ fun RandomSpeechScreen(
         totalSeconds = totalSeconds,
         isRunning = startMainTimer,
         onFinish = {
+            Log.d("ExitFlow", "✅ 카운트다운 끝! 녹음 정지 호출")
             audioRecorderService.stop()
             val file = recordedFile.value
             if (file != null) {
-                coroutineScope.launch {
-                    try {
-                        val transcript = WhisperApiHelper.transcribeWavFile(file)
-                        Log.d("ExitFlow", "⏰ 제한시간 종료 후 STT 완료")
-
-                        viewModel.submitScript(
-                            script = transcript,
-                            onSuccess = {
-                                val id = viewModel.getSpeechIdForReport()
-                                Log.d("ExitFlow", "⏰ 제한시간 종료 후 저장 완료, id = $id")
-                                if (id != null) {
-                                    navController.navigate(NavRoutes.RandomSpeechReport.withId(id))
-                                }
-                            },
-                            onError = {
-                                Log.e("ExitFlow", "❌ 제한시간 종료 후 저장 실패: ${viewModel.uiState.value.errorMessage}")
-                            }
-                        )
-                    } catch (e: Exception) {
-                        Log.e("ExitFlow", "❌ 제한시간 STT 실패: ${e.message}")
-                    }
-                }
             }
         }
     )

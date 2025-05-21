@@ -60,9 +60,36 @@ fun FinalModeLoadingScreen(
 
     // 결과 전송용 LaunchedEffect
     if (type == FinalModeLoadingType.REPORT) {
+
+        // 1. QnA 없는 경우
+        LaunchedEffect(result) {
+            val localResult = result
+            if (localResult != null && !viewModel.getHasQnA()) {
+                Log.d("FinalFlow", "📤 [QnA 없음] 결과 전송 시작")
+                Log.d("FinalFlow", "📦 전송 request = ${localResult.toFinalModeResultRequestDto(emptyList())}")
+
+                viewModel.setPracticeId(practiceId)
+
+                viewModel.submitFinalModeResult(
+                    projectId = projectId,
+                    request = localResult.toFinalModeResultRequestDto(answers = emptyList())
+                )
+
+                delay(2000)
+                parentNavController.navigate(
+                    NavRoutes.FinalReport.createRoute(
+                        projectId = projectId,
+                        practiceId = practiceId
+                    )
+                )
+            }
+        }
+
+        // 2. QnA 있는 경우
         LaunchedEffect(isAnswerCompleted) {
-            if (isAnswerCompleted) {
-                Log.d("FinalFlow", "📤 결과 전송 시작")
+            val localResult = result
+            if (isAnswerCompleted && viewModel.getHasQnA() && localResult != null) {
+                Log.d("FinalFlow", "📤 [QnA 있음] 결과 전송 시작")
 
                 viewModel.setPracticeId(practiceId)
 
@@ -73,12 +100,12 @@ fun FinalModeLoadingScreen(
                     )
                 }
 
+                Log.d("FinalFlow", "📦 전송 request = ${localResult.toFinalModeResultRequestDto(answers)}")
+
                 viewModel.submitFinalModeResult(
                     projectId = projectId,
-                    request = result!!.toFinalModeResultRequestDto(answers = answers)
+                    request = localResult.toFinalModeResultRequestDto(answers = answers)
                 )
-
-                Log.d("FinalFlow", "📦 전송 request = ${result!!.toFinalModeResultRequestDto(answers)}")
 
                 delay(2000)
                 parentNavController.navigate(
@@ -90,7 +117,6 @@ fun FinalModeLoadingScreen(
             }
         }
     }
-
 
 
 
