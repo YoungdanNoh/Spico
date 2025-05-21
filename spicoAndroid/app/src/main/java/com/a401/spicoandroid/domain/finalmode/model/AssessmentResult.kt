@@ -69,6 +69,7 @@ fun AssessmentResult.toFinalModeResultRequestDto(
     return FinalModeResultRequestDto(
         fileName = generateFileName(),
         speechContent = this.transcribedText,
+        completenessScore = completenessScore.toInt(),
         pronunciationScore = pronunciationScore.toInt(),
         pauseCount = issueDetails.pauseIssues.size,
         pauseScore = pauseScore.toInt(),

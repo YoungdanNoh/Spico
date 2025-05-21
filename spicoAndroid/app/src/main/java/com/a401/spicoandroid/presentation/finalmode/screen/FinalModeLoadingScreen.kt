@@ -32,14 +32,12 @@ fun FinalModeLoadingScreen(
     projectId: Int,
     practiceId: Int,
     viewModel: FinalModeViewModel = hiltViewModel(),
-    practiceViewModel: PracticeViewModel = hiltViewModel(),
     type: FinalModeLoadingType
 ) {
     val context = LocalContext.current
     val result by viewModel.assessmentResult.collectAsState()
     val questionState by viewModel.finalQuestionState.collectAsState()
     val isAnswerCompleted by viewModel.isAnswerCompleted.collectAsState()
-    val answerTimeLimit = practiceViewModel.answerTimeLimit
 
     // 뒤로 가기 막기
     BackHandler(enabled = true){}
@@ -49,9 +47,6 @@ fun FinalModeLoadingScreen(
         LaunchedEffect(result) {
             result?.let {
                 Log.d("FinalFlow", "🚀 질문 생성 시작")
-                Log.d("TimerDebug", "📥 LoadingScreen에서 answerTimeLimit 주입 전 값: ${practiceViewModel.answerTimeLimit}")
-                viewModel.setAnswerTimeLimit(practiceViewModel.answerTimeLimit)
-
                 viewModel.generateFinalQuestions(
                     projectId = projectId,
                     practiceId = practiceId,
@@ -65,27 +60,51 @@ fun FinalModeLoadingScreen(
 
     // 결과 전송용 LaunchedEffect
     if (type == FinalModeLoadingType.REPORT) {
+
+        // 1. QnA 없는 경우
         LaunchedEffect(result) {
-            result?.let {
-                Log.d("FinalFlow", "📤 결과 전송 시작")
-                Log.d("FinalFlow", "📝 현재 저장된 답변: ${questionState.answers}")
+            val localResult = result
+            if (localResult != null && !viewModel.getHasQnA()) {
+                Log.d("FinalFlow", "📤 [QnA 없음] 결과 전송 시작")
+                Log.d("FinalFlow", "📦 전송 request = ${localResult.toFinalModeResultRequestDto(emptyList())}")
+
+                viewModel.setPracticeId(practiceId)
+
+                viewModel.submitFinalModeResult(
+                    projectId = projectId,
+                    request = localResult.toFinalModeResultRequestDto(answers = emptyList())
+                )
+
+                delay(2000)
+                parentNavController.navigate(
+                    NavRoutes.FinalReport.createRoute(
+                        projectId = projectId,
+                        practiceId = practiceId
+                    )
+                )
+            }
+        }
+
+        // 2. QnA 있는 경우
+        LaunchedEffect(isAnswerCompleted) {
+            val localResult = result
+            if (isAnswerCompleted && viewModel.getHasQnA() && localResult != null) {
+                Log.d("FinalFlow", "📤 [QnA 있음] 결과 전송 시작")
 
                 viewModel.setPracticeId(practiceId)
 
                 val answers: List<AnswerDto> = questionState.questions.map { question ->
-                    val answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
-                    Log.d("FinalFlow", "📝 질문 ${question.id}의 답변: $answer")
                     AnswerDto(
                         questionId = question.id,
-                        answer = answer
+                        answer = questionState.answers.find { it.questionId == question.id }?.text ?: ""
                     )
                 }
 
-                Log.d("FinalFlow", "📦 전송할 답변 목록: $answers")
+                Log.d("FinalFlow", "📦 전송 request = ${localResult.toFinalModeResultRequestDto(answers)}")
 
                 viewModel.submitFinalModeResult(
                     projectId = projectId,
-                    request = it.toFinalModeResultRequestDto(answers = answers)
+                    request = localResult.toFinalModeResultRequestDto(answers = answers)
                 )
 
                 delay(2000)
@@ -101,7 +120,6 @@ fun FinalModeLoadingScreen(
 
 
 
-
     val (imageRes, message) = when (type) {
         FinalModeLoadingType.QUESTION -> R.drawable.character_home_1 to
                 "질문 생성중입니다.\n숨을 고르고 답변을 생각해주세요."
@@ -114,5 +132,8 @@ fun FinalModeLoadingScreen(
         message = message
     )
 }
+
+
+
 
 
