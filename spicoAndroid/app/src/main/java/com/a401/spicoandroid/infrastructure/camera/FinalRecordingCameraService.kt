@@ -126,25 +126,29 @@ class FinalRecordingCameraService(
                             val resultMap: Map<String, Any> = pronunciationAssessmentContinuousWithFile(
                                 context, wavFile, script ?: ""
                             )
-                            val result = AssessmentResult(
-                                transcribedText = resultMap["transcribedText"] as? String ?: "",
-                                accuracyScore = resultMap["accuracyScore"] as? Double ?: 0.0,
-                                completenessScore = resultMap["completenessScore"] as? Double ?: 0.0,
-                                fluencyScore = resultMap["fluencyScore"] as? Double ?: 0.0,
-                                pronunciationScore = resultMap["pronunciationScore"] as? Double ?: 0.0,
-                                pauseScore = resultMap["pauseScore"] as? Double ?: 0.0,
-                                volumeScore = resultMap["volumeScore"] as? Double ?: 0.0,
-                                speedScore = resultMap["speedScore"] as? Double ?: 0.0,
-                                issueDetails = (resultMap["issueDetails"] as? Map<String, List<Pair<String, String>>>)
-                                    ?.let { details ->
-                                        IssueDetails(
-                                            pauseIssues = details["pauseIssues"].orEmpty().map { TimeRange(it.first, it.second) },
-                                            speedIssues = details["speedIssues"].orEmpty().map { TimeRange(it.first, it.second) },
-                                            volumeIssues = details["volumeIssues"].orEmpty().map { TimeRange(it.first, it.second) },
-                                            pronunciationIssues = details["pronunciationIssues"].orEmpty().map { TimeRange(it.first, it.second) }
-                                        )
-                                    } ?: IssueDetails(emptyList(), emptyList(), emptyList(), emptyList())
-                            )
+
+                            Log.d("AzurePronunciation", "resultMap: $resultMap")
+
+                            val result = mapToAssessmentResult(resultMap)
+//                            val result = AssessmentResult(
+//                                transcribedText = resultMap["transcribedText"] as? String ?: "",
+//                                accuracyScore = resultMap["accuracyScore"] as? Double ?: 0.0,
+//                                completenessScore = resultMap["completenessScore"] as? Double ?: 0.0,
+//                                fluencyScore = resultMap["fluencyScore"] as? Double ?: 0.0,
+//                                pronunciationScore = resultMap["pronunciationScore"] as? Double ?: 0.0,
+//                                pauseScore = resultMap["pauseScore"] as? Double ?: 0.0,
+//                                volumeScore = resultMap["volumeScore"] as? Double ?: 0.0,
+//                                speedScore = resultMap["speedScore"] as? Double ?: 0.0,
+//                                issueDetails = (resultMap["issueDetails"] as? Map<String, List<Pair<String, String>>>)
+//                                    ?.let { details ->
+//                                        IssueDetails(
+//                                            pauseIssues = details["pauseIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+//                                            speedIssues = details["speedIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+//                                            volumeIssues = details["volumeIssues"].orEmpty().map { TimeRange(it.first, it.second) },
+//                                            pronunciationIssues = details["pronunciationIssues"].orEmpty().map { TimeRange(it.first, it.second) }
+//                                        )
+//                                    } ?: IssueDetails(emptyList(), emptyList(), emptyList(), emptyList())
+//                            )
                             setAssessmentResult?.invoke(result)
                         }
                     }
@@ -182,5 +186,19 @@ class FinalRecordingCameraService(
         }
 
         return tempFile
+    }
+
+    fun mapToAssessmentResult(resultMap: Map<String, Any>): AssessmentResult {
+        return AssessmentResult(
+            transcribedText = resultMap["transcribedText"] as String,
+            accuracyScore = (resultMap["accuracyScore"] as Number).toDouble(),
+            completenessScore = (resultMap["completenessScore"] as Number).toDouble(),
+            fluencyScore = (resultMap["fluencyScore"] as Number).toDouble(),
+            pronunciationScore = (resultMap["pronunciationScore"] as Number).toDouble(),
+            pauseScore = (resultMap["pauseScore"] as Number).toDouble(),
+            volumeScore = (resultMap["volumeScore"] as Number).toDouble(),
+            speedScore = (resultMap["speedScore"] as Number).toDouble(),
+            issueDetails = resultMap["issueDetails"] as IssueDetails
+        )
     }
 }

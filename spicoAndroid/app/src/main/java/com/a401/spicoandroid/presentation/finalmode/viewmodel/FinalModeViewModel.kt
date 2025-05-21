@@ -289,8 +289,7 @@ class FinalModeViewModel @Inject constructor(
             .filterNot { it.questionId == questionId } + FinalAnswer(questionId, answer)
 
         _finalQuestionState.value = finalQuestionState.value.copy(answers = newAnswers)
-        answerCount += 1
-        if (answerCount == finalQuestionState.value.questions.size) {
+        if (newAnswers.map { it.questionId }.distinct().size == finalQuestionState.value.questions.size) {
             _isAnswerCompleted.value = true
         }
     }
