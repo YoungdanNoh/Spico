@@ -15,14 +15,16 @@ fun countdownTimer(
 ): State<Int> {
     val seconds = remember { mutableIntStateOf(totalSeconds) }
 
-    LaunchedEffect(seconds.intValue, isRunning) {
-        if (isRunning && seconds.intValue > 0) {
-            delay(1000)
-            seconds.intValue -= 1
-        } else if (isRunning && seconds.intValue == 0) {
+    LaunchedEffect(isRunning) {
+        if (isRunning) {
+            while (seconds.intValue > 0) {
+                delay(1000)
+                seconds.intValue -= 1
+            }
             onFinish()
         }
     }
 
     return seconds
 }
+
