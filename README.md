@@ -8,7 +8,7 @@
 
 📆 **2025.04.14(월) ~ 2025.05.22(목) [6주]**
 
-**[😎 영상 포트폴리오 바로가기]()**
+**[😎 영상 포트폴리오 바로가기](https://www.youtube.com/watch?v=kVqDxbPYqXk)**
 
 </div>
 
@@ -40,7 +40,7 @@
 
 </br>
 
-### 🖥️ Frontend
+### 🖥️ Android
 
 | Tech Stack       | Description                                                                                                                               |
 | :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -75,20 +75,27 @@
 
 <table>
     <tr>
-      <th scope="col" colspan="4"> Backend </th>
-      <th scope="col" colspan="2"> Frontend </th>
+      <th scope="col" colspan="3"> Android </th>
+      <th scope="col" colspan="2"> Backend </th>
+      <th scope="col" colspan="1"> Infra </th>
     </tr>
     <tr>
+      <td>강명주</td>
       <td>김서현</td>
+      <td>신유영</td>
       <td>김예진</td>
       <td>노영단</td>
       <td>이승연</td>
-      <td>강명주</td>
-      <td>신유영</td>
     </tr>
     <tr>
       <td>
+        <a href="https://github.com/notrealsilk"><img src="https://avatars.githubusercontent.com/notrealsilk" width=160/></a>
+      </td>
+      <td>
         <a href="https://github.com/seohye-ki"><img src="https://avatars.githubusercontent.com/seohye-ki" width=160/></a>
+      </td>
+      <td>
+         <a href="https://github.com/shinyou28"><img src="https://avatars.githubusercontent.com/shinyou28" width=160/></a> 
       </td>
       <td>
         <a href="https://github.com/z5zH0"><img src="https://avatars.githubusercontent.com/z5zH0" width=160/></a>
@@ -98,12 +105,6 @@
       </td>
       <td>
        <a href="https://github.com/leesyseel"><img src="https://avatars.githubusercontent.com/leesyseel" width=160/></a> 
-      </td>
-      <td>
-        <a href="https://github.com/notrealsilk"><img src="https://avatars.githubusercontent.com/notrealsilk" width=160/></a>
-      </td>
-      <td>
-         <a href="https://github.com/shinyou28"><img src="https://avatars.githubusercontent.com/shinyou28" width=160/></a> 
       </td>
     </tr>
 </table>
