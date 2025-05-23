@@ -36,7 +36,7 @@
 즉흥 발표 훈련을 위한 랜덤 질문 제공 및 타이머 기능
 
 ### 📊 리포트	
-모드에 따른 다양한 리포트 제공 - 코칭 피드밷, 점수 시각화, AI 피드백 등
+모드에 따른 다양한 리포트 제공 - 코칭 피드백, 점수 시각화, AI 피드백 등
 
 #### 코칭모드 리포트
 <table>
@@ -44,8 +44,8 @@
     <td colspan="2" align="center"><strong>코칭모드 리포트</strong></td>
   </tr>
   <tr>
-    <td><img src="assets/코칭_리포트.jpg" alt="코칭 리포트 이미지" width="300"/></td>
-    <td><img src="assets/코칭_리포트.gif" alt="코칭 리포트 gif" width="300"/></td>
+    <td><img src="assets/coaching_report.jpg" alt="코칭 리포트 이미지" width="300"/></td>
+    <td><img src="assets/coaching_report.gif" alt="코칭 리포트 gif" width="300"/></td>
   </tr>
 </table>
 
@@ -56,8 +56,8 @@
     <td colspan="2" align="center"><strong>파이널모드 리포트</strong></td>
   </tr>
   <tr>
-    <td><img src="assets/파이널_리포트.jpg" alt="파이널 리포트 이미지" width="300"/></td>
-    <td><img src="assets/파이널_리포트.gif" alt="파이널 리포트 gif" width="300"/></td>
+    <td><img src="assets/final_report.jpg" alt="파이널 리포트 이미지" width="300"/></td>
+    <td><img src="assets/final_report.gif" alt="파이널 리포트 gif" width="300"/></td>
   </tr>
 </table>
 
@@ -68,8 +68,8 @@
     <td colspan="2" align="center"><strong>랜덤스피치 리포트</strong></td>
   </tr>
   <tr>
-    <td><img src="assets/랜덤_리포트.jpg" alt="랜덤 리포트 이미지" width="300"/></td>
-    <td><img src="assets/랜덤_리포트.gif" alt="랜덤 리포트 gif" width="300"/></td>
+    <td><img src="assets/random_report.jpg" alt="랜덤 리포트 이미지" width="300"/></td>
+    <td><img src="assets/random_report.gif" alt="랜덤 리포트 gif" width="300"/></td>
   </tr>
 </table>
 
