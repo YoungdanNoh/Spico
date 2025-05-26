@@ -164,7 +164,6 @@
 | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Container      | <img src="https://img.shields.io/badge/Docker 26.1.3-2496ED?style=for-the-badge&logo=docker&logoColor=black" alt="docker">                                                     |
 | Server         | <img src="https://img.shields.io/badge/AWS EC2 %28Ubuntu 22.04.5 LTS%29-FF9900?style=for-the-badge&logo=amazonec2&logoColor=black" alt="amazonec2">                            |
-| Deployment URL | <a href="https://i12a508.p.ssafy.io/" target="_blank"><img src="https://img.shields.io/badge/Confy-3B66BC?style=for-the-badge&logo=Confy&logoColor=black" alt="amazonec2"></a> |
 
 </br>
 
@@ -219,7 +218,7 @@
 
 | Contributors | Role                   | Position |
 |--------------|------------------------|----------|
-| **노영단**     | 팀장, <br /> Backend   | - **STT** <br> - **AI  질문생성** <br> - **피드백 생성** <br> - **DB 설계**|
+| **노영단**     | 팀장, <br /> Backend   | - **Google STT** <br> - **AI  질문생성** <br> - **실시간 피드백 생성** <br> - **파이널 모드 및 코칭모드 백엔드 구현** <br> - **DB 설계**|
 | **김예진**   | 팀원, <br /> Backend   | - **STT** <br> - **랜덤스피치 기능 구현** <br> - **Android 개발 환경 구축** <br> - **DB 설계** |
 | **이승연**   | 팀원, <br /> Infra   | - **배포** <br> - **모니터링 구축** <br> - **카카오 로그인** <br> - **DB 설계**|
 | **강명주**   | 팀원, <br /> Android  | - **랜덤스피치 구현** <br> - **홈화면 및 연습 생성 구현** <br> - **와이어프레임** <br> - **UI/UX 디자인** |
