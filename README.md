@@ -162,8 +162,9 @@
 
 | Tech Stack     | Description                                                                                                                                                                    |
 | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Container      | <img src="https://img.shields.io/badge/Docker 26.1.3-2496ED?style=for-the-badge&logo=docker&logoColor=black" alt="docker">                                                     |
+| Deploy      | <img src="https://img.shields.io/badge/Docker 26.1.3-2496ED?style=for-the-badge&logo=docker&logoColor=black" alt="docker"> <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white" alt="nginx"> <img src="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white" alt="jenkins">                                                    |
 | Server         | <img src="https://img.shields.io/badge/AWS EC2 %28Ubuntu 22.04.5 LTS%29-FF9900?style=for-the-badge&logo=amazonec2&logoColor=black" alt="amazonec2">                            |
+| Monitoring     | <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white" alt="prometheus"> <img src="https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white" alt="grafana">                                                     |
 
 </br>
 
