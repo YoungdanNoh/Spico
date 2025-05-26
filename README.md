@@ -144,7 +144,7 @@
 | JDK        | <img src="https://img.shields.io/badge/JDK21%28jdk 21.0.7%29-000000?style=for-the-badge&logo=openjdk&logoColor=white" alt="openjdk">                                                                                                                                                                                                                                                 |
 | Build Tool | <img src="https://img.shields.io/badge/gradle 8.13-02303A?style=for-the-badge&logo=gradle&logoColor=white" alt="gradle">                                                                                                                                                                                                                                          |
 | Database   | <img src="https://img.shields.io/badge/mariadb 3.5.2-003545?style=for-the-badge&logo=mariadb&logoColor=white" alt="mariadb">
-| Libraries  | <img src="https://img.shields.io/badge/Azure STT SDK 1.34.0-40AEF0?style=for-the-badge&logo=microsoft&logoColor=white" alt="microsoft"> <img src="https://img.shields.io/badge/google cloud-4285F4?style=for-the-badge&logo=google cloud&logoColor=white" alt="google cloud"> <img src="https://img.shields.io/badge/GPT 4o-191A1B?style=for-the-badge&logo=openai&logoColor=white" alt="gpt"> <img src="https://img.shields.io/badge/Whisper--1-191A1B?style=for-the-badge&logo=openai&logoColor=white" alt="Whisper"> |                                   
+| Libraries  | <img src="https://img.shields.io/badge/Azure STT SDK 1.34.0-40AEF0?style=for-the-badge&logo=microsoft&logoColor=white" alt="microsoft"> <img src="https://img.shields.io/badge/google cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="google cloud"> <img src="https://img.shields.io/badge/GPT 4o-191A1B?style=for-the-badge&logo=openai&logoColor=white" alt="gpt"> <img src="https://img.shields.io/badge/Whisper--1-191A1B?style=for-the-badge&logo=openai&logoColor=white" alt="Whisper"> |                                   
 | IDE        | <img src="https://img.shields.io/badge/intellij-000000?style=for-the-badge&logo=intellijidea&logoColor=white" alt="intellijidea">                                                                                                                                                                                                                                                     |
 
 </br>
@@ -154,7 +154,7 @@
 | Tech Stack       | Description                                                                                                                               |
 | :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------- |
 | Framework        | <img src="https://img.shields.io/badge/Jetpack Compose 1.7.6-4285F4?style=for-the-badge&logo=android" alt="android">                     |
-| Runtime        | <img src="https://img.shields.io/badge/android sdk 35-4285F4?style=for-the-badge&logo=android sdk" alt="android sdk">                     |
+| Runtime        | <img src="https://img.shields.io/badge/android sdk 35-4285F4?style=for-the-badge&logo=androidsdk" alt="android sdk">                     |
 | Language         | <img src="https://img.shields.io/badge/kotlin 1.9.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="kotlin">              |
 | IDE        | <img src="https://img.shields.io/badge/androidstudio-3DDC84?style=for-the-badge&logo=androidstudio&logoColor=white" alt="inteandroidstudiollijidea">       
 
