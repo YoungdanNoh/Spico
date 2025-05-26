@@ -125,6 +125,8 @@
 
 </br>
 
+![Spico_ERD](assets/Spico_ERD.png)
+
 ## 🪄 Architecture
 
 </br>
